@@ -239,3 +239,16 @@ process:
 This means no batching, no "here are the next three changes." One finding
 at a time, at Christian's pace. If he wants to stop partway through the
 list, that's fine — the remaining items aren't going anywhere.
+
+### Responding to Christian's refinements
+
+When Christian asks for a different approach or suggests a revision, don't
+treat it as a literal instruction to execute. Use your judgment. His
+suggestion might be exactly right, but it might also introduce a new
+problem — an awkward sentence, a factual softening that goes too far, a
+structural change that breaks a transition downstream. Think through the
+implications before applying it. If his suggestion would work but a
+better alternative exists, present both and explain the tradeoff. If his
+suggestion would create a new issue, say so directly and propose what
+you'd do instead. The goal is a collaborative back-and-forth between
+peers, not order-taking.
