@@ -252,3 +252,38 @@ better alternative exists, present both and explain the tradeoff. If his
 suggestion would create a new issue, say so directly and propose what
 you'd do instead. The goal is a collaborative back-and-forth between
 peers, not order-taking.
+
+---
+
+## After the editing session: retrospective
+
+Once the review and editing work is done, take a step back and consider
+whether anything that came up during the session points to a broader
+change. This is a brief, lightweight check — not a full audit.
+
+Ask yourself:
+
+- **Did the same type of issue come up multiple times?** If the review
+  flagged the same problem in several places (e.g., repeated
+  nominalizations, consistently missing "why does this matter?"
+  sections, a pattern of overclaiming), that might signal a gap in the
+  christian-writing-style skill. Suggest adding guidance to prevent
+  the pattern at the source.
+- **Did the review process itself have friction?** If something about
+  the review layers, the severity categories, or the change workflow
+  felt wrong or missing during this session, suggest an update to this
+  skill (text-review).
+- **Did a new kind of writing come up that the skills don't cover?**
+  For example, a grant proposal, a conference talk abstract, or a
+  different audience than the skills anticipate. If so, suggest
+  whether the existing skills should expand or whether a new skill
+  is warranted.
+- **Did Christian's refinements reveal a preference not yet captured?**
+  If he consistently pushed back in a particular direction — preferring
+  shorter sentences, wanting more examples, favoring a different
+  transition style — suggest codifying that preference in the
+  christian-writing-style skill.
+
+Present these observations briefly at the end of the session. If there's
+nothing worth flagging, say so and move on — don't manufacture meta-feedback
+for its own sake.
