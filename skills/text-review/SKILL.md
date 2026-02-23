@@ -93,7 +93,10 @@ What to check:
   comparison and summary tables) and they are a signature strength of his
   writing. If a paragraph is essentially a list of "X does A, Y does B,
   Z does C," suggest a table. If a process is described in prose but would
-  be clearer as a diagram, say so.
+  be clearer as a diagram, say so. Conversely, review existing tables —
+  if a table has too many columns or tries to capture too many dimensions
+  at once, suggest splitting it into focused tables that each make one
+  clear point.
 - **For academic papers specifically:** Does the structure match the
   conventions for the paper type (empirical, systematic review, tutorial)?
   The christian-writing-style skill documents these structures — check the
