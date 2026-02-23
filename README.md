@@ -91,4 +91,4 @@ git commit -m "Add my-new-skill"
 ```
 
 For skill structure, frontmatter format, and best practices, see the
-[official Claude skills documentation](https://docs.claude.com).
+[official skills documentation](https://agentskills.io/home).
