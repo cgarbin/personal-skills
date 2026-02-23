@@ -83,34 +83,12 @@ reinstall.
 
 ```bash
 mkdir skills/my-new-skill
-# Write the SKILL.md
+# Write the SKILL.md (see official docs for structure and frontmatter format)
 # Symlink it (or package and install)
 ln -s ~/projects/personal-skills/skills/my-new-skill ~/.claude/skills/my-new-skill
 git add skills/my-new-skill
 git commit -m "Add my-new-skill"
 ```
 
-## Skill anatomy
-
-At minimum, a skill is a folder with a `SKILL.md`:
-
-```
-my-skill/
-├── SKILL.md          # Required: YAML frontmatter + instructions
-├── scripts/          # Optional: executable code for deterministic tasks
-├── references/       # Optional: docs loaded into context as needed
-└── assets/           # Optional: templates, icons, fonts
-```
-
-The `SKILL.md` frontmatter must include `name` and `description`:
-
-```yaml
----
-name: my-skill
-description: "When to trigger and what it does."
----
-```
-
-The description is what Claude uses to decide whether to consult the skill, so
-make it specific about both the skill's purpose and the contexts that should
-trigger it.
+For skill structure, frontmatter format, and best practices, see the
+[official Claude skills documentation](https://docs.claude.com).
