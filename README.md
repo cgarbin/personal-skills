@@ -5,22 +5,9 @@ portable across machines.
 
 ## Repository structure
 
-```
-skills/
-├── christian-writing-style/
-│   └── SKILL.md
-├── python-dev-process/
-│   ├── SKILL.md
-│   └── assets/
-│       └── AGENTS-template.md
-└── text-review/
-    └── SKILL.md
-scripts/
-└── install.sh
-```
-
-Each skill lives in its own folder under `skills/`. Add new skills by creating
-a new folder with a `SKILL.md` inside it.
+Each skill lives in its own folder under `skills/`, with at least a `SKILL.md`
+inside it. The `scripts/` folder contains the install script. Add new skills by
+creating a new folder with a `SKILL.md` inside it.
 
 ## Setting up a new machine
 
@@ -59,12 +46,12 @@ you can package a skill and install it through the Cowork UI:
 
 ```bash
 # From a session that has access to the skill-creator
-python -m scripts.package_skill ~/projects/personal-skills/skills/christian-writing-style
+python -m scripts.package_skill ~/projects/personal-skills/skills/<skill-name>
 ```
 
-This produces a `christian-writing-style.skill` file (a zip archive). Install
-it by double-clicking or dragging into a Cowork session. The downside is that
-you need to repackage and reinstall after every change.
+This produces a `.skill` file (a zip archive). Install it by double-clicking or
+dragging into a Cowork session. The downside is that you need to repackage and
+reinstall after every change.
 
 ## Day-to-day workflow
 
@@ -73,8 +60,8 @@ you need to repackage and reinstall after every change.
 3. Commit when you're happy with the changes.
 
 ```bash
-git add skills/christian-writing-style/SKILL.md
-git commit -m "Update writing style: add guidance on X"
+git add skills/<skill-name>/SKILL.md
+git commit -m "Update <skill-name>: add guidance on X"
 git push
 ```
 
