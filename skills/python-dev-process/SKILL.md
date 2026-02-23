@@ -18,14 +18,20 @@ existing one.
 
 ## Development phases
 
-Projects evolve through phases. Each phase has a clear purpose. Don't skip
-ahead — get the current phase right before moving to the next one.
+These phases describe the kinds of work that happen during a project. For a
+brand-new project, you'll go through them roughly in order the first time.
+But after that, they repeat in smaller cycles: a new feature brings you back
+to "get it working," then you add tests for it, then you refactor what got
+tangled. A project might cycle through phases 1–3 many times over its
+lifetime. The phases are a vocabulary for what kind of work you're doing
+right now, not a one-way progression.
 
 ### Phase 1: Get it working
 
-Start with a functional version. The first priority is something that runs
-and does what it's supposed to do. Don't worry about code quality tooling,
-perfect modularity, or comprehensive tests yet.
+The first priority is something that runs and does what it's supposed to do.
+For a new project, this means the initial functional version. For a new
+feature in an existing project, this means getting the feature working
+before worrying about perfect structure.
 
 What belongs in this phase:
 
@@ -36,14 +42,18 @@ What belongs in this phase:
 - A `requirements.txt` with pinned minimum versions of dependencies.
 - A clear first commit.
 
-What doesn't belong yet: linting, formatting, pre-commit hooks, tests,
-module extraction. Those come next.
+For a new project, don't worry about linting, formatting, pre-commit hooks,
+tests, or module extraction yet — those come in Phase 2. For an existing
+project that already has guardrails, go straight to adding tests for the
+new code.
 
 ### Phase 2: Add guardrails
 
-Once the code works, add the infrastructure that keeps it working.
+Add the infrastructure that keeps the code working. For a new project, this
+means setting up the full toolchain. For a new feature in an existing
+project, this means adding tests and updating docs to cover the new code.
 
-In this order:
+For a new project, set up guardrails in this order:
 
 1. **Unit tests** for the core logic modules. Test your code, not
    third-party libraries. Mock external services (APIs, databases) — never
@@ -59,8 +69,9 @@ point for AGENTS.md. Customize it for each project.
 
 ### Phase 3: Extract and modularize
 
-As the codebase grows, extract modules. Each extraction should be a single,
-focused commit. The pattern:
+This phase happens whenever the code gets tangled — whether during initial
+development or months later when a new feature makes an existing module do
+too much. Each extraction should be a single, focused commit. The pattern:
 
 - **Presentation separate from logic.** UI code (Streamlit, Flask, CLI)
   should contain no business logic. Business logic should have no UI imports.
@@ -83,8 +94,9 @@ Each extraction commit should:
 
 ### Phase 4: Evolve with confidence
 
-With tests, linting, and clean modules in place, new features land cleanly.
-This phase is ongoing. The practices:
+This is the steady state — but "steady" doesn't mean static. New features
+cycle back through phases 1–3 at a smaller scale. The practices that keep
+this sustainable:
 
 - **Run tests after every change** to a logic module.
 - **Remove dead code** when you find it — don't leave it commented out.
