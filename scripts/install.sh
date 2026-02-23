@@ -57,8 +57,9 @@ fi
 
 mkdir -p "$TARGET_DIR"
 
-installed=0
-skipped=0
+linked=0
+up_to_date=0
+conflicts=0
 
 for skill_dir in "$SKILLS_SRC"/*/; do
     [[ -d "$skill_dir" ]] || continue
@@ -66,27 +67,27 @@ for skill_dir in "$SKILLS_SRC"/*/; do
     skill_name="$(basename "$skill_dir")"
     link_path="$TARGET_DIR/$skill_name"
 
-    # Skip if the symlink already points to the right place.
+    # Already points to the right place — nothing to do.
     if [[ -L "$link_path" ]] && [[ "$(readlink "$link_path")" == "$skill_dir" || "$(readlink "$link_path")" == "${skill_dir%/}" ]]; then
-        echo "  skip  $skill_name (already linked)"
-        skipped=$((skipped + 1))
+        echo "  ok      $skill_name (already linked)"
+        up_to_date=$((up_to_date + 1))
         continue
     fi
 
-    # Remove a stale symlink (points elsewhere or is broken).
+    # Stale symlink (points elsewhere or is broken) — safe to replace.
     if [[ -L "$link_path" ]]; then
         echo "  update  $skill_name (re-linking)"
         rm "$link_path"
     elif [[ -e "$link_path" ]]; then
-        echo "  skip  $skill_name (non-symlink already exists at $link_path)" >&2
-        skipped=$((skipped + 1))
+        echo "  CONFLICT  $skill_name (non-symlink already exists at $link_path)" >&2
+        conflicts=$((conflicts + 1))
         continue
     fi
 
     ln -s "$skill_dir" "$link_path"
-    echo "  link  $skill_name -> $skill_dir"
-    installed=$((installed + 1))
+    echo "  link    $skill_name -> $skill_dir"
+    linked=$((linked + 1))
 done
 
 echo ""
-echo "Done. $installed linked, $skipped skipped."
+echo "Done. $linked linked, $up_to_date already up to date, $conflicts conflicts."
