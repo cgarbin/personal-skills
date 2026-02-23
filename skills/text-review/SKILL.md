@@ -202,3 +202,34 @@ reworking this." Say what specifically should change and why.
   they might otherwise get cut in a revision).
 - Don't flag style preferences as errors. If a sentence is clear and accurate
   but you'd have written it differently, leave it alone.
+
+---
+
+## After the review: applying changes
+
+The review has two distinct phases. First, present the full summary of
+findings. Then stop and wait — do not start making changes until Christian
+asks to proceed.
+
+### Phase 1: Summarize all findings
+
+Present the complete review using the severity structure above (must fix /
+should fix / consider). This gives Christian the full picture so he can
+prioritize, push back, or skip items before any edits begin.
+
+### Phase 2: Walk through changes one at a time
+
+When Christian is ready to apply changes, work through the findings as a
+task list. Christian prefers to stay in control of the process:
+
+1. **Show the current text** — quote the passage as it stands now.
+2. **Show the proposed change** — present the revised version alongside a
+   brief explanation of what changed and why.
+3. **Wait for Christian's decision** — he will either accept the change,
+   ask for a different approach, or skip it entirely.
+4. **Do not move to the next finding** until Christian says he is done with
+   the current one.
+
+This means no batching, no "here are the next three changes." One finding
+at a time, at Christian's pace. If he wants to stop partway through the
+list, that's fine — the remaining items aren't going anywhere.
