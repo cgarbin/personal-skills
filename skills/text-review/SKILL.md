@@ -220,7 +220,13 @@ prioritize, push back, or skip items before any edits begin.
 ### Phase 2: Walk through changes one at a time
 
 When Christian is ready to apply changes, work through the findings as a
-task list. Christian prefers to stay in control of the process:
+task list. Before starting, order the items logically — not necessarily by
+severity. Some changes depend on others: a structural reorganization should
+come before polishing the prose that will move, and fixing a factual error
+should come before refining the sentence it appears in. If applying one
+change would make another one irrelevant or would require re-doing it,
+put the upstream change first. Christian prefers to stay in control of the
+process:
 
 1. **Show the current text** — quote the passage as it stands now.
 2. **Show the proposed change** — present the revised version alongside a
