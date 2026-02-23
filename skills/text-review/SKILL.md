@@ -86,6 +86,14 @@ What to check:
   the audience already knows.
 - **Do transitions work?** Does each section connect to the next? Can you
   follow the thread from opening to conclusion without getting lost?
+- **Opportunities for tables or figures.** Look for places where prose is
+  doing work that a table or figure would do better — comparisons across
+  multiple items, step-by-step processes, chronological progressions, or
+  dense numerical results. Christian uses tables heavily (especially
+  comparison and summary tables) and they are a signature strength of his
+  writing. If a paragraph is essentially a list of "X does A, Y does B,
+  Z does C," suggest a table. If a process is described in prose but would
+  be clearer as a diagram, say so.
 - **For academic papers specifically:** Does the structure match the
   conventions for the paper type (empirical, systematic review, tutorial)?
   The christian-writing-style skill documents these structures — check the
