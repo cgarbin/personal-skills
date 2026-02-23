@@ -1,0 +1,12 @@
+# Machine-specific files
+manifest.json
+
+# Packaged skill files (generated from source)
+*.skill
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Workspace/eval artifacts from skill-creator
+*-workspace/
