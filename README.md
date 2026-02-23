@@ -7,8 +7,16 @@ portable across machines.
 
 ```
 skills/
-└── christian-writing-style/
+├── christian-writing-style/
+│   └── SKILL.md
+├── python-dev-process/
+│   ├── SKILL.md
+│   └── assets/
+│       └── AGENTS-template.md
+└── text-review/
     └── SKILL.md
+scripts/
+└── install.sh
 ```
 
 Each skill lives in its own folder under `skills/`. Add new skills by creating
@@ -23,31 +31,26 @@ cd ~/projects
 git clone <your-remote-url> personal-skills
 ```
 
-### 2. Symlink skills into the Claude skills directory
+### 2. Install skills
 
-Cowork and Claude Code look for skills in `~/.claude/skills/`. Symlink each
-skill from this repo so that changes are picked up immediately:
+Run the install script to symlink all skills into the Claude skills directory:
 
 ```bash
-# Create the target directory if it doesn't exist
-mkdir -p ~/.claude/skills
+./scripts/install.sh
+```
 
-# Symlink each skill
-ln -s ~/projects/personal-skills/skills/christian-writing-style \
-      ~/.claude/skills/christian-writing-style
+The script finds every skill under `skills/` and symlinks it into
+`~/.claude/skills/`. It is idempotent — re-running it skips skills that are
+already linked and picks up any new ones.
+
+If your Claude skills directory is somewhere else, pass it with `--target`:
+
+```bash
+./scripts/install.sh --target /path/to/skills
 ```
 
 With symlinks in place, any edit to the files in this repo (or any `git pull`)
 is live immediately — no reinstall step needed.
-
-If the symlink path doesn't work (the skills directory location can vary by
-platform and version), check where your existing skills are stored:
-
-```bash
-find ~ -path "*/.claude/skills" -o -path "*/.skills/skills" 2>/dev/null
-```
-
-Then adjust the symlink target accordingly.
 
 ### Alternative: install from a `.skill` package
 
@@ -84,8 +87,8 @@ reinstall.
 ```bash
 mkdir skills/my-new-skill
 # Write the SKILL.md (see official docs for structure and frontmatter format)
-# Symlink it (or package and install)
-ln -s ~/projects/personal-skills/skills/my-new-skill ~/.claude/skills/my-new-skill
+# Link the new skill (re-run install — it picks up new skills automatically)
+./scripts/install.sh
 git add skills/my-new-skill
 git commit -m "Add my-new-skill"
 ```
