@@ -79,7 +79,8 @@ for skill_dir in "$SKILLS_SRC"/*/; do
         echo "  update  $skill_name (re-linking)"
         rm "$link_path"
     elif [[ -e "$link_path" ]]; then
-        echo "  CONFLICT  $skill_name (non-symlink already exists at $link_path)" >&2
+        echo "  CONFLICT  $skill_name — a file or folder already exists at $link_path" >&2
+        echo "            Remove or rename it, then re-run this script." >&2
         conflicts=$((conflicts + 1))
         continue
     fi
