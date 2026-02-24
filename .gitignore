@@ -10,3 +10,6 @@ Thumbs.db
 
 # Workspace/eval artifacts from skill-creator
 *-workspace/
+
+# Fetched external skills (re-downloaded by install.sh)
+vendor/

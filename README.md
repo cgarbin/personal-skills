@@ -5,9 +5,9 @@ portable across machines.
 
 ## Repository structure
 
-Each skill lives in its own folder under `skills/`, with at least a `SKILL.md`
-inside it. The `scripts/` folder contains the install script. Add new skills by
-creating a new folder with a `SKILL.md` inside it.
+Personal skills live under `skills/`, each in its own folder with a `SKILL.md`.
+External skills from GitHub are listed in `skills.manifest` and fetched into
+`vendor/` at install time. The `scripts/` folder contains the install script.
 
 ## Setting up a new machine
 
@@ -26,9 +26,10 @@ Run the install script to symlink all skills into the Claude skills directory:
 ./scripts/install.sh
 ```
 
-The script finds every skill under `skills/` and symlinks it into
-`~/.claude/skills/`. It is idempotent — re-running it skips skills that are
-already linked and picks up any new ones.
+The script fetches external skills listed in `skills.manifest`, then symlinks
+both personal and external skills into `~/.claude/skills/`. It is idempotent —
+re-running it updates external skills, skips personal skills that are already
+linked, and picks up any new ones.
 
 If your Claude skills directory is somewhere else, pass it with `--target`:
 
@@ -69,16 +70,28 @@ On other machines, `git pull` picks up the changes. If you used symlinks, the
 skill is updated immediately. If you used `.skill` packages, repackage and
 reinstall.
 
-## Adding a new skill
+## Adding a personal skill
 
 ```bash
 mkdir skills/my-new-skill
 # Write the SKILL.md (see official docs for structure and frontmatter format)
-# Link the new skill (re-run install — it picks up new skills automatically)
 ./scripts/install.sh
 git add skills/my-new-skill
 git commit -m "Add my-new-skill"
 ```
+
+## Adding an external skill
+
+Add a GitHub URL to `skills.manifest` and re-run the install script:
+
+```bash
+echo "https://github.com/<owner>/<repo>/tree/<branch>/<path-to-skill>" >> skills.manifest
+./scripts/install.sh
+```
+
+External skills are fetched into `vendor/` (git-ignored) and symlinked
+alongside personal skills. The manifest is committed, so other machines get
+the same set of external skills after `git pull && ./scripts/install.sh`.
 
 For skill structure, frontmatter format, and best practices, see the
 [official skills documentation](https://agentskills.io/home).

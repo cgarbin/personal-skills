@@ -1,0 +1,9 @@
+# External skills to install.
+#
+# One GitHub URL per line, pointing to a skill directory (the folder
+# containing SKILL.md). Blank lines and lines starting with # are ignored.
+#
+# Format: https://github.com/<owner>/<repo>/tree/<branch>/<path-to-skill>
+
+https://github.com/trailofbits/skills/tree/main/plugins/modern-python/skills/modern-python
+https://github.com/trailofbits/skills/tree/main/plugins/ask-questions-if-underspecified/skills/ask-questions-if-underspecified
