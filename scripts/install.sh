@@ -8,8 +8,8 @@
 #   ./scripts/install.sh --target ~/.claude/skills  # custom target dir
 #
 # The script:
-#   1. Fetches external skills listed in skills.manifest (if present)
-#   2. Symlinks personal skills from <repo>/skills/
+#   1. Symlinks personal skills from <repo>/skills/
+#   2. Fetches external skills listed in skills.manifest (if present)
 #   3. Cleans up stale external symlinks
 #   4. Symlinks external skills from <repo>/from-others/
 
@@ -66,7 +66,10 @@ conflicts=0
 # ── Symlink helpers ──────────────────────────────────────────────────────
 
 # symlink_skill <source_dir> <skill_name>
-#   Creates a symlink in TARGET_DIR, handling duplicates and conflicts.
+#   Creates a symlink in TARGET_DIR. Handles three cases:
+#   - Already linked correctly → report "ok"
+#   - Stale or broken symlink → replace it
+#   - Non-symlink exists at the path → report conflict, don't touch it
 symlink_skill() {
     local src="$1"
     local skill_name="$2"
@@ -254,28 +257,33 @@ fetch_external_skills() {
     echo ""
 }
 
-# ── Main ─────────────────────────────────────────────────────────────────
+# ── Personal skills ──────────────────────────────────────────────────────
 
-mkdir -p "$TARGET_DIR"
+# install_personal_skills
+#   Symlinks every skill folder under skills/ into TARGET_DIR.
+install_personal_skills() {
+    echo "Personal skills:"
+    for skill_dir in "$SKILLS_SRC"/*/; do
+        [[ -d "$skill_dir" ]] || continue
+        symlink_skill "$skill_dir" "$(basename "$skill_dir")"
+    done
+}
 
-# Phase 1: Fetch external skills from the manifest (if present).
-fetch_external_skills
+# ── External skills ──────────────────────────────────────────────────────
 
-# Phase 2: Symlink personal skills.
-echo "Personal skills:"
-for skill_dir in "$SKILLS_SRC"/*/; do
-    [[ -d "$skill_dir" ]] || continue
-    symlink_skill "$skill_dir" "$(basename "$skill_dir")"
-done
+# install_external_skills
+#   Fetches skills from the manifest, cleans up stale symlinks, and
+#   symlinks the fetched skills into TARGET_DIR.
+install_external_skills() {
+    fetch_external_skills
+    remove_stale_external_symlinks
 
-# Phase 3: Remove symlinks whose target was deleted (skill removed from manifest).
-remove_stale_external_symlinks
+    [[ -d "$EXTERNAL_DIR" ]] || return
 
-# Phase 4: Symlink external skills.
-if [[ -d "$EXTERNAL_DIR" ]]; then
-    has_external_skills=false
+    local has_external_skills=false
     for skill_dir in "$EXTERNAL_DIR"/*/; do
         [[ -d "$skill_dir" ]] || continue
+        local skill_name
         skill_name="$(basename "$skill_dir")"
         # Skip the .repos cache directory — it's not a skill.
         [[ "$skill_name" == ".repos" ]] && continue
@@ -286,7 +294,12 @@ if [[ -d "$EXTERNAL_DIR" ]]; then
         fi
         symlink_skill "$skill_dir" "$skill_name"
     done
-fi
+}
 
+# ── Main ─────────────────────────────────────────────────────────────────
+
+mkdir -p "$TARGET_DIR"
+install_personal_skills
+install_external_skills
 echo ""
 echo "Done. $linked linked, $up_to_date already up to date, $conflicts conflicts."
