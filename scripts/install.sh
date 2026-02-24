@@ -139,7 +139,9 @@ fetch_external_skills() {
         if [[ -z "${fetched_repos[$repo_key]+x}" ]]; then
             if [[ -d "$clone_dir/.git" ]]; then
                 echo "  pull      $repo_key"
-                git -C "$clone_dir" pull --quiet 2>/dev/null || true
+                git -C "$clone_dir" fetch --quiet --depth 1 origin "$GH_BRANCH" 2>/dev/null \
+                    && git -C "$clone_dir" reset --quiet --hard "origin/$GH_BRANCH" \
+                    || true
             else
                 echo "  clone     $repo_key"
                 mkdir -p "$(dirname "$clone_dir")"
