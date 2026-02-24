@@ -42,6 +42,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# If no repo dir given, derive it from the script's own location.
 if [[ -z "$REPO_DIR" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
     REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -71,15 +72,18 @@ symlink_skill() {
     local skill_name="$2"
     local link_path="$TARGET_DIR/$skill_name"
 
+    # Already points to the right place — nothing to do.
     if [[ -L "$link_path" ]] && [[ "$(readlink "$link_path")" == "$src" || "$(readlink "$link_path")" == "${src%/}" ]]; then
         echo "  ok        $skill_name (already linked)"
         up_to_date=$((up_to_date + 1))
         return
     fi
 
+    # Stale symlink (points elsewhere or is broken) — safe to replace.
     if [[ -L "$link_path" ]]; then
         echo "  update    $skill_name (re-linking)"
         rm "$link_path"
+    # Non-symlink file or folder — don't touch it.
     elif [[ -e "$link_path" ]]; then
         echo "  CONFLICT  $skill_name — a file or folder already exists at $link_path" >&2
         echo "            Remove or rename it, then re-run this script." >&2
@@ -97,6 +101,7 @@ symlink_skill() {
 #   target no longer exists (i.e. the skill was removed from the manifest).
 remove_stale_external_symlinks() {
     for link in "$TARGET_DIR"/*; do
+        # Only inspect symlinks; skip regular files and folders.
         [[ -L "$link" ]] || continue
         local target
         target="$(readlink "$link")"
@@ -147,6 +152,7 @@ clean_external_skills() {
 #     repo_paths    — associative array: repo_key -> newline-separated paths
 parse_manifest() {
     while IFS= read -r line || [[ -n "$line" ]]; do
+        # Strip comments and whitespace.
         line="${line%%#*}"
         line="$(echo "$line" | xargs)"
         [[ -z "$line" ]] && continue
@@ -156,6 +162,7 @@ parse_manifest() {
 
         repo_branches[$repo_key]="$GH_BRANCH"
 
+        # Group paths by repo so we sparse-checkout once per repo.
         if [[ -z "${repo_seen[$repo_key]+x}" ]]; then
             repo_order+=("$repo_key")
             repo_seen[$repo_key]=1
@@ -175,12 +182,16 @@ clone_or_update_repo() {
     local paths="$4"
 
     if [[ -d "$clone_dir/.git" ]]; then
+        # Already cloned — update sparse-checkout paths (may have changed)
+        # and fetch the latest commit.
         echo "  pull      $repo_key"
         git -C "$clone_dir" sparse-checkout set --no-cone $paths 2>/dev/null
+        # Use fetch+reset instead of pull — more reliable on shallow clones.
         git -C "$clone_dir" fetch --quiet --depth 1 origin "$branch" 2>/dev/null \
             && git -C "$clone_dir" reset --quiet --hard "origin/$branch" \
             || true
     else
+        # First time — shallow clone with only the paths we need.
         echo "  clone     $repo_key (sparse)"
         mkdir -p "$(dirname "$clone_dir")"
         git clone --quiet --depth 1 --branch "$branch" \
@@ -247,21 +258,26 @@ fetch_external_skills() {
 
 mkdir -p "$TARGET_DIR"
 
+# Phase 1: Fetch external skills from the manifest (if present).
 fetch_external_skills
 
+# Phase 2: Symlink personal skills.
 echo "Personal skills:"
 for skill_dir in "$SKILLS_SRC"/*/; do
     [[ -d "$skill_dir" ]] || continue
     symlink_skill "$skill_dir" "$(basename "$skill_dir")"
 done
 
+# Phase 3: Remove symlinks whose target was deleted (skill removed from manifest).
 remove_stale_external_symlinks
 
+# Phase 4: Symlink external skills.
 if [[ -d "$EXTERNAL_DIR" ]]; then
     has_external_skills=false
     for skill_dir in "$EXTERNAL_DIR"/*/; do
         [[ -d "$skill_dir" ]] || continue
         skill_name="$(basename "$skill_dir")"
+        # Skip the .repos cache directory — it's not a skill.
         [[ "$skill_name" == ".repos" ]] && continue
         if [[ "$has_external_skills" == false ]]; then
             echo ""
