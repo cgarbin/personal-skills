@@ -10,7 +10,7 @@
 # The script:
 #   1. Symlinks every personal skill from <repo>/skills/
 #   2. Fetches external skills listed in skills.manifest (if present)
-#   3. Symlinks the fetched skills from <repo>/vendor/
+#   3. Symlinks the fetched skills from <repo>/from-others/
 
 set -euo pipefail
 
@@ -48,7 +48,7 @@ if [[ -z "$REPO_DIR" ]]; then
 fi
 
 SKILLS_SRC="$REPO_DIR/skills"
-VENDOR_DIR="$REPO_DIR/vendor"
+EXTERNAL_DIR="$REPO_DIR/from-others"
 MANIFEST="$REPO_DIR/skills.manifest"
 
 # ── Validate ─────────────────────────────────────────────────────────────
@@ -119,7 +119,7 @@ fetch_external_skills() {
     echo "Fetching external skills..."
     echo ""
 
-    mkdir -p "$VENDOR_DIR"
+    mkdir -p "$EXTERNAL_DIR"
 
     # Track which repos we've already cloned/updated this run.
     declare -A fetched_repos
@@ -133,7 +133,7 @@ fetch_external_skills() {
         parse_github_url "$line"
 
         local repo_key="${GH_OWNER}/${GH_REPO}"
-        local clone_dir="$VENDOR_DIR/.repos/${GH_OWNER}-${GH_REPO}"
+        local clone_dir="$EXTERNAL_DIR/.repos/${GH_OWNER}-${GH_REPO}"
 
         # Clone or update the repo (once per repo per run).
         if [[ -z "${fetched_repos[$repo_key]+x}" ]]; then
@@ -151,14 +151,14 @@ fetch_external_skills() {
             fetched_repos[$repo_key]=1
         fi
 
-        # Copy the skill folder into vendor/ so the symlink target is stable.
+        # Copy the skill folder into from-others/ so the symlink target is stable.
         local skill_name
         skill_name="$(basename "$GH_PATH")"
-        local vendor_skill_dir="$VENDOR_DIR/$skill_name"
+        local external_skill_dir="$EXTERNAL_DIR/$skill_name"
 
         if [[ -d "$clone_dir/$GH_PATH" ]]; then
-            rm -rf "$vendor_skill_dir"
-            cp -R "$clone_dir/$GH_PATH" "$vendor_skill_dir"
+            rm -rf "$external_skill_dir"
+            cp -R "$clone_dir/$GH_PATH" "$external_skill_dir"
         else
             echo "  ERROR     $skill_name — path $GH_PATH not found in $repo_key" >&2
             continue
@@ -182,18 +182,18 @@ for skill_dir in "$SKILLS_SRC"/*/; do
     symlink_skill "$skill_dir" "$(basename "$skill_dir")"
 done
 
-# Phase 3: Symlink external (vendor) skills.
-if [[ -d "$VENDOR_DIR" ]]; then
-    has_vendor_skills=false
-    for skill_dir in "$VENDOR_DIR"/*/; do
+# Phase 3: Symlink external skills.
+if [[ -d "$EXTERNAL_DIR" ]]; then
+    has_external_skills=false
+    for skill_dir in "$EXTERNAL_DIR"/*/; do
         [[ -d "$skill_dir" ]] || continue
         skill_name="$(basename "$skill_dir")"
         # Skip the .repos cache directory.
         [[ "$skill_name" == ".repos" ]] && continue
-        if [[ "$has_vendor_skills" == false ]]; then
+        if [[ "$has_external_skills" == false ]]; then
             echo ""
             echo "External skills:"
-            has_vendor_skills=true
+            has_external_skills=true
         fi
         symlink_skill "$skill_dir" "$skill_name"
     done

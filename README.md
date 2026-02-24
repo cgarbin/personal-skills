@@ -7,7 +7,7 @@ portable across machines.
 
 Personal skills live under `skills/`, each in its own folder with a `SKILL.md`.
 External skills from GitHub are listed in `skills.manifest` and fetched into
-`vendor/` at install time. The `scripts/` folder contains the install script.
+`from-others/` at install time. The `scripts/` folder contains the install script.
 
 ## Setting up a new machine
 
@@ -89,7 +89,7 @@ echo "https://github.com/<owner>/<repo>/tree/<branch>/<path-to-skill>" >> skills
 ./scripts/install.sh
 ```
 
-External skills are fetched into `vendor/` (git-ignored) and symlinked
+External skills are fetched into `from-others/` (git-ignored) and symlinked
 alongside personal skills. The manifest is committed, so other machines get
 the same set of external skills after `git pull && ./scripts/install.sh`.
 
