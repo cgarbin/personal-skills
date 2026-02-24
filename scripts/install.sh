@@ -149,10 +149,8 @@ clean_external_skills() {
 }
 
 # parse_manifest
-#   Reads skills.manifest and groups entries by repo. Populates:
-#     repo_order   — array of repo keys in manifest order
-#     repo_branches — associative array: repo_key -> branch
-#     repo_paths    — associative array: repo_key -> newline-separated paths
+#   Reads skills.manifest into the manifest_entries array.
+#   Each element is "owner/repo|branch|path".
 parse_manifest() {
     while IFS= read -r line || [[ -n "$line" ]]; do
         # Strip comments and whitespace.
@@ -161,19 +159,22 @@ parse_manifest() {
         [[ -z "$line" ]] && continue
 
         parse_github_url "$line"
-        local repo_key="${GH_OWNER}/${GH_REPO}"
-
-        repo_branches[$repo_key]="$GH_BRANCH"
-
-        # Group paths by repo so we sparse-checkout once per repo.
-        if [[ -z "${repo_seen[$repo_key]+x}" ]]; then
-            repo_order+=("$repo_key")
-            repo_seen[$repo_key]=1
-            repo_paths[$repo_key]="$GH_PATH"
-        else
-            repo_paths[$repo_key]+=$'\n'"$GH_PATH"
-        fi
+        manifest_entries+=("${GH_OWNER}/${GH_REPO}|${GH_BRANCH}|${GH_PATH}")
     done < "$MANIFEST"
+}
+
+# collect_paths_for_repo <repo_key>
+#   Scans manifest_entries and prints all paths for the given repo,
+#   one per line.
+collect_paths_for_repo() {
+    local target_repo="$1"
+    for entry in "${manifest_entries[@]}"; do
+        local repo="${entry%%|*}"
+        if [[ "$repo" == "$target_repo" ]]; then
+            # Strip "owner/repo|branch|" to get the path.
+            echo "${entry##*|}"
+        fi
+    done
 }
 
 # clone_or_update_repo <repo_key> <branch> <clone_dir> <paths>
@@ -237,20 +238,31 @@ fetch_external_skills() {
     mkdir -p "$EXTERNAL_DIR"
     clean_external_skills
 
-    declare -A repo_branches
-    declare -A repo_paths
-    declare -A repo_seen
-    local repo_order=()
-
+    manifest_entries=()
     parse_manifest
 
-    for repo_key in "${repo_order[@]}"; do
+    # Process each unique repo once: collect its paths, clone/update, copy.
+    local processed_repos=""
+    for entry in "${manifest_entries[@]}"; do
+        local repo_key="${entry%%|*}"
+
+        # Skip repos we've already handled.
+        if [[ "$processed_repos" == *"|${repo_key}|"* ]]; then
+            continue
+        fi
+        processed_repos="${processed_repos}|${repo_key}|"
+
+        # Extract the branch from this entry.
+        local rest="${entry#*|}"
+        local branch="${rest%%|*}"
+
         local owner="${repo_key%%/*}"
         local repo="${repo_key#*/}"
         local clone_dir="$EXTERNAL_DIR/.repos/${owner}-${repo}"
-        local paths="${repo_paths[$repo_key]}"
+        local paths
+        paths="$(collect_paths_for_repo "$repo_key")"
 
-        clone_or_update_repo "$repo_key" "${repo_branches[$repo_key]}" "$clone_dir" "$paths"
+        clone_or_update_repo "$repo_key" "$branch" "$clone_dir" "$paths"
         copy_skills_from_repo "$clone_dir" "$paths"
     done
 
