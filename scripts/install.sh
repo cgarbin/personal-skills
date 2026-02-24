@@ -121,49 +121,79 @@ fetch_external_skills() {
 
     mkdir -p "$EXTERNAL_DIR"
 
-    # Track which repos we've already cloned/updated this run.
-    declare -A fetched_repos
+    # ── Pass 1: group manifest entries by repo ───────────────────────────
+    # We collect all paths per repo so we can sparse-checkout only what we
+    # need, keeping disk usage low for large repositories.
+
+    declare -A repo_branches   # repo_key -> branch
+    declare -A repo_paths      # repo_key -> newline-separated list of paths
+    local repo_order=()        # preserve manifest order for output
+    declare -A repo_seen
 
     while IFS= read -r line || [[ -n "$line" ]]; do
-        # Skip blank lines and comments.
         line="${line%%#*}"
         line="$(echo "$line" | xargs)"
         [[ -z "$line" ]] && continue
 
         parse_github_url "$line"
-
         local repo_key="${GH_OWNER}/${GH_REPO}"
-        local clone_dir="$EXTERNAL_DIR/.repos/${GH_OWNER}-${GH_REPO}"
 
-        # Clone or update the repo (once per repo per run).
-        if [[ -z "${fetched_repos[$repo_key]+x}" ]]; then
-            if [[ -d "$clone_dir/.git" ]]; then
-                echo "  pull      $repo_key"
-                git -C "$clone_dir" fetch --quiet --depth 1 origin "$GH_BRANCH" 2>/dev/null \
-                    && git -C "$clone_dir" reset --quiet --hard "origin/$GH_BRANCH" \
-                    || true
-            else
-                echo "  clone     $repo_key"
-                mkdir -p "$(dirname "$clone_dir")"
-                git clone --quiet --depth 1 --branch "$GH_BRANCH" \
-                    "https://github.com/${repo_key}.git" "$clone_dir"
-            fi
-            fetched_repos[$repo_key]=1
-        fi
+        repo_branches[$repo_key]="$GH_BRANCH"
 
-        # Copy the skill folder into from-others/ so the symlink target is stable.
-        local skill_name
-        skill_name="$(basename "$GH_PATH")"
-        local external_skill_dir="$EXTERNAL_DIR/$skill_name"
-
-        if [[ -d "$clone_dir/$GH_PATH" ]]; then
-            rm -rf "$external_skill_dir"
-            cp -R "$clone_dir/$GH_PATH" "$external_skill_dir"
+        if [[ -z "${repo_seen[$repo_key]+x}" ]]; then
+            repo_order+=("$repo_key")
+            repo_seen[$repo_key]=1
+            repo_paths[$repo_key]="$GH_PATH"
         else
-            echo "  ERROR     $skill_name — path $GH_PATH not found in $repo_key" >&2
-            continue
+            repo_paths[$repo_key]+=$'\n'"$GH_PATH"
         fi
     done < "$MANIFEST"
+
+    # ── Pass 2: clone/update each repo with sparse checkout ──────────────
+
+    for repo_key in "${repo_order[@]}"; do
+        local branch="${repo_branches[$repo_key]}"
+        local owner="${repo_key%%/*}"
+        local repo="${repo_key#*/}"
+        local clone_dir="$EXTERNAL_DIR/.repos/${owner}-${repo}"
+        local paths="${repo_paths[$repo_key]}"
+
+        if [[ -d "$clone_dir/.git" ]]; then
+            echo "  pull      $repo_key"
+
+            # Update sparse-checkout paths (may have changed since last run).
+            git -C "$clone_dir" sparse-checkout set --no-cone $paths 2>/dev/null
+
+            git -C "$clone_dir" fetch --quiet --depth 1 origin "$branch" 2>/dev/null \
+                && git -C "$clone_dir" reset --quiet --hard "origin/$branch" \
+                || true
+        else
+            echo "  clone     $repo_key (sparse)"
+            mkdir -p "$(dirname "$clone_dir")"
+            git clone --quiet --depth 1 --branch "$branch" \
+                --no-checkout --filter=blob:none \
+                "https://github.com/${repo_key}.git" "$clone_dir"
+
+            git -C "$clone_dir" sparse-checkout init
+            git -C "$clone_dir" sparse-checkout set --no-cone $paths
+            git -C "$clone_dir" checkout --quiet "$branch"
+        fi
+
+        # Copy each skill folder into from-others/.
+        while IFS= read -r skill_path; do
+            [[ -z "$skill_path" ]] && continue
+            local skill_name
+            skill_name="$(basename "$skill_path")"
+            local external_skill_dir="$EXTERNAL_DIR/$skill_name"
+
+            if [[ -d "$clone_dir/$skill_path" ]]; then
+                rm -rf "$external_skill_dir"
+                cp -R "$clone_dir/$skill_path" "$external_skill_dir"
+            else
+                echo "  ERROR     $skill_name — path $skill_path not found in $repo_key" >&2
+            fi
+        done <<< "$paths"
+    done
 
     echo ""
 }
