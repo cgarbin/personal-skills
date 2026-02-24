@@ -121,6 +121,14 @@ fetch_external_skills() {
 
     mkdir -p "$EXTERNAL_DIR"
 
+    # Clean out old external skills. The .repos/ cache is kept so we don't
+    # re-clone on every run. Everything else is rebuilt from the manifest.
+    for old_skill in "$EXTERNAL_DIR"/*/; do
+        [[ -d "$old_skill" ]] || continue
+        [[ "$(basename "$old_skill")" == ".repos" ]] && continue
+        rm -rf "$old_skill"
+    done
+
     # ── Pass 1: group manifest entries by repo ───────────────────────────
     # We collect all paths per repo so we can sparse-checkout only what we
     # need, keeping disk usage low for large repositories.
@@ -212,7 +220,23 @@ for skill_dir in "$SKILLS_SRC"/*/; do
     symlink_skill "$skill_dir" "$(basename "$skill_dir")"
 done
 
-# Phase 3: Symlink external skills.
+# Phase 3: Remove symlinks that point into from-others/ but whose target no
+# longer exists (i.e. the skill was removed from the manifest).
+for link in "$TARGET_DIR"/*; do
+    [[ -L "$link" ]] || continue
+    target="$(readlink "$link")"
+    case "$target" in
+        "$EXTERNAL_DIR"/*)
+            if [[ ! -d "$target" ]]; then
+                skill_name="$(basename "$link")"
+                echo "  remove    $skill_name (no longer in manifest)"
+                rm "$link"
+            fi
+            ;;
+    esac
+done
+
+# Phase 4: Symlink external skills.
 if [[ -d "$EXTERNAL_DIR" ]]; then
     has_external_skills=false
     for skill_dir in "$EXTERNAL_DIR"/*/; do
