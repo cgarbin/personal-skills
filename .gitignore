@@ -11,5 +11,8 @@ Thumbs.db
 # Workspace/eval artifacts from skill-creator
 *-workspace/
 
+# Claude Code local settings (machine-specific)
+.claude/settings.local.json
+
 # Fetched external skills (re-downloaded by install.sh)
 from-others/
