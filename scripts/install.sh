@@ -262,6 +262,8 @@ clone_or_update_repo() {
         # Already cloned — update sparse-checkout paths (may have changed)
         # and fetch the latest commit.
         echo "  pull      $repo_key"
+        # Intentional word-splitting: sparse-checkout needs separate args.
+        # shellcheck disable=SC2086
         git -C "$clone_dir" sparse-checkout set --no-cone $paths 2>/dev/null
         # Use fetch+reset instead of pull — more reliable on shallow clones.
         git -C "$clone_dir" fetch --quiet --depth 1 origin "$branch" 2>/dev/null \
@@ -275,6 +277,7 @@ clone_or_update_repo() {
             --no-checkout --filter=blob:none \
             "https://github.com/${repo_key}.git" "$clone_dir"
         git -C "$clone_dir" sparse-checkout init
+        # shellcheck disable=SC2086
         git -C "$clone_dir" sparse-checkout set --no-cone $paths
         git -C "$clone_dir" checkout --quiet "$branch"
     fi
@@ -292,7 +295,7 @@ copy_skills_from_repo() {
         skill_name="$(basename "$skill_path")"
 
         if [[ -d "$clone_dir/$skill_path" ]]; then
-            rm -rf "$EXTERNAL_DIR/$skill_name"
+            rm -rf "${EXTERNAL_DIR:?}/$skill_name"
             cp -R "$clone_dir/$skill_path" "$EXTERNAL_DIR/$skill_name"
         else
             echo "  ERROR     $skill_name — path $skill_path not found" >&2
