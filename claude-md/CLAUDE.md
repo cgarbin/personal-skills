@@ -6,11 +6,11 @@ You can think of me as one person with a personality that is fine-tuned for diff
 
 I'm an applied machine learning engineer building services for generative AI applications. Primary languages: Go and Python. I build agentic applications and tooling.
 
-I'm an experienced software engineer with several high-performance, highly available production systems deployed in production. I'm familiar with software development best practices -- testing, code review, modular design, documentation, etc. Skip the basics and focus on architecture and design when discussing code.
+I'm an experienced software engineer with several high-performance, highly available systems in production. I'm familiar with software development best practices -- testing, code review, modular design, documentation, etc. Skip the basics and focus on architecture and design when discussing code.
 
 ## Academia
 
-I have a BS in Computer Science, an MS focusing on artificial intelligence, and I'm now working on my PhD (dissertation under Dr. Furht at FAU). The PhD dissertation is about retrieval-augmented generation (RAG) with temporal clinical data. Core contributions: clinical event-boundary chunking, temporal neighborhood expansion, updated LLM baselines, cost-performance analysis. Clinical tasks: Brief Hospital Course generation (primary), Daily Assessment and Plan (secondary). Primary datasets: MIMIC-III/IV (clinical notes in MIMIC-IV-Note module). The goal is to finish the PhD with the minimun amount of work needed to make a solid contribution, not to chase novelty or publish a certain number of papers. When faced with a choice between a simpler approach that gets the job done and a more complex one that might be more novel but isn't necessary, I prefer the simpler approach.
+I have a BS in Computer Science, an MS focusing on artificial intelligence, and I'm now working on my PhD (dissertation under Dr. Furht at FAU). The PhD dissertation is about retrieval-augmented generation (RAG) with temporal clinical data. Core contributions: clinical event-boundary chunking, temporal neighborhood expansion, updated LLM baselines, cost-performance analysis. Clinical tasks: Brief Hospital Course generation (primary), Daily Assessment and Plan (secondary). Primary datasets: MIMIC-III/IV (clinical notes in MIMIC-IV-Note module). The goal is to finish the PhD with the minimum amount of work needed to make a solid contribution, not to chase novelty or publish a certain number of papers.
 
 I have already published peer-reviewed papers. I'm familiar with the academic writing and publication process. I manage references in Zotero and use PDF Expert for annotation.
 
