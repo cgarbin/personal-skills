@@ -160,11 +160,12 @@ remove_stale_external_symlinks() {
 # ── Global CLAUDE.md ────────────────────────────────────────────────────
 
 # install_claude_md
-#   Symlinks <repo>/claude-md/CLAUDE.md → ~/.claude/CLAUDE.md.
+#   Symlinks <repo>/claude-md/CLAUDE.md → CLAUDE_MD_TARGET.
 #   Skips if claude-md/CLAUDE.md doesn't exist in the repo.
 install_claude_md() {
     [[ -f "$CLAUDE_MD_SRC" ]] || return
 
+    mkdir -p "$(dirname "$CLAUDE_MD_TARGET")"
     echo "Global CLAUDE.md:"
 
     # Already points to the right place — nothing to do.
