@@ -67,7 +67,6 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# --symlink-to and --target are mutually exclusive.
 if [[ -n "$SYMLINK_TO" ]] && [[ "$TARGET_EXPLICIT" == true ]]; then
     echo "Error: --symlink-to and --target are mutually exclusive." >&2
     exit 1
@@ -85,7 +84,6 @@ MANIFEST="$REPO_DIR/skills.manifest"
 CLAUDE_MD_SRC="$REPO_DIR/claude-md/CLAUDE.md"
 CLAUDE_MD_TARGET="$HOME/.claude/CLAUDE.md"
 
-# When --symlink-to is given, redirect everything into the project's .claude/.
 if [[ -n "$SYMLINK_TO" ]]; then
     TARGET_DIR="$SYMLINK_TO/.claude/skills"
     CLAUDE_MD_TARGET="$SYMLINK_TO/.claude/CLAUDE.md"
@@ -114,7 +112,7 @@ ensure_symlink() {
     local link_path="$2"
     local display_name="$3"
 
-    # Already points to the right place — nothing to do.
+    # Compare with and without trailing slash because glob expansion adds one.
     if [[ -L "$link_path" ]] && [[ "$(readlink "$link_path")" == "$src" || "$(readlink "$link_path")" == "${src%/}" ]]; then
         echo "  ok        $display_name (already linked)"
         up_to_date=$((up_to_date + 1))
@@ -244,8 +242,7 @@ clone_or_update_repo() {
     local paths="$4"
 
     if [[ -d "$clone_dir/.git" ]]; then
-        # Already cloned — update sparse-checkout paths (may have changed)
-        # and fetch the latest commit.
+        # Update sparse-checkout paths (may have changed) and pull latest.
         echo "  pull      $repo_key"
         # Intentional word-splitting: sparse-checkout needs separate args.
         # shellcheck disable=SC2086
@@ -255,7 +252,7 @@ clone_or_update_repo() {
             && git -C "$clone_dir" reset --quiet --hard "origin/$branch" \
             || true
     else
-        # First time — shallow clone with only the paths we need.
+        # Shallow sparse clone — only fetch the paths we need.
         echo "  clone     $repo_key (sparse)"
         mkdir -p "$(dirname "$clone_dir")"
         git clone --quiet --depth 1 --branch "$branch" \
@@ -302,7 +299,8 @@ fetch_external_skills() {
     manifest_entries=()
     parse_manifest
 
-    # Process each unique repo once: collect its paths, clone/update, copy.
+    # Deduplicate repos so we clone each once. Uses string matching because
+    # macOS ships bash 3.2, which lacks associative arrays.
     local processed_repos=""
     for entry in "${manifest_entries[@]}"; do
         local repo_key="${entry%%|*}"
