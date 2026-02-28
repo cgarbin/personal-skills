@@ -50,9 +50,10 @@ while [[ $# -gt 0 ]]; do
             echo "                 Defaults to the parent directory of this script."
             echo "  --target       Claude skills directory to symlink into."
             echo "                 Default: ~/.claude/skills"
-            echo "  --symlink-to   Install into a project's .claude/ directory instead"
-            echo "                 of ~/.claude/. Useful for Claude Cowork projects"
-            echo "                 that can't access the global ~/.claude/ directory."
+            echo "  --symlink-to   Symlink skills and CLAUDE.md into a project's"
+            echo "                 .claude/ directory instead of ~/.claude/. Useful"
+            echo "                 for Claude Cowork projects that can't access the"
+            echo "                 global ~/.claude/ directory."
             echo "                 Mutually exclusive with --target."
             exit 0
             ;;
