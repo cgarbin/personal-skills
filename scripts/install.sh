@@ -6,7 +6,6 @@
 #   ./scripts/install.sh                      # auto-detect repo path
 #   ./scripts/install.sh /path/to/repo        # explicit repo path
 #   ./scripts/install.sh --target ~/.claude/skills  # custom target dir
-#   ./scripts/install.sh --symlink-to /path/to/project  # install into project
 #
 # The script:
 #   1. Symlinks the global CLAUDE.md from <repo>/claude-md/
@@ -21,9 +20,6 @@ set -euo pipefail
 
 REPO_DIR=""
 TARGET_DIR="$HOME/.claude/skills"
-SYMLINK_TO=""
-TARGET_EXPLICIT=false
-
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --target)
@@ -32,29 +28,15 @@ while [[ $# -gt 0 ]]; do
                 exit 1
             fi
             TARGET_DIR="$2"
-            TARGET_EXPLICIT=true
-            shift 2
-            ;;
-        --symlink-to)
-            if [[ $# -lt 2 ]]; then
-                echo "Error: --symlink-to requires a value." >&2
-                exit 1
-            fi
-            SYMLINK_TO="$2"
             shift 2
             ;;
         -h|--help)
-            echo "Usage: $0 [REPO_DIR] [--target SKILLS_DIR] [--symlink-to PROJECT_DIR]"
+            echo "Usage: $0 [REPO_DIR] [--target SKILLS_DIR]"
             echo ""
             echo "  REPO_DIR       Path to the personal-skills repository."
             echo "                 Defaults to the parent directory of this script."
             echo "  --target       Claude skills directory to symlink into."
             echo "                 Default: ~/.claude/skills"
-            echo "  --symlink-to   Symlink skills and CLAUDE.md into a project's"
-            echo "                 .claude/ directory instead of ~/.claude/. Useful"
-            echo "                 for Claude Cowork projects that can't access the"
-            echo "                 global ~/.claude/ directory."
-            echo "                 Mutually exclusive with --target."
             exit 0
             ;;
         --*)
@@ -68,11 +50,6 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [[ -n "$SYMLINK_TO" ]] && [[ "$TARGET_EXPLICIT" == true ]]; then
-    echo "Error: --symlink-to and --target are mutually exclusive." >&2
-    exit 1
-fi
-
 # If no repo dir given, derive it from the script's own location.
 if [[ -z "$REPO_DIR" ]]; then
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -84,11 +61,6 @@ EXTERNAL_DIR="$REPO_DIR/from-others"
 MANIFEST="$REPO_DIR/skills.manifest"
 CLAUDE_MD_SRC="$REPO_DIR/claude-md/CLAUDE.md"
 CLAUDE_MD_TARGET="$HOME/.claude/CLAUDE.md"
-
-if [[ -n "$SYMLINK_TO" ]]; then
-    TARGET_DIR="$SYMLINK_TO/.claude/skills"
-    CLAUDE_MD_TARGET="$SYMLINK_TO/.claude/CLAUDE.md"
-fi
 
 if [[ ! -d "$SKILLS_SRC" ]]; then
     echo "Error: skills directory not found at $SKILLS_SRC" >&2
