@@ -27,11 +27,19 @@ TARGET_EXPLICIT=false
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --target)
+            if [[ $# -lt 2 ]]; then
+                echo "Error: --target requires a value." >&2
+                exit 1
+            fi
             TARGET_DIR="$2"
             TARGET_EXPLICIT=true
             shift 2
             ;;
         --symlink-to)
+            if [[ $# -lt 2 ]]; then
+                echo "Error: --symlink-to requires a value." >&2
+                exit 1
+            fi
             SYMLINK_TO="$2"
             shift 2
             ;;
