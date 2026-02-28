@@ -56,6 +56,10 @@ while [[ $# -gt 0 ]]; do
             echo "                 Mutually exclusive with --target."
             exit 0
             ;;
+        --*)
+            echo "Error: unknown option $1" >&2
+            exit 1
+            ;;
         *)
             REPO_DIR="$1"
             shift
@@ -67,11 +71,6 @@ done
 if [[ -n "$SYMLINK_TO" ]] && [[ "$TARGET_EXPLICIT" == true ]]; then
     echo "Error: --symlink-to and --target are mutually exclusive." >&2
     exit 1
-fi
-
-# When --symlink-to is given, redirect everything into that project's .claude/.
-if [[ -n "$SYMLINK_TO" ]]; then
-    TARGET_DIR="$SYMLINK_TO/.claude/skills"
 fi
 
 # If no repo dir given, derive it from the script's own location.
@@ -86,7 +85,9 @@ MANIFEST="$REPO_DIR/skills.manifest"
 CLAUDE_MD_SRC="$REPO_DIR/claude-md/CLAUDE.md"
 CLAUDE_MD_TARGET="$HOME/.claude/CLAUDE.md"
 
+# When --symlink-to is given, redirect everything into the project's .claude/.
 if [[ -n "$SYMLINK_TO" ]]; then
+    TARGET_DIR="$SYMLINK_TO/.claude/skills"
     CLAUDE_MD_TARGET="$SYMLINK_TO/.claude/CLAUDE.md"
 fi
 
