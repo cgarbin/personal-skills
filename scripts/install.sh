@@ -104,38 +104,44 @@ conflicts=0
 
 # ── Symlink helpers ──────────────────────────────────────────────────────
 
-# symlink_skill <source_dir> <skill_name>
-#   Creates a symlink in TARGET_DIR. Handles three cases:
+# ensure_symlink <source> <link_path> <display_name>
+#   Creates or updates a symlink. Handles three cases:
 #   - Already linked correctly → report "ok"
 #   - Stale or broken symlink → replace it
 #   - Non-symlink exists at the path → report conflict, don't touch it
-symlink_skill() {
+ensure_symlink() {
     local src="$1"
-    local skill_name="$2"
-    local link_path="$TARGET_DIR/$skill_name"
+    local link_path="$2"
+    local display_name="$3"
 
     # Already points to the right place — nothing to do.
     if [[ -L "$link_path" ]] && [[ "$(readlink "$link_path")" == "$src" || "$(readlink "$link_path")" == "${src%/}" ]]; then
-        echo "  ok        $skill_name (already linked)"
+        echo "  ok        $display_name (already linked)"
         up_to_date=$((up_to_date + 1))
         return
     fi
 
     # Stale symlink (points elsewhere or is broken) — safe to replace.
     if [[ -L "$link_path" ]]; then
-        echo "  update    $skill_name (re-linking)"
+        echo "  update    $display_name (re-linking)"
         rm "$link_path"
     # Non-symlink file or folder — don't touch it.
     elif [[ -e "$link_path" ]]; then
-        echo "  CONFLICT  $skill_name — a file or folder already exists at $link_path" >&2
+        echo "  CONFLICT  $display_name — a file or folder already exists at $link_path" >&2
         echo "            Remove or rename it, then re-run this script." >&2
         conflicts=$((conflicts + 1))
         return
     fi
 
     ln -s "$src" "$link_path"
-    echo "  link      $skill_name -> $src"
+    echo "  link      $display_name -> $src"
     linked=$((linked + 1))
+}
+
+# symlink_skill <source_dir> <skill_name>
+#   Convenience wrapper: symlinks a skill into TARGET_DIR.
+symlink_skill() {
+    ensure_symlink "$1" "$TARGET_DIR/$2" "$2"
 }
 
 # remove_stale_external_symlinks
@@ -158,7 +164,7 @@ remove_stale_external_symlinks() {
     done
 }
 
-# ── Global CLAUDE.md ────────────────────────────────────────────────────
+# ── CLAUDE.md ──────────────────────────────────────────────────────────
 
 # install_claude_md
 #   Symlinks <repo>/claude-md/CLAUDE.md → CLAUDE_MD_TARGET.
@@ -167,30 +173,8 @@ install_claude_md() {
     [[ -f "$CLAUDE_MD_SRC" ]] || return
 
     mkdir -p "$(dirname "$CLAUDE_MD_TARGET")"
-    echo "Global CLAUDE.md:"
-
-    # Already points to the right place — nothing to do.
-    if [[ -L "$CLAUDE_MD_TARGET" ]] && [[ "$(readlink "$CLAUDE_MD_TARGET")" == "$CLAUDE_MD_SRC" ]]; then
-        echo "  ok        CLAUDE.md (already linked)"
-        up_to_date=$((up_to_date + 1))
-        return
-    fi
-
-    # Stale symlink (points elsewhere or is broken) — safe to replace.
-    if [[ -L "$CLAUDE_MD_TARGET" ]]; then
-        echo "  update    CLAUDE.md (re-linking)"
-        rm "$CLAUDE_MD_TARGET"
-    # Non-symlink file — don't touch it.
-    elif [[ -e "$CLAUDE_MD_TARGET" ]]; then
-        echo "  CONFLICT  CLAUDE.md — a file already exists at $CLAUDE_MD_TARGET" >&2
-        echo "            Remove or rename it, then re-run this script." >&2
-        conflicts=$((conflicts + 1))
-        return
-    fi
-
-    ln -s "$CLAUDE_MD_SRC" "$CLAUDE_MD_TARGET"
-    echo "  link      CLAUDE.md -> $CLAUDE_MD_SRC"
-    linked=$((linked + 1))
+    echo "CLAUDE.md:"
+    ensure_symlink "$CLAUDE_MD_SRC" "$CLAUDE_MD_TARGET" "CLAUDE.md"
 }
 
 # ── GitHub URL parsing ───────────────────────────────────────────────────
