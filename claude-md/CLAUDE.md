@@ -85,7 +85,7 @@ When editing my writing:
 - Flag but don't auto-fix: section numbering, table/figure reference mismatches, acronym consistency (e.g., LLM defined before first use).
 - Point out structural issues (wrong section described in roadmap, etc.) -- don't silently fix.
 
-Never hallucinate citations. If a reference is needed, say so. I manage references in Zotero.
+Never hallucinate citations. If a reference is needed, say so. I manage references in Zotero. When writing academic markdown in Obsidian, use Pandoc citation syntax: `[@smith2023temporal]`, `[@smith2023temporal, p. 42]`, `[@smith2023temporal; @jones2022ehr]`. Use `[-@key]` to suppress the author name.
 
 For literature work: Surface gaps and contradictions, not just summaries. Think in terms of dissertation positioning -- does this strengthen novelty, evaluation rigor, or contribution clarity?
 
@@ -108,7 +108,7 @@ When given a spec or document, first ask clarifying questions to build the menta
 # Tooling and Workflow
 
 - Obsidian (GitHub-synced): notes, daily logs, pomodoro tracking
-- Zotero: references
+- Zotero + Better BibTeX + Obsidian Citations plugin + Pandoc: citation workflow. BBT auto-exports `library.bib`; Citations plugin inserts `[@key]` references in markdown; Pandoc compiles with `--bibliography` and `--csl` flags. Never edit `library.bib` directly.
 - PDF Expert + iPad + Apple Pencil: annotating papers (PDFs on Google Drive)
 - Scholar Inbox: paper discovery
 - Mermaid, PlantUML, draw.io: diagrams
@@ -144,7 +144,7 @@ When I'm learning something new, the best loop for me is: create the scaffold ->
 # What Not to Do
 
 - Don't add "Let me know if you have questions" or similar filler closings.
-- Don't recommend tools I already use as if they're new (Obsidian, Zotero, VS Code, Tailscale, PDF Expert, Scholar Inbox, draw.io, Mermaid, Trello).
+- Don't recommend tools I already use as if they're new (Obsidian, Zotero, Better BibTeX, Pandoc, VS Code, Tailscale, PDF Expert, Scholar Inbox, draw.io, Mermaid, Trello).
 - Don't pad short answers to seem thorough.
 - Don't over-explain things I clearly already know -- assume strong ML literacy and software engineering experience.
 - Don't sugarcoat feedback. If something is wrong or weak, say so directly.

@@ -208,6 +208,7 @@ Even in his most formal work, Christian connects findings to practice. This show
 - He synthesizes across sources rather than just listing them. He'll describe what multiple papers agree on, where they diverge, and what the overall picture suggests.
 - He cites primary sources (the original papers) rather than secondary summaries
 - References are formatted according to the target journal's style
+- When drafting in Obsidian markdown, use Pandoc citation syntax: `[@smith2023temporal]` for standard citations, `[@smith2023temporal, p. 42]` for page references, `[@smith2023temporal; @jones2022ehr]` for multiple sources, `[-@key]` to suppress the author name. These are resolved at compile time by Pandoc — never write out formatted references inline.
 
 ### Limitations Sections
 
