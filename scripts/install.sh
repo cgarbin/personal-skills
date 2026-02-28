@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Install personal and external skills by symlinking them into the Claude
-# skills directory.
+# skills directory, and symlink the global CLAUDE.md into ~/.claude/.
 #
 # Usage:
 #   ./scripts/install.sh                      # auto-detect repo path
@@ -8,10 +8,11 @@
 #   ./scripts/install.sh --target ~/.claude/skills  # custom target dir
 #
 # The script:
-#   1. Symlinks personal skills from <repo>/skills/
-#   2. Fetches external skills listed in skills.manifest (if present)
-#   3. Cleans up stale external symlinks
-#   4. Symlinks external skills from <repo>/from-others/
+#   1. Symlinks the global CLAUDE.md from <repo>/claude-md/
+#   2. Symlinks personal skills from <repo>/skills/
+#   3. Fetches external skills listed in skills.manifest (if present)
+#   4. Cleans up stale external symlinks
+#   5. Symlinks external skills from <repo>/from-others/
 
 set -euo pipefail
 
@@ -51,6 +52,8 @@ fi
 SKILLS_SRC="$REPO_DIR/skills"
 EXTERNAL_DIR="$REPO_DIR/from-others"
 MANIFEST="$REPO_DIR/skills.manifest"
+CLAUDE_MD_SRC="$REPO_DIR/claude-md/CLAUDE.md"
+CLAUDE_MD_TARGET="$HOME/.claude/CLAUDE.md"
 
 if [[ ! -d "$SKILLS_SRC" ]]; then
     echo "Error: skills directory not found at $SKILLS_SRC" >&2
@@ -117,6 +120,40 @@ remove_stale_external_symlinks() {
                 ;;
         esac
     done
+}
+
+# ── Global CLAUDE.md ────────────────────────────────────────────────────
+
+# install_claude_md
+#   Symlinks <repo>/claude-md/CLAUDE.md → ~/.claude/CLAUDE.md.
+#   Skips if claude-md/CLAUDE.md doesn't exist in the repo.
+install_claude_md() {
+    [[ -f "$CLAUDE_MD_SRC" ]] || return
+
+    echo "Global CLAUDE.md:"
+
+    # Already points to the right place — nothing to do.
+    if [[ -L "$CLAUDE_MD_TARGET" ]] && [[ "$(readlink "$CLAUDE_MD_TARGET")" == "$CLAUDE_MD_SRC" ]]; then
+        echo "  ok        CLAUDE.md (already linked)"
+        up_to_date=$((up_to_date + 1))
+        return
+    fi
+
+    # Stale symlink (points elsewhere or is broken) — safe to replace.
+    if [[ -L "$CLAUDE_MD_TARGET" ]]; then
+        echo "  update    CLAUDE.md (re-linking)"
+        rm "$CLAUDE_MD_TARGET"
+    # Non-symlink file — don't touch it.
+    elif [[ -e "$CLAUDE_MD_TARGET" ]]; then
+        echo "  CONFLICT  CLAUDE.md — a file already exists at $CLAUDE_MD_TARGET" >&2
+        echo "            Remove or rename it, then re-run this script." >&2
+        conflicts=$((conflicts + 1))
+        return
+    fi
+
+    ln -s "$CLAUDE_MD_SRC" "$CLAUDE_MD_TARGET"
+    echo "  link      CLAUDE.md -> $CLAUDE_MD_SRC"
+    linked=$((linked + 1))
 }
 
 # ── GitHub URL parsing ───────────────────────────────────────────────────
@@ -311,6 +348,8 @@ install_external_skills() {
 # ── Main ─────────────────────────────────────────────────────────────────
 
 mkdir -p "$TARGET_DIR"
+install_claude_md
+echo ""
 install_personal_skills
 install_external_skills
 echo ""
