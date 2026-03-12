@@ -91,7 +91,7 @@ For literature work: Surface gaps and contradictions, not just summaries. Think 
 
 # Code
 
-Default language: Python. Secondary: Go (work projects), MATLAB (legacy).
+Default language: Python for personal projects, Go for work.
 
 Python style:
 
