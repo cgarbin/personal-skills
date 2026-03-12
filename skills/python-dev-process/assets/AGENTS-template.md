@@ -21,34 +21,19 @@
 
 ## Setup
 
-### macOS / Linux
-
 ```bash
-uv venv --python 3.14 venv
-source venv/bin/activate
-uv pip install -r requirements-dev.txt
-ln -sf ../../scripts/pre-commit .git/hooks/pre-commit
+uv sync --all-groups
 ```
 
-### Windows (Git Bash)
-
-```bash
-uv venv --python 3.14 venv
-source venv/Scripts/activate
-uv pip install -r requirements-dev.txt
-cp scripts/pre-commit .git/hooks/pre-commit
-```
-
-On Windows the hook is copied rather than symlinked. After changing
-`scripts/pre-commit`, re-run the `cp` command.
+This installs all runtime and dev dependencies. `uv` manages the virtual
+environment automatically -- use `uv run <cmd>` to execute commands.
 
 ## Running tests
 
 Tests live in the `tests/` directory. Configuration is in `pyproject.toml`.
 
 ```bash
-source venv/bin/activate
-python -m pytest tests/ -v
+uv run pytest tests/ -v
 ```
 
 Run tests after every change to logic modules.
@@ -58,13 +43,12 @@ Run tests after every change to `parser.py`, `screening.py`, `results.py`.
 
 ## Linting and formatting
 
-Ruff handles both linting and formatting. A pre-commit hook
-(`scripts/pre-commit`, installed during setup) rejects commits that fail
-either check.
+Ruff handles both linting and formatting. Pre-commit hooks via `prek`
+reject commits that fail either check.
 
 ```bash
-ruff check .        # lint
-ruff format .       # format
+uv run ruff check .        # lint
+uv run ruff format .       # format
 ```
 
 ## Code style

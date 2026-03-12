@@ -37,9 +37,9 @@ What belongs in this phase:
 
 - A working implementation of the core functionality.
 - A PRD or README that explains what the project does and why.
-- A `.gitignore` with standard Python entries (venv, `__pycache__`, `.pyc`,
-  `.pytest_cache`, `.ruff_cache`, `.mypy_cache`, `.env`, `.DS_Store`).
-- A `requirements.txt` with pinned minimum versions of dependencies.
+- A `.gitignore` with standard Python entries (`.venv`, `__pycache__`, `.pyc`,
+  `.pytest_cache`, `.ruff_cache`, `.env`, `.DS_Store`).
+- A `pyproject.toml` with dependencies managed via `uv add`.
 - A clear first commit.
 
 For a new project, don't worry about linting, formatting, pre-commit hooks,
@@ -58,9 +58,10 @@ For a new project, set up guardrails in this order:
 1. **Unit tests** for the core logic modules. Test your code, not
    third-party libraries. Mock external services (APIs, databases) — never
    make real calls in tests. Use `monkeypatch` and `tmp_path` for file I/O.
-2. **Ruff** for linting and formatting. Add it to `requirements-dev.txt`.
-3. **Pre-commit hook** that rejects commits failing lint or format checks.
-   Keep the hook in `scripts/pre-commit` and symlink it during setup.
+2. **Ruff** for linting and formatting. Add it to the `dev` dependency
+   group: `uv add --group dev ruff`.
+3. **Pre-commit hook** via `prek` that rejects commits failing lint or
+   format checks.
 4. **AGENTS.md** (and a minimal CLAUDE.md pointing to it) to tell Claude
    how the project is structured and how to work in it.
 
@@ -117,8 +118,8 @@ Ruff handles both linting and formatting. No need for separate tools
 but the defaults are usually fine.
 
 ```bash
-ruff check .        # lint
-ruff format .       # format
+uv run ruff check .        # lint
+uv run ruff format .       # format
 ```
 
 ### pytest
@@ -133,30 +134,33 @@ pythonpath = ["."]
 
 ### Pre-commit hook
 
-The hook lives in `scripts/pre-commit` (tracked in Git) and gets symlinked
-into `.git/hooks/` during setup. It runs Ruff lint and format checks on
-staged Python files only, and rejects the commit if either fails.
+Use `prek` for pre-commit hooks (Rust-native, faster than the Python
+`pre-commit` tool). It runs Ruff lint and format checks and rejects the
+commit if either fails. See the `modern-python` skill for `prek` setup.
 
 ### Virtual environment
 
-Use `uv` when available (faster), fall back to standard `venv`:
+`uv` manages the virtual environment automatically. Use `uv run` to execute
+commands without manual activation:
 
 ```bash
-uv venv --python 3.14 venv    # or: python -m venv venv
-source venv/bin/activate
-uv pip install -r requirements-dev.txt
+uv run pytest              # run tests
+uv run ruff check .        # lint
 ```
 
-### Dependency files
+### Dependency management
 
-- `requirements.txt` — runtime dependencies with minimum versions
-  (e.g., `streamlit>=1.54.0`).
-- `requirements-dev.txt` — includes runtime deps plus dev tools:
-  ```
-  -r requirements.txt
-  pytest>=8.0.0
-  ruff>=0.11.0
-  ```
+All dependencies live in `pyproject.toml`. Use `uv add` and `uv remove` to
+manage them -- never edit `pyproject.toml` dependency lists manually.
+
+```bash
+uv add requests rich            # add runtime dependencies
+uv add --group dev pytest ruff  # add dev dependencies
+uv sync --all-groups            # install everything
+```
+
+Use `[dependency-groups]` (PEP 735) for dev/test/docs dependencies, not
+`[project.optional-dependencies]`. Commit `uv.lock` to version control.
 
 ---
 
@@ -245,13 +249,15 @@ combine a refactoring with a feature addition or bug fix.
 
 When Christian asks to start a new Python project:
 
-1. Create the project directory and initialize Git.
-2. Create `requirements.txt`, `requirements-dev.txt`, `.gitignore`,
-   and a virtual environment.
-3. Build the first working version (Phase 1).
-4. Commit the working version.
-5. Add tests, Ruff, pre-commit hook, AGENTS.md, CLAUDE.md (Phase 2).
+1. Run `uv init` (or `uv init --package` for distributable packages)
+   and initialize Git.
+2. Add dependencies with `uv add` and dev tools with
+   `uv add --group dev pytest ruff`.
+3. Create `.gitignore` with standard Python entries.
+4. Build the first working version (Phase 1).
+5. Commit the working version.
+6. Add tests, prek hooks, AGENTS.md, CLAUDE.md (Phase 2).
    Use `assets/AGENTS-template.md` as the starting point for AGENTS.md,
    customized for this project.
-6. Commit each guardrail addition separately.
-7. Continue with Phase 3 and 4 as the project grows.
+7. Commit each guardrail addition separately.
+8. Continue with Phase 3 and 4 as the project grows.
