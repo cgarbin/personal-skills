@@ -1,13 +1,10 @@
 # Personal Skills
 
-Personal skills for Claude (Cowork and Claude Code), version-controlled and
-portable across machines.
+Personal skills for Claude (Cowork and Claude Code), version-controlled and portable across machines.
 
 ## Repository structure
 
-Personal skills live under `skills/`, each in its own folder with a `SKILL.md`.
-External skills from GitHub are listed in `skills.manifest` and fetched into
-`from-others/` at install time. The `scripts/` folder contains the install script.
+Personal skills live under `skills/`, each in its own folder with a `SKILL.md`. External skills from GitHub are listed in `skills.manifest` and fetched into `from-others/` at install time. The `scripts/` folder contains the install script.
 
 ## Setting up a new machine
 
@@ -26,10 +23,7 @@ Run the install script to symlink all skills into the Claude skills directory:
 ./scripts/install.sh
 ```
 
-The script fetches external skills listed in `skills.manifest`, then symlinks
-both personal and external skills into `~/.claude/skills/`. It is idempotent —
-re-running it updates external skills, skips personal skills that are already
-linked, and picks up any new ones.
+The script fetches external skills listed in `skills.manifest`, then symlinks both personal and external skills into `~/.claude/skills/`. It is idempotent — re-running it updates external skills, skips personal skills that are already linked, and picks up any new ones.
 
 If your Claude skills directory is somewhere else, pass it with `--target`:
 
@@ -37,22 +31,18 @@ If your Claude skills directory is somewhere else, pass it with `--target`:
 ./scripts/install.sh --target /path/to/skills
 ```
 
-With symlinks in place, any edit to the files in this repo (or any `git pull`)
-is live immediately — no reinstall step needed.
+With symlinks in place, any edit to the files in this repo (or any `git pull`) is live immediately — no reinstall step needed.
 
 ### Alternative: install from a `.skill` package
 
-If you prefer not to use symlinks (or the skills directory isn't writable),
-you can package a skill and install it through the Cowork UI:
+If you prefer not to use symlinks (or the skills directory isn't writable), you can package a skill and install it through the Cowork UI:
 
 ```bash
 # From a session that has access to the skill-creator
 python -m scripts.package_skill ~/projects/personal-skills/skills/<skill-name>
 ```
 
-This produces a `.skill` file (a zip archive). Install it by double-clicking or
-dragging into a Cowork session. The downside is that you need to repackage and
-reinstall after every change.
+This produces a `.skill` file (a zip archive). Install it by double-clicking or dragging into a Cowork session. The downside is that you need to repackage and reinstall after every change.
 
 ## Day-to-day workflow
 
@@ -66,9 +56,7 @@ git commit -m "Update <skill-name>: add guidance on X"
 git push
 ```
 
-On other machines, `git pull` picks up the changes. If you used symlinks, the
-skill is updated immediately. If you used `.skill` packages, repackage and
-reinstall.
+On other machines, `git pull` picks up the changes. If you used symlinks, the skill is updated immediately. If you used `.skill` packages, repackage and reinstall.
 
 ## Adding a personal skill
 
@@ -89,9 +77,6 @@ echo "https://github.com/<owner>/<repo>/tree/<branch>/<path-to-skill>" >> skills
 ./scripts/install.sh
 ```
 
-External skills are fetched into `from-others/` (git-ignored) and symlinked
-alongside personal skills. The manifest is committed, so other machines get
-the same set of external skills after `git pull && ./scripts/install.sh`.
+External skills are fetched into `from-others/` (git-ignored) and symlinked alongside personal skills. The manifest is committed, so other machines get the same set of external skills after `git pull && ./scripts/install.sh`.
 
-For skill structure, frontmatter format, and best practices, see the
-[official skills documentation](https://agentskills.io/home).
+For skill structure, frontmatter format, and best practices, see the [official skills documentation](https://agentskills.io/home).
