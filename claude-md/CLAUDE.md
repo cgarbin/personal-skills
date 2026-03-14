@@ -97,7 +97,7 @@ Python style:
 
 - Use Ruff for linting/formatting (replaces Flake8 + Black)
 - Write tests before code, run them frequently, and fix as I go.
-- Add pre-commit hooks for linting and testing and any other relevant checks.
+- Add pre-commit hooks for linting and testing and any other relevant checks. When a tool (e.g. ruff) is already a uv-managed project dependency, use `repo: local` hooks with `uv run` instead of a remote pre-commit repo with its own version pin. This avoids version drift between the project dependency and the hook.
 - Split commits by logical unit, but don't overdo (e.g. create patch files just to split changes).
 - Use rebase workflow. No merge commits -- keep history linear.
 - Modular code -- I extend things. No monolithic scripts.
