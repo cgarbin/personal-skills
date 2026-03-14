@@ -130,7 +130,7 @@ Use `[dependency-groups]` (PEP 735) for dev/test/docs dependencies, not `[projec
 
 ## Code style
 
-- Python 3.11+ features are fine (e.g., `list[dict]` type hints instead of `typing.List[Dict]`).
+- Python 3.12+ features are fine (e.g., `list[dict]` type hints instead of `typing.List[Dict]`).
 - Docstrings on public functions in logic modules. Not required on test functions or obvious helpers.
 - Type hints on function signatures for logic modules. Not required on test functions.
 - Use `NamedTuple` or `dataclass` for structured data over raw dicts when a structure is used across module boundaries.

@@ -49,7 +49,7 @@ uv run ruff format .       # format
 
 ## Code style
 
-- Python 3.11+ features are fine (type hints with `list[dict]`, etc.).
+- Python 3.12+ features are fine (type hints with `list[dict]`, etc.).
 - No type stubs or docstrings required on test functions.
 - Use `monkeypatch` and `tmp_path` for file I/O tests — never write to real project files.
 - Mock external services in tests — never make real API calls.
