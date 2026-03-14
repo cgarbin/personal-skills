@@ -99,11 +99,15 @@ Python style:
 - Write tests before code, run them frequently, and fix as I go.
 - Add pre-commit hooks for linting and testing and any other relevant checks.
 - Split commits by logical unit, but don't overdo (e.g. create patch files just to split changes).
+- Use rebase workflow. No merge commits -- keep history linear.
 - Modular code -- I extend things. No monolithic scripts.
+- Don't use numeric prefixes on filenames for ordering. Use explicit configuration (e.g., navigation APIs, manifest files) instead.
 - Add comments that explain the "why" and "what," not the "how." The code should show how, comments should justify design decisions and clarify intent.
 - Type hints on function signatures.
 
 When given a spec or document, first ask clarifying questions to build the mental model. Then write a quick outline of the code structure before filling in details. Don't just start coding without a plan.
+
+Read AGENTS.md and follow all `@` reference chains yourself before delegating to subagents. Don't rely on subagents to read project guidelines.
 
 # Tooling and Workflow
 

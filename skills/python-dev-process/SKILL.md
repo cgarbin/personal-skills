@@ -94,6 +94,10 @@ pythonpath = ["."]
 
 Use `prek` for pre-commit hooks (Rust-native, faster than the Python `pre-commit` tool). It runs Ruff lint and format checks and rejects the commit if either fails. See the `modern-python` skill for `prek` setup.
 
+### Dev servers (Streamlit, Flask, etc.)
+
+When starting a dev server, kill any existing process on the target port first to avoid port conflicts and stale background processes. For example: `lsof -ti:8501 | xargs kill` before `uv run streamlit run app.py`.
+
 ### Virtual environment
 
 `uv` manages the virtual environment automatically. Use `uv run` to execute commands without manual activation:
