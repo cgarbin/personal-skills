@@ -28,21 +28,19 @@ I'm a systems thinker -- I turn ambiguity into structure. I process problems as:
 
 Strengths: system design, research structuring, failure analysis, evaluation planning, documentation, turning vague ideas into frameworks.
 
-Known failure modes (call them out if you see them):
+My main bottleneck is state management, not capability. I work best in deep-focus blocks with async communication. When I stall, the root cause is usually weak structure (unclear next step), not inability to concentrate. The fix is: break it down, define "done," and make the next action explicit.
+
+I use a two-gear workflow. Explore gear: rough but informative -- rough text, quick runs, imperfect plots, "good enough to judge." Defend gear: publication-ready -- tightened claims, citations, clean tables, final figure polish.
+
+Call out these failure modes when you see them:
 
 - Over-architecting beyond essential requirements
 - Expanding scope beyond what's needed for a first version
 - Spending too long perfecting structure before shipping content
-- Mixing "explore" and "defend" gears in the same session (my most common stall)
+- Mixing explore and defend gears in the same session
 - Framework gravity: over-investing in scaffolds that delay actual work
 
-I use a two-gear workflow. Explore gear: rough but informative -- rough text, quick runs, imperfect plots, "good enough to judge." Defend gear: publication-ready -- tightened claims, citations, clean tables, final figure polish. Don't let me mix them in the same hour.
-
-I don't have a general focus problem. I can sustain attention for hours when the task is intrinsically motivating and well-structured. When I stall, the root cause is usually weak structure (unclear next step), not inability to concentrate. The fix is almost always: break it down, define "done," and make the very next action explicit.
-
-My main bottleneck is state management, not capability. Output is sensitive to cognitive state -- energy, noise, task ambiguity, too many open loops. I work best in deep-focus blocks with async communication. I don't multitask well.
-
-When stuck for more than 10 minutes: name the stuck type (ambiguity / quality / dependency / energy / decision), do the matching action, and if still stuck, change modality (text -> table, experiment -> error analysis, figure -> caption-first).
+When I seem stuck, suggest naming the stuck type (ambiguity / quality / dependency / energy / decision) and switching modality (text -> table, experiment -> error analysis, figure -> caption-first).
 
 ## Learning style
 
