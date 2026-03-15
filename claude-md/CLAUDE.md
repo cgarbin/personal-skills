@@ -46,7 +46,24 @@ My main bottleneck is state management, not capability. Output is sensitive to c
 
 When stuck for more than 10 minutes: name the stuck type (ambiguity / quality / dependency / energy / decision), do the matching action, and if still stuck, change modality (text -> table, experiment -> error analysis, figure -> caption-first).
 
-# Communication Rules
+## Learning style
+
+I learn by building scaffolds, not collecting facts. I create structure first (pipeline, taxonomy, rubric, workflow) and attach details after. Once the scaffold exists, new information snaps into slots quickly.
+
+I'm a transfer-first learner: new ideas aren't "done" until they connect to my existing model. I optimize for reusable artifacts -- tables, diagrams, prompts, rules. I validate by comparison and ablation, not just explanation.
+
+When I'm learning something new, the best loop for me is: create the scaffold -> fill with 3-5 representative examples -> run a quick validation -> freeze the version and only revise on a trigger.
+
+## Operating principles
+
+- Depth over speed. I care about craft, rigor, and building things that last.
+- I value evidence-based reasoning, intellectual honesty, clear tradeoffs, and long-term thinking.
+- I'm motivated by conceptual ownership and compounding depth, not novelty-chasing.
+- I prefer async over constant pings, written context over verbal, and structured agendas for meetings.
+- I treat attention and energy as variables to manage, not constants to assume.
+- "The days are long but the years are short" -- I try to be patient with hard days and intentional with how I spend time.
+
+# Communication
 
 Be direct. Lead with the answer, then justify. Never open with analysis when a verdict is what's being asked for.
 
@@ -61,7 +78,7 @@ When corrected, update and move on. No over-apology, no lengthy re-explanation.
 
 When I ask for feedback, be critical. Honest assessment over validation. I seek confirmation only when I'm genuinely uncertain -- don't reinforce over-caution. I don't take intellectual disagreement personally. Evidence > authority.
 
-# Formatting
+## Formatting
 
 - Prose over bullets. Use bullets only when structure genuinely aids comprehension.
 - No excessive headers in conversational replies.
@@ -69,7 +86,7 @@ When I ask for feedback, be critical. Honest assessment over validation. I seek 
 - Don't use bold for emphasis mid-sentence unless truly critical.
 - Short responses for simple questions. Long responses only when the complexity demands it.
 
-# General Writing
+# Writing
 
 I write in a concise, direct style. I prefer active voice and simple sentence structures. I avoid jargon unless it's necessary for precision. I value clarity and readability over formality.
 
@@ -77,7 +94,7 @@ I like to follow "The Sense of Style" by Steven Pinker as a general guide, but I
 
 When editing my writing, focus on improving clarity, flow, and impact. Don't just fix grammar or word choice -- look at the overall structure and argument. If something is confusing or weak, point it out and suggest how to strengthen it.
 
-# Academic Writing
+## Academic writing
 
 When editing my writing:
 
@@ -88,6 +105,13 @@ When editing my writing:
 Never hallucinate citations. If a reference is needed, say so. I manage references in Zotero. When writing academic markdown in Obsidian, use Pandoc citation syntax: `[@smith2023temporal]`, `[@smith2023temporal, p. 42]`, `[@smith2023temporal; @jones2022ehr]`. Use `[-@key]` to suppress the author name.
 
 For literature work: Surface gaps and contradictions, not just summaries. Think in terms of dissertation positioning -- does this strengthen novelty, evaluation rigor, or contribution clarity?
+
+## Visuals and diagrams
+
+I iterate on diagrams -- often multiple rounds. When producing a revised version:
+
+- State concisely what changed and why (so the diff is obvious without side-by-side comparison).
+- Prefer Mermaid for pipeline/flow diagrams in dissertation context.
 
 # Code
 
@@ -122,30 +146,6 @@ Default language: Python for personal projects, Go for work.
 - Dailybrew: curated AI news digest
 
 Obsidian-compatible output: use `[[wikilinks]]`, inline Dataview fields when relevant. Markdown only, no proprietary formats.
-
-# Visuals and Diagrams
-
-I iterate on diagrams -- often multiple rounds. When producing a revised version:
-
-- State concisely what changed and why (so the diff is obvious without side-by-side comparison).
-- Prefer Mermaid for pipeline/flow diagrams in dissertation context.
-
-# Learning Style
-
-I learn by building scaffolds, not collecting facts. I create structure first (pipeline, taxonomy, rubric, workflow) and attach details after. Once the scaffold exists, new information snaps into slots quickly.
-
-I'm a transfer-first learner: new ideas aren't "done" until they connect to my existing model. I optimize for reusable artifacts -- tables, diagrams, prompts, rules. I validate by comparison and ablation, not just explanation.
-
-When I'm learning something new, the best loop for me is: create the scaffold -> fill with 3-5 representative examples -> run a quick validation -> freeze the version and only revise on a trigger.
-
-# Personal Operating Principles
-
-- Depth over speed. I care about craft, rigor, and building things that last.
-- I value evidence-based reasoning, intellectual honesty, clear tradeoffs, and long-term thinking.
-- I'm motivated by conceptual ownership and compounding depth, not novelty-chasing.
-- I prefer async over constant pings, written context over verbal, and structured agendas for meetings.
-- I treat attention and energy as variables to manage, not constants to assume.
-- "The days are long but the years are short" -- I try to be patient with hard days and intentional with how I spend time.
 
 # What Not to Do
 
