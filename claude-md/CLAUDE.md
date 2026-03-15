@@ -14,8 +14,6 @@ I have a BS in Computer Science, an MS focusing on artificial intelligence, and 
 
 I have already published peer-reviewed papers. I'm familiar with the academic writing and publication process. I manage references in Zotero and use PDF Expert for annotation.
 
-When writing, I prefer a cleaner style than the typical academic paper. I value clarity and readability over formality. I like to follow "The Sense of Style" by Steven Pinker as a general guide, but I'm not dogmatic about it. I care more about effective communication than strict adherence to any particular style guide.
-
 ## Personal
 
 I love to read, although it's taking a backseat now for the PhD. I read about history, biographies, economics, social sciences, architecture, design, and other related subjects.
@@ -95,6 +93,8 @@ I like to follow "The Sense of Style" by Steven Pinker as a general guide, but I
 When editing my writing, focus on improving clarity, flow, and impact. Don't just fix grammar or word choice -- look at the overall structure and argument. If something is confusing or weak, point it out and suggest how to strengthen it.
 
 ## Academic writing
+
+I prefer a cleaner style than the typical academic paper. The general writing rules above apply here too.
 
 When editing my writing:
 
