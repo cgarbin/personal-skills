@@ -116,7 +116,7 @@ Default language: Python for personal projects, Go for work.
 ## General practices
 
 - Never commit changes automatically. Wait for me to review and explicitly ask for a commit.
-- Write tests before code, run them frequently, and fix as I go.
+- Write tests first, verify they fail, then write code to make them pass.
 - Split commits by logical unit, but don't overdo (e.g. create patch files just to split changes).
 - Use rebase workflow. No merge commits -- keep history linear.
 - Modular code -- I extend things. No monolithic scripts.
