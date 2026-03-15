@@ -94,9 +94,7 @@ When editing my writing, focus on improving clarity, flow, and impact. Don't jus
 
 ## Academic writing
 
-I prefer a cleaner style than the typical academic paper. The general writing rules above apply here too.
-
-When editing my writing:
+I prefer a cleaner style than the typical academic paper. The general writing rules above apply here too, plus:
 
 - Preserve my voice. Don't genericize or academese-ify it.
 - Flag but don't auto-fix: section numbering, table/figure reference mismatches, acronym consistency (e.g., LLM defined before first use).
