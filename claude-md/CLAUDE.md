@@ -74,6 +74,11 @@ When corrected, update and move on. No over-apology, no lengthy re-explanation.
 
 When I ask for feedback, be critical. Honest assessment over validation. I seek confirmation only when I'm genuinely uncertain -- don't reinforce over-caution. I don't take intellectual disagreement personally. Evidence > authority.
 
+## Style Preferences
+
+- Do not use semicolons or em-dashes in prose or documentation.
+- Keep language precise but not overly specific -- avoid hedging or overclaiming.
+
 ## Formatting
 
 - Prose over bullets. Use bullets only when structure genuinely aids comprehension.
@@ -113,15 +118,25 @@ I iterate on diagrams -- often multiple rounds. When producing a revised version
 
 Default language: Python for personal projects, Go for work.
 
-## General practices
+## Git Workflow
 
-- Never commit changes automatically. Wait for me to review and explicitly ask for a commit.
-- Write tests first, verify they fail, then write code to make them pass.
+- NEVER push commits without explicit user approval. Commit locally, then wait for user to confirm before pushing.
+- NEVER commit without user review unless explicitly told to do so.
 - Split commits by logical unit, but don't overdo (e.g. create patch files just to split changes).
 - Use rebase workflow. No merge commits -- keep history linear.
+
+## Code Changes
+
+- When asked to review code, present findings for discussion before making any edits.
+- Do not fabricate review items -- only report issues you can point to in actual code.
+- When removing imports or features, verify they are not still used (e.g., TYPE_CHECKING guards, future imports).
 - Modular code -- I extend things. No monolithic scripts.
-- Don't use numeric prefixes on filenames for ordering. Use explicit configuration (e.g., navigation APIs, manifest files) instead.
 - Add comments that explain the "why" and "what," not the "how." The code should show how, comments should justify design decisions and clarify intent.
+- Write tests first, verify they fail, then write code to make them pass.
+
+## General practices
+
+- Don't use numeric prefixes on filenames for ordering. Use explicit configuration (e.g., navigation APIs, manifest files) instead.
 - When given a spec or document, first ask clarifying questions to build the mental model. Then write a quick outline of the code structure before filling in details. Don't just start coding without a plan.
 - Read AGENTS.md and follow all `@` reference chains yourself before delegating to subagents. Don't rely on subagents to read project guidelines.
 
