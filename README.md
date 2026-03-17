@@ -33,17 +33,6 @@ If your Claude skills directory is somewhere else, pass it with `--target`:
 
 With symlinks in place, any edit to the files in this repo (or any `git pull`) is live immediately — no reinstall step needed.
 
-### Alternative: install from a `.skill` package
-
-If you prefer not to use symlinks (or the skills directory isn't writable), you can package a skill and install it through the Cowork UI:
-
-```bash
-# From a session that has access to the skill-creator
-python -m scripts.package_skill ~/projects/personal-skills/skills/<skill-name>
-```
-
-This produces a `.skill` file (a zip archive). Install it by double-clicking or dragging into a Cowork session. The downside is that you need to repackage and reinstall after every change.
-
 ### 3. Configure Claude Code permissions
 
 The `configure-permissions.sh` script manages the allow/deny permission lists in Claude Code settings files. It merges a set of desired permissions into the file, reports what was added, and lists any extra permissions not in the desired set so you can choose to remove them.
