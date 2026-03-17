@@ -44,6 +44,23 @@ python -m scripts.package_skill ~/projects/personal-skills/skills/<skill-name>
 
 This produces a `.skill` file (a zip archive). Install it by double-clicking or dragging into a Cowork session. The downside is that you need to repackage and reinstall after every change.
 
+### 3. Configure Claude Code permissions
+
+The `configure-permissions.sh` script manages the allow/deny permission lists in Claude Code settings files. It merges a set of desired permissions into the file, reports what was added, and lists any extra permissions not in the desired set so you can choose to remove them.
+
+```bash
+# Global settings (~/.claude/settings.json)
+./scripts/configure-permissions.sh --global
+
+# Project settings (.claude/settings.local.json in current directory)
+./scripts/configure-permissions.sh --project
+
+# Project settings in a specific directory
+./scripts/configure-permissions.sh --project /path/to/project
+```
+
+The desired allow/deny lists are defined at the top of the script. Edit them to change your defaults.
+
 ## Day-to-day workflow
 
 1. Edit the skill's `SKILL.md` in this repo.
