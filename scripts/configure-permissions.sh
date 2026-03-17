@@ -158,26 +158,19 @@ fi
 
 # ---------------------------------------------------------------------------
 # Find extra entries not in the desired lists
+# (use jq throughout to handle multiline permission strings correctly)
 # ---------------------------------------------------------------------------
-EXTRA_ALLOW=()
-while IFS= read -r perm; do
-  [[ -z "$perm" ]] && continue
-  found=0
-  for desired in "${DESIRED_ALLOW[@]}"; do
-    [[ "$perm" == "$desired" ]] && found=1 && break
-  done
-  [[ $found -eq 0 ]] && EXTRA_ALLOW+=("$perm")
-done <<< "$CURRENT_ALLOW"
+EXTRAS_JSON=$(echo "$MERGED" | jq \
+  --argjson desired_allow "$DESIRED_ALLOW_JSON" \
+  --argjson desired_deny "$DESIRED_DENY_JSON" \
+  '{
+    allow: [.permissions.allow[] | select(. as $p | $desired_allow | index($p) | not)],
+    deny:  [.permissions.deny[]  | select(. as $p | $desired_deny  | index($p) | not)]
+  }')
 
-EXTRA_DENY=()
-while IFS= read -r perm; do
-  [[ -z "$perm" ]] && continue
-  found=0
-  for desired in "${DESIRED_DENY[@]}"; do
-    [[ "$perm" == "$desired" ]] && found=1 && break
-  done
-  [[ $found -eq 0 ]] && EXTRA_DENY+=("$perm")
-done <<< "$CURRENT_DENY"
+NUM_EXTRA_ALLOW=$(echo "$EXTRAS_JSON" | jq '.allow | length')
+NUM_EXTRA_DENY=$(echo "$EXTRAS_JSON" | jq '.deny | length')
+NUM_EXTRAS=$((NUM_EXTRA_ALLOW + NUM_EXTRA_DENY))
 
 # ---------------------------------------------------------------------------
 # Ask about extras
@@ -188,20 +181,30 @@ if [[ ${#ADDED_ALLOW[@]} -gt 0 || ${#ADDED_DENY[@]} -gt 0 ]]; then
   CHANGED=true
 fi
 
-if [[ ${#EXTRA_ALLOW[@]} -gt 0 || ${#EXTRA_DENY[@]} -gt 0 ]]; then
+if [[ $NUM_EXTRAS -gt 0 ]]; then
   echo ""
   echo "The following permissions exist but are NOT in the desired list:"
   idx=1
-  ALL_EXTRAS=()
 
-  for perm in "${EXTRA_ALLOW[@]}"; do
-    echo "  [$idx] allow: $perm"
-    ALL_EXTRAS+=("allow:$perm")
+  for ((i=0; i<NUM_EXTRA_ALLOW; i++)); do
+    perm=$(echo "$EXTRAS_JSON" | jq -r ".allow[$i]")
+    # Show first line only for readability; multiline entries are truncated
+    first_line=$(echo "$perm" | head -1)
+    if [[ $(echo "$perm" | wc -l) -gt 1 ]]; then
+      echo "  [$idx] allow: ${first_line}..."
+    else
+      echo "  [$idx] allow: $perm"
+    fi
     idx=$((idx + 1))
   done
-  for perm in "${EXTRA_DENY[@]}"; do
-    echo "  [$idx] deny:  $perm"
-    ALL_EXTRAS+=("deny:$perm")
+  for ((i=0; i<NUM_EXTRA_DENY; i++)); do
+    perm=$(echo "$EXTRAS_JSON" | jq -r ".deny[$i]")
+    first_line=$(echo "$perm" | head -1)
+    if [[ $(echo "$perm" | wc -l) -gt 1 ]]; then
+      echo "  [$idx] deny:  ${first_line}..."
+    else
+      echo "  [$idx] deny:  $perm"
+    fi
     idx=$((idx + 1))
   done
 
@@ -221,23 +224,26 @@ if [[ ${#EXTRA_ALLOW[@]} -gt 0 || ${#EXTRA_DENY[@]} -gt 0 ]]; then
 
     for i in "${REMOVE_INDICES[@]}"; do
       i=$(echo "$i" | tr -d ' ')
-      # Skip non-numeric input
       if ! [[ "$i" =~ ^[0-9]+$ ]]; then
         echo "  Skipping invalid input: $i"
         continue
       fi
       if [[ $i -ge 1 ]] && [[ $i -lt $idx ]]; then
-        entry="${ALL_EXTRAS[$((i-1))]}"
-        list="${entry%%:*}"
-        perm="${entry#*:}"
-        perm_json=$(printf '%s' "$perm" | jq -R .)
-        if [[ "$list" == "allow" ]]; then
+        # Map 1-based index to the extras JSON arrays
+        if [[ $i -le $NUM_EXTRA_ALLOW ]]; then
+          list="allow"
+          ji=$((i - 1))
+          perm_json=$(echo "$EXTRAS_JSON" | jq ".allow[$ji]")
           MERGED=$(echo "$MERGED" | jq --argjson p "$perm_json" '.permissions.allow -= [$p]')
         else
+          list="deny"
+          ji=$((i - NUM_EXTRA_ALLOW - 1))
+          perm_json=$(echo "$EXTRAS_JSON" | jq ".deny[$ji]")
           MERGED=$(echo "$MERGED" | jq --argjson p "$perm_json" '.permissions.deny -= [$p]')
         fi
         CHANGED=true
-        echo "  Removed $list: $perm"
+        perm_display=$(echo "$perm_json" | jq -r . | head -1)
+        echo "  Removed $list: $perm_display"
       else
         echo "  Skipping out-of-range: $i"
       fi
