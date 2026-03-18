@@ -126,7 +126,6 @@ He uses rhetorical questions as transitions: "Should we be concerned that deep '
 
 - "In other words..." to rephrase a complex idea
 - "But there is a twist..." to introduce a complication
-- "This is a good segway for the following..." to connect sections
 - "Coming from an engineering background..." to ground a point in experience
 - Short bridging sentences: "We will fix some of the issues in the next step."
 
