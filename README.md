@@ -91,6 +91,4 @@ The install script maintains a `skills.lock` file that records the commit SHA fe
 
 The lockfile is committed to the repo, so all machines share the same baseline. After reviewing and accepting an update, commit the updated `skills.lock`.
 
-If the previously locked commit no longer exists upstream (e.g., force-pushed away), the script falls back to showing the diff of the latest commit.
-
 For skill structure, frontmatter format, and best practices, see the [official skills documentation](https://agentskills.io/home).
