@@ -163,15 +163,10 @@ write_locked_sha() {
 }
 
 # show_changelog <clone_dir> <repo_key> <old_sha> <new_sha> <paths>
-#   Fetches the previously locked commit and shows the diff of the skill
-#   files between the old and new SHAs. Prints nothing if the skill files
-#   themselves did not change (the repo may have other commits that don't
-#   affect the skills we use). Returns 0 if skill files changed, 1 if not.
-#
-#   Note: fetching a specific commit by SHA (git fetch origin <sha>) requires
-#   the server to support allowReachableSHA1InWant. GitHub enables this, but
-#   other hosts may not. If the fetch fails, the fallback shows the latest
-#   commit's diff instead.
+#   Shows the diff of the skill files between the old and new SHAs.
+#   Prints nothing if the skill files themselves did not change (the repo
+#   may have other commits that don't affect the skills we use).
+#   Returns 0 if skill files changed, 1 if not.
 show_changelog() {
     local clone_dir="$1"
     local repo_key="$2"
@@ -179,18 +174,9 @@ show_changelog() {
     local new_sha="$4"
     local paths="$5"
 
-    # Fetch the exact old commit so we can diff against it.
-    git -C "$clone_dir" fetch --quiet origin "$old_sha" 2>/dev/null || true
-
     local diff_output
-    if git -C "$clone_dir" cat-file -e "$old_sha" 2>/dev/null; then
-        # shellcheck disable=SC2086
-        diff_output="$(git -C "$clone_dir" diff "${old_sha}" "${new_sha}" -- $paths 2>/dev/null)" || true
-    else
-        echo "  (locked commit ${old_sha:0:12} no longer exists upstream; showing diff of new HEAD only)"
-        # shellcheck disable=SC2086
-        diff_output="$(git -C "$clone_dir" diff HEAD~1..HEAD -- $paths 2>/dev/null)" || true
-    fi
+    # shellcheck disable=SC2086
+    diff_output="$(git -C "$clone_dir" diff "${old_sha}" "${new_sha}" -- $paths 2>/dev/null)" || true
 
     if [[ -z "$diff_output" ]]; then
         return 1
