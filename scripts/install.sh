@@ -284,23 +284,19 @@ clone_or_update_repo() {
     local paths="$4"
 
     if [[ -d "$clone_dir/.git" ]]; then
-        # Update sparse-checkout paths (may have changed) and pull latest.
         echo "  pull      $repo_key"
         # Intentional word-splitting: sparse-checkout needs separate args.
         # shellcheck disable=SC2086
         git -C "$clone_dir" sparse-checkout set --no-cone $paths 2>/dev/null
-        # Use fetch+reset instead of pull — more reliable on shallow clones.
-        git -C "$clone_dir" fetch --quiet --depth 1 origin "$branch" 2>/dev/null \
+        git -C "$clone_dir" fetch --quiet origin "$branch" 2>/dev/null \
             && git -C "$clone_dir" reset --quiet --hard "origin/$branch" \
             || true
     else
-        # Shallow sparse clone — only fetch the paths we need.
         echo "  clone     $repo_key (sparse)"
         mkdir -p "$(dirname "$clone_dir")"
-        git clone --quiet --depth 1 --branch "$branch" \
-            --no-checkout --filter=blob:none \
+        git clone --quiet --branch "$branch" \
+            --no-checkout --sparse \
             "https://github.com/${repo_key}.git" "$clone_dir"
-        git -C "$clone_dir" sparse-checkout init
         # shellcheck disable=SC2086
         git -C "$clone_dir" sparse-checkout set --no-cone $paths
         git -C "$clone_dir" checkout --quiet "$branch"
