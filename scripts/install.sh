@@ -59,6 +59,7 @@ fi
 SKILLS_SRC="$REPO_DIR/skills"
 EXTERNAL_DIR="$REPO_DIR/from-others"
 MANIFEST="$REPO_DIR/skills.manifest"
+LOCKFILE="$REPO_DIR/skills.lock"
 CLAUDE_MD_SRC="$REPO_DIR/claude-md/CLAUDE.md"
 CLAUDE_MD_TARGET="$HOME/.claude/CLAUDE.md"
 
@@ -133,6 +134,74 @@ remove_stale_external_symlinks() {
                 ;;
         esac
     done
+}
+
+# ── Lockfile helpers ──────────────────────────────────────────────────
+
+# read_locked_sha <repo_key>
+#   Prints the locked SHA for the given repo, or empty string if not found.
+read_locked_sha() {
+    local repo_key="$1"
+    if [[ -f "$LOCKFILE" ]]; then
+        awk -v key="$repo_key" '$1 == key { print $2 }' "$LOCKFILE"
+    fi
+}
+
+# write_locked_sha <repo_key> <sha>
+#   Upserts the SHA for repo_key in the lockfile, keeping it sorted.
+write_locked_sha() {
+    local repo_key="$1"
+    local sha="$2"
+
+    if [[ -f "$LOCKFILE" ]] && grep -q "^${repo_key} " "$LOCKFILE"; then
+        sed -i '' "s|^${repo_key} .*|${repo_key} ${sha}|" "$LOCKFILE"
+    else
+        echo "${repo_key} ${sha}" >> "$LOCKFILE"
+    fi
+
+    sort -o "$LOCKFILE" "$LOCKFILE"
+}
+
+# show_changelog <clone_dir> <repo_key> <old_sha> <new_sha> <paths>
+#   Fetches the previously locked commit and shows the diff of the skill
+#   files between the old and new SHAs. Prints nothing if the skill files
+#   themselves did not change (the repo may have other commits that don't
+#   affect the skills we use). Returns 0 if skill files changed, 1 if not.
+#
+#   Note: fetching a specific commit by SHA (git fetch origin <sha>) requires
+#   the server to support allowReachableSHA1InWant. GitHub enables this, but
+#   other hosts may not. If the fetch fails, the fallback shows the latest
+#   commit's diff instead.
+show_changelog() {
+    local clone_dir="$1"
+    local repo_key="$2"
+    local old_sha="$3"
+    local new_sha="$4"
+    local paths="$5"
+
+    # Fetch the exact old commit so we can diff against it.
+    git -C "$clone_dir" fetch --quiet origin "$old_sha" 2>/dev/null || true
+
+    local diff_output
+    if git -C "$clone_dir" cat-file -e "$old_sha" 2>/dev/null; then
+        # shellcheck disable=SC2086
+        diff_output="$(git -C "$clone_dir" diff "${old_sha}" "${new_sha}" -- $paths 2>/dev/null)" || true
+    else
+        echo "  (locked commit ${old_sha:0:12} no longer exists upstream; showing diff of new HEAD only)"
+        # shellcheck disable=SC2086
+        diff_output="$(git -C "$clone_dir" diff HEAD~1..HEAD -- $paths 2>/dev/null)" || true
+    fi
+
+    if [[ -z "$diff_output" ]]; then
+        return 1
+    fi
+
+    echo ""
+    echo "  ── Changes in $repo_key (${old_sha:0:12} -> ${new_sha:0:12}) ──"
+    echo ""
+    echo "$diff_output"
+    echo ""
+    return 0
 }
 
 # ── CLAUDE.md ──────────────────────────────────────────────────────────
@@ -294,8 +363,32 @@ fetch_external_skills() {
         local paths
         paths="$(collect_paths_for_repo "$repo_key")"
 
+        # Read the previously locked SHA before fetching.
+        local old_sha
+        old_sha="$(read_locked_sha "$repo_key")"
+
         clone_or_update_repo "$repo_key" "$branch" "$clone_dir" "$paths"
+
+        # Get the new HEAD and show what changed.
+        local new_sha
+        new_sha="$(git -C "$clone_dir" rev-parse HEAD 2>/dev/null || echo "")"
+
+        if [[ -z "$old_sha" && -n "$new_sha" ]]; then
+            echo "  new       $repo_key (first fetch, locked at ${new_sha:0:12})"
+        elif [[ -n "$old_sha" && -n "$new_sha" && "$old_sha" != "$new_sha" ]]; then
+            if ! show_changelog "$clone_dir" "$repo_key" "$old_sha" "$new_sha" "$paths"; then
+                echo "  current   $repo_key (upstream has new commits but skill files unchanged)"
+            fi
+        else
+            echo "  current   $repo_key (no changes)"
+        fi
+
         copy_skills_from_repo "$clone_dir" "$paths"
+
+        # Update the lockfile with the new SHA.
+        if [[ -n "$new_sha" ]]; then
+            write_locked_sha "$repo_key" "$new_sha"
+        fi
     done
 
     echo ""

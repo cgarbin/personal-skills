@@ -85,4 +85,12 @@ echo "https://github.com/<owner>/<repo>/tree/<branch>/<path-to-skill>" >> skills
 
 External skills are fetched into `from-others/` (git-ignored) and symlinked alongside personal skills. The manifest is committed, so other machines get the same set of external skills after `git pull && ./scripts/install.sh`.
 
+## Tracking external skill changes
+
+The install script maintains a `skills.lock` file that records the commit SHA fetched for each external repo. On subsequent runs, if the upstream repo has new commits, the script shows a full diff of what changed in the skill files before updating. This lets you review upstream changes instead of silently replacing skills.
+
+The lockfile is committed to the repo, so all machines share the same baseline. After reviewing and accepting an update, commit the updated `skills.lock`.
+
+If the previously locked commit no longer exists upstream (e.g., force-pushed away), the script falls back to showing the diff of the latest commit.
+
 For skill structure, frontmatter format, and best practices, see the [official skills documentation](https://agentskills.io/home).
