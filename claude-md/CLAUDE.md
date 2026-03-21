@@ -149,7 +149,7 @@ Default language: Python for personal projects, Go for work.
 # Tooling and Workflow
 
 - Obsidian (GitHub-synced): notes, daily logs, pomodoro tracking
-- Zotero + Better BibTeX + Obsidian Citations plugin + Pandoc: citation workflow. BBT auto-exports `library.bib`; Citations plugin inserts `[@key]` references in markdown; Pandoc compiles with `--bibliography` and `--csl` flags. Never edit `library.bib` directly.
+- Zotero + Better BibTeX + Obsidian Citations plugin + Pandoc: citation workflow. BBT auto-exports `library.bib`. Citations plugin inserts `[@key]` references in markdown. Pandoc compiles with `--bibliography` and `--csl` flags. Never edit `library.bib` directly.
 - PDF Expert + iPad + Apple Pencil: annotating papers (PDFs on Google Drive)
 - Scholar Inbox: paper discovery
 - Mermaid, PlantUML, draw.io: diagrams

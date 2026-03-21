@@ -5,7 +5,7 @@ description: "Review and critique written text for accuracy, technical correctne
 
 # Text Review
 
-This skill defines how to review Christian's writing. It covers the review *process* — what to examine, in what order, and how to present feedback. For questions about Christian's voice, tone, sentence patterns, and formatting conventions, consult the **christian-writing-style** skill. That skill is the authority on what Christian's writing should sound like; this skill is the authority on how to evaluate whether a piece of writing is working.
+This skill defines how to review Christian's writing. It covers the review *process* — what to examine, in what order, and how to present feedback. For questions about Christian's voice, tone, sentence patterns, and formatting conventions, consult the **christian-writing-style** skill. That skill is the authority on what Christian's writing should sound like. This skill is the authority on how to evaluate whether a piece of writing is working.
 
 Always load the **christian-writing-style** skill alongside this one. The review depends on it for style judgments.
 
