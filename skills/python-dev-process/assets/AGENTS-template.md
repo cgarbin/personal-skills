@@ -23,7 +23,7 @@
 uv sync --all-groups
 ```
 
-This installs all runtime and dev dependencies. `uv` manages the virtual environment automatically -- use `uv run <cmd>` to execute commands.
+This installs all runtime and dev dependencies. `uv` manages the virtual environment automatically. Use `uv run <cmd>` to execute commands.
 
 ## Running tests
 

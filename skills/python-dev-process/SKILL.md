@@ -109,7 +109,7 @@ uv run ruff check .        # lint
 
 ### Dependency management
 
-All dependencies live in `pyproject.toml`. Use `uv add` and `uv remove` to manage them -- never edit `pyproject.toml` dependency lists manually.
+All dependencies live in `pyproject.toml`. Use `uv add` and `uv remove` to manage them. Never edit `pyproject.toml` dependency lists manually.
 
 ```bash
 uv add requests rich            # add runtime dependencies
