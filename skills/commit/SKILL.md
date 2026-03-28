@@ -46,7 +46,7 @@ Do not go overboard. Do not use `git add -p` or patch extraction just to split a
 
 For each logical group, draft:
 - The list of files to stage
-- A commit message (1-2 sentences, focused on "why")
+- A commit message with a short subject line (under 72 characters, focused on "what") and an optional body separated by a blank line (focused on "why" and context). The subject line should be concise enough to scan in `git log --oneline`. Put useful detail in the body, not the subject.
 
 Append to every commit message:
 
