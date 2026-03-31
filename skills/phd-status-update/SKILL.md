@@ -9,7 +9,7 @@ description: >
   single-document edits, individual PhD questions, or daily note operations.
 ---
 
-# PhD Status Update
+# PhD Status Update Skill
 
 You are updating the dissertation's living planning documents to reflect recent work. Your job is to record what happened and fix anything that's stale. You are not proposing next steps, suggesting priorities, or making strategic recommendations unless explicitly asked.
 
@@ -53,7 +53,7 @@ Fix inconsistencies in place. If you're unsure whether something is stale or int
 
 ## How to do the update
 
-1. **Read first.** Read recent daily notes (for context on what was worked on since the last progress log entry), the execution plan, and the repository map. Check git logs from all repos listed in the repository map using `git log --oneline --since=<date of last progress log entry>` for each repo. Don't hardcode repo paths -- read the repository map at runtime.
+1. **Read first.** Read the most recent snapshot in `PhD dissertation - temporal EHR summary/Supporting material/Snapshots/` to establish the baseline — its date tells you how far back to look. Read daily notes since that date, the execution plan, and the repository map. Check git logs from all repos listed in the repository map using `git log --oneline --since=<snapshot date>` for each repo. Don't hardcode repo paths -- read the repository map at runtime.
 2. **Draft changes.** For each document you plan to modify, describe what you'll change and why. Show this to Christian before editing.
 3. **Apply edits.** Use the Edit tool. Make targeted changes, not wholesale rewrites.
 4. **Show the diff.** After editing, run `git diff` in the phd-dissertation-writing folder so Christian can review what changed. Do not commit -- Christian will decide when to commit.
@@ -61,8 +61,8 @@ Fix inconsistencies in place. If you're unsure whether something is stale or int
 ## What NOT to do
 
 - Don't propose next steps or suggest what to work on next. The daily note's "Next tasks" section is Christian's domain.
-- Don't create snapshot documents.
+- Don't create snapshot documents unless Christian explicitly asks for one (e.g. "update and snapshot", "also create a snapshot"). If requested, create it in `PhD dissertation - temporal EHR summary/Supporting material/Snapshots/Progress assessment YYYY-MM-DD.md` with the standard warning block and format used by existing snapshots.
 - Don't update documents in code repos. This skill only touches the dissertation-writing vault.
 - Don't rewrite sections that are still accurate just to improve wording.
 - Don't add speculative content ("this suggests we should..." or "consider whether...").
-- Don't touch the dissertation paper itself, the proposal, or any document in the Snapshots folder.
+- Don't touch the dissertation paper itself or the proposal. Don't modify existing snapshots (they're frozen).
