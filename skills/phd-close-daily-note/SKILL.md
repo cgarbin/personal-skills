@@ -47,10 +47,6 @@ Use this template:
 created: YYYY-MM-DD HH:mm
 ---
 
-# Today's Focus
-
--
-
 # Pomodoros
 <!-- Categories: writing | lit-review | experiment | analysis | admin -->
 - [ ] 🍅 [task:: ] [category:: writing | lit-review | experiment | analysis | admin] [start:: ]
