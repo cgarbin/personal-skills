@@ -60,7 +60,13 @@ If the user passed `do not ask`, skip to Step 6.
 
 Otherwise, present the commit plan (groups, files, messages) and wait for approval. If the doc check in Step 2 found stale references or flagged uncertain matches, list them here. The user may adjust grouping, messages, or doc updates.
 
-## Step 6: Commit
+## Step 6: Run repo-specific pre-commit checks
+
+Before committing, check AGENTS.md and CLAUDE.md for pre-commit instructions such as linting, formatting, or test commands. Run whatever the repo requires on the files being committed. If any check fails, fix the issue before proceeding to Step 7.
+
+If no AGENTS.md or CLAUDE.md exists, or they don't mention pre-commit checks, skip this step.
+
+## Step 7: Commit
 
 For each group, stage the files by name (never `git add -A` or `git add .`) and commit. Use a HEREDOC for the commit message to preserve formatting.
 
