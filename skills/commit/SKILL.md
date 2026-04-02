@@ -40,7 +40,7 @@ Extract key identifiers from the diff: changed or removed function/class/variabl
 
 Split the session changes into logical groups. Each group becomes one commit. Examples of good groupings: a config change separate from the code it enables, test files with the code they test, a refactor separate from a feature addition. Include documentation updates in the same group as the code they describe so docs and code stay in sync.
 
-Do not go overboard. Do not use `git add -p` or patch extraction just to split a single file across commits. If a file has changes that belong to two logical groups but splitting requires patch-level extraction, put it in the most relevant group.
+Do not go overboard. Do not use `git add -p` or patch extraction unless it's a trivial split that doesn't require stashing just to split files. If a file has changes that belong to two logical groups but splitting requires patch-level extraction, put it in the most relevant group.
 
 ## Step 4: Plan the commits
 
