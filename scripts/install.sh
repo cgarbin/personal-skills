@@ -9,10 +9,11 @@
 #
 # The script:
 #   1. Symlinks the global CLAUDE.md from <repo>/claude-md/
-#   2. Symlinks personal skills from <repo>/skills/
-#   3. Fetches external skills listed in skills.manifest (if present)
-#   4. Cleans up stale external symlinks
-#   5. Symlinks external skills from <repo>/from-others/
+#   2. Cleans up stale personal skill symlinks (deleted skill folders)
+#   3. Symlinks personal skills from <repo>/skills/
+#   4. Fetches external skills listed in skills.manifest (if present)
+#   5. Cleans up stale external symlinks
+#   6. Symlinks external skills from <repo>/from-others/
 
 set -euo pipefail
 
@@ -376,12 +377,32 @@ fetch_external_skills() {
     echo ""
 }
 
+# remove_stale_personal_symlinks
+#   Removes symlinks in TARGET_DIR that point into SKILLS_SRC but whose
+#   target no longer exists (i.e. the skill folder was deleted).
+remove_stale_personal_symlinks() {
+    for link in "$TARGET_DIR"/*; do
+        [[ -L "$link" ]] || continue
+        local target
+        target="$(readlink "$link")"
+        case "$target" in
+            "$SKILLS_SRC"/*)
+                if [[ ! -d "$target" ]]; then
+                    echo "  remove    $(basename "$link") (skill folder deleted)"
+                    rm "$link"
+                fi
+                ;;
+        esac
+    done
+}
+
 # ── Personal skills ──────────────────────────────────────────────────────
 
 # install_personal_skills
 #   Symlinks every skill folder under skills/ into TARGET_DIR.
 install_personal_skills() {
     echo "Personal skills:"
+    remove_stale_personal_symlinks
     for skill_dir in "$SKILLS_SRC"/*/; do
         [[ -d "$skill_dir" ]] || continue
         symlink_skill "$skill_dir" "$(basename "$skill_dir")"
