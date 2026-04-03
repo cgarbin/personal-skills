@@ -17,24 +17,21 @@ Load the `christian-writing-style` skill before proceeding. The summary must mat
 
 ### Step 1: Determine the target date
 
-If the user provided a date as an argument (e.g., `/phd-close-daily-note yesterday`, `/phd-close-daily-note 2026-03-15`), use that date. Otherwise, ask the user which date to summarize. The default is yesterday.
+If the user provided a date as an argument (e.g., `/phd-close-daily-note yesterday`, `/phd-close-daily-note 2026-03-15`), use that date. Otherwise, default to yesterday.
 
 Date interpretation:
 
 - "today": use the current date
-- "yesterday" or no date specified when asked: use the day before the current date
+- "yesterday" or no date specified: use the day before the current date
 - A specific date like "March 15" or "2026-03-15": use that date
 
 Convert to `YYYY-MM-DD` format. If the date is in the future, tell the user and stop. Confirm with the user before proceeding if there is any ambiguity (e.g., "last Friday" when you're unsure which Friday).
 
 ### Step 2: Find the daily note
 
-Daily notes live in `/Users/cgarbin/projects/phd-dissertation-writing/_daily-notes/`. They can be in two locations:
+Daily notes live in `/Users/cgarbin/projects/phd-dissertation-writing/_daily-notes/`. Filenames follow the pattern `YYYY-MM-DD Ddd.md` (e.g., `2026-04-02 Thu.md`). Older notes may be in a monthly subdirectory (`_daily-notes/YYYY-MM/`).
 
-1. Top level: `_daily-notes/YYYY-MM-DD.md`
-2. Monthly subdirectory: `_daily-notes/YYYY-MM/YYYY-MM-DD.md`
-
-Check both. If the note doesn't exist, tell the user and stop.
+Glob for `_daily-notes/*YYYY-MM-DD*` and `_daily-notes/YYYY-MM/*YYYY-MM-DD*` to find the file. If the note doesn't exist, tell the user and stop.
 
 ### Step 3: Read the daily note
 
@@ -46,16 +43,14 @@ Extract:
 
 - **Pomodoros**: count, task names, categories. Note which tasks had multiple pomodoros (sustained focus).
 - **Completed tasks**: lines matching `- [x]` in the Next tasks section.
-- **In-progress tasks**: lines matching `- [ ]` that show partial completion (some sub-tasks checked).
+- **In-progress tasks**: unchecked tasks (`- [ ]`) that have at least one checked sub-task beneath them.
 - **Notes section**: any existing content (the summary will be appended here).
 
 ### Step 4: Gather git commits across all repositories
 
-Read the repository map at `/Users/cgarbin/projects/phd-dissertation-writing/PhD dissertation - temporal EHR summary/Supporting material/Repository map.md` to get the current list of repositories. All repositories live under `~/projects/`. Extract the repository names from the `##` headings (each heading is a repo name, and the path is `~/projects/<heading-name>`).
+Read the repository map at `/Users/cgarbin/projects/phd-dissertation-writing/PhD dissertation - temporal EHR summary/Supporting material/Repository map.md` to get the current list of repositories. All repositories live under `~/projects/`. Extract the repository names from the `##` headings where the heading name corresponds to a directory under `~/projects/`. Skip headings that are not repositories (e.g., `## Shared patterns`).
 
-If fewer than three repositories are found, something is wrong with the repository map or the paths. Stop and tell the user.
-
-For each repo, verify the directory exists on disk before running git log. If a repo directory is missing, warn the user (mention which one) but continue with the remaining repos.
+For each candidate repo, verify the directory exists on disk before running git log. If a directory is missing, warn the user (mention which one) but continue with the remaining repos. If fewer than three valid repos are found after verification, something is wrong with the repository map or the paths. Stop and tell the user.
 
 For each repo, run:
 ```bash
@@ -72,7 +67,7 @@ Write a summary as a bullet list in Christian's writing style (direct, concise, 
 
 The summary should cover:
 
-- What the main focus was (derived from pomodoro tasks and their categories)
+- What the main focus was. Pomodoro tasks and their categories are the primary signal for what the day was about. Commits corroborate and add detail, but the pomodoro log defines the narrative arc.
 - What was accomplished, tying together pomodoro tasks, completed checklist items, and commits into coherent groups
 - Which repos saw activity and what kind (new code, refactoring, documentation, infrastructure)
 - If tasks were started but not finished, where things stand
@@ -92,34 +87,21 @@ Tell the user the summary was written and show it in the conversation so they ca
 
 ## Part 2: Create the next day's note
 
-This part runs automatically when the target date is yesterday or today relative to the current calendar date. When the target date is 2 or more calendar days before today (a backfill), skip this part entirely and tell the user: "Skipping next-day note creation because the target date is more than one day ago."
+This part always runs after Part 1, regardless of how far back the target date is. This supports cascading catch-up: if multiple days need closing, run the skill once per day in sequence and each run creates the next day's note. Step 9 guards against overwriting an existing note.
 
 ### Step 8: Determine the next day's date
 
-Calculate the calendar day after the target date. Handle month and year boundaries correctly:
-
-- 2026-03-31 becomes 2026-04-01
-- 2026-12-31 becomes 2027-01-01
-- 2026-02-28 becomes 2026-03-01 (2026 is not a leap year)
-
-Format as `YYYY-MM-DD`.
+Compute the next calendar day using `date -j -v+1d -f "%Y-%m-%d" "YYYY-MM-DD" "+%Y-%m-%d"` (macOS). Do not compute date arithmetic manually.
 
 ### Step 9: Check that the next day's note does not already exist
 
-Check both possible locations:
-
-1. Top level: `_daily-notes/YYYY-MM-DD.md`
-2. Monthly subdirectory: `_daily-notes/YYYY-MM/YYYY-MM-DD.md`
-
-If a note already exists for the next day, tell the user and ask whether to overwrite it or skip creating the note (still carry over tasks if the user wants).
+Glob for `_daily-notes/*YYYY-MM-DD*` and `_daily-notes/YYYY-MM/*YYYY-MM-DD*`. If a note already exists for the next day, tell the user and skip Part 2. Do not overwrite it.
 
 ### Step 10: Create the next day's note from the template
 
-Create the new note at the top level: `_daily-notes/YYYY-MM-DD.md`. This matches Obsidian's daily notes configuration (`folder: "_daily-notes"`).
+Create the new note at the top level using the `YYYY-MM-DD Ddd.md` naming convention from Step 2, where `YYYY-MM-DD` is the next day's date from Step 8. Compute the day-of-week abbreviation with `date -j -f "%Y-%m-%d" "<next-day-date>" "+%a"` (macOS). Do not infer it from the previous day's filename.
 
-The `created` frontmatter field records when the file was physically created, not the date the note is for. Use today's date (the day the skill is running) and the current time in `HH:mm` format. The filename is what identifies which day the note belongs to.
-
-Use this template:
+Use this template. The `created` field uses today's date and current time (when the file is physically created), not the note's target date:
 
 ```markdown
 ---
@@ -137,7 +119,7 @@ created: YYYY-MM-DD HH:mm
 
 ### Step 11: Carry over the task list
 
-Read the `# Next tasks` section from the day being closed out. Copy it into the new note's `# Next tasks` section, preserving all content: headers, numbering, indentation, wikilinks, and checkbox states.
+Copy the `# Next tasks` section (already read in Step 3) into the new note's `# Next tasks` section, preserving all content: headers, numbering, indentation, wikilinks, and checkbox states.
 
 The task list is a living document. Tasks that were checked off today should remain checked in the carried-over list (they serve as a record of progress). Do not remove completed items or modify the list in any way. The user will curate it manually.
 
