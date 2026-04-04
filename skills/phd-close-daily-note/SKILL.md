@@ -17,6 +17,8 @@ Load the `christian-writing-style` skill before proceeding. The summary must mat
 
 ### Step 1: Determine the target date
 
+Determine today's date by running `date "+%Y-%m-%d"` (macOS). Do not rely on session metadata or context-injected dates, as these may be stale.
+
 If the user provided a date as an argument (e.g., `/phd-close-daily-note yesterday`, `/phd-close-daily-note 2026-03-15`), use that date. Otherwise, default to yesterday.
 
 Date interpretation:
