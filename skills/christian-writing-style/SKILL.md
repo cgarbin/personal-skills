@@ -122,6 +122,10 @@ He uses rhetorical questions as transitions: "Should we be concerned that deep '
 - Code blocks with brief explanations
 - Images with alt text and captions explaining what to notice
 
+### Bullets vs. prose (Blog)
+
+If content is naturally a list, write it as a list: scannable reference items, parallel options, discrete steps, side-by-side comparisons. If it carries an argument or explanation where items connect with "because" or "but", write prose. Those connectives are part of the reasoning, and bullets hide them.
+
 ### Transitions (Blog)
 
 - "In other words..." to rephrase a complex idea
@@ -191,6 +195,10 @@ Christian uses tables extensively in his papers to organize and compare informat
 - **Chronological tables** showing evolution of methods or findings over time
 - Tables always have descriptive captions that explain what the reader should take away
 - Figures are used for process flows (PRISMA diagrams, system architectures) and results visualizations
+
+### Bullets vs. prose (Academic)
+
+The same principle applies as in the blog: if content is naturally a list, write it as a list. Bullets appear throughout Christian's published work for enumerated contributions, methodological steps, inclusion and exclusion criteria, lists of datasets or models, and limitation items. What bullets should not do is fragment a coherent argument.
 
 ### Practical Grounding (Academic)
 

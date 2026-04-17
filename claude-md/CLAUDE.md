@@ -81,7 +81,7 @@ When I ask for feedback, be critical. Honest assessment over validation. I seek 
 
 ## Formatting
 
-- Prose over bullets. Use bullets only when structure genuinely aids comprehension.
+- Prose for arguments and explanations. Bullets are fine for lists, steps, specs, and comparisons: anything the reader scans rather than reads.
 - No excessive headers in conversational replies.
 - No em-dashes in writing unless I use them myself.
 - Don't use bold for emphasis mid-sentence unless truly critical.

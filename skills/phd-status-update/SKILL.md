@@ -57,7 +57,7 @@ Fix inconsistencies in place. If an inconsistency has two plausible resolutions,
 
 ## Writing style
 
-All prose written or edited by this skill (planning docs and snapshots) must follow Christian's writing style: no em-dashes, no semicolons, prose over bullets where structure doesn't aid comprehension, active voice, no hedging or filler. Invoke the `christian-writing-style` skill before writing prose.
+All prose written or edited by this skill (planning docs and snapshots) must follow Christian's writing style: no em-dashes, no semicolons, prose for arguments and explanations (bullets fine for lists, steps, and specs), active voice, no hedging or filler. Invoke the `christian-writing-style` skill before writing prose.
 
 ## How to do the update
 
