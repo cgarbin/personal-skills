@@ -1,6 +1,6 @@
 ---
 name: christian-writing-style
-description: "Christian Garbin's personal writing style guide for both blog posts and academic papers. Use this skill whenever Christian asks you to write anything — blog posts, articles, explanations, tutorials, documentation, academic papers, literature reviews, systematic reviews, conference papers, journal submissions, abstracts, or any prose content. Also use it when he says 'write this in my style', 'draft a post', 'draft a paper', 'help me write', or asks for any written content that should sound like him. If Christian is asking you to produce written text of any kind, consult this skill first."
+description: "Christian Garbin's personal writing style guide for both blog posts and academic papers. Use this skill whenever Christian asks you to write anything — blog posts, articles, explanations, tutorials, documentation, academic papers, literature reviews, systematic reviews, conference papers, journal submissions, abstracts, or any prose content. Also use it when he says 'write this in my style', 'draft a post', 'draft a paper', 'help me write', or asks for any written content that should sound like him. If Christian is asking you to produce written text of any kind, consult this skill first. Also trigger when writing prose into files: docstrings, READMEs, design docs, commit bodies, multi-sentence comments."
 ---
 
 # Christian Garbin's Writing Style
