@@ -1,13 +1,13 @@
 ---
 name: christian-writing-style
-description: "Christian Garbin's personal writing style guide for both blog posts and academic papers. Use this skill whenever Christian asks you to write anything — blog posts, articles, explanations, tutorials, documentation, academic papers, literature reviews, systematic reviews, conference papers, journal submissions, abstracts, or any prose content. Also use it when he says 'write this in my style', 'draft a post', 'draft a paper', 'help me write', or asks for any written content that should sound like him. If Christian is asking you to produce written text of any kind, consult this skill first. Also trigger when writing prose into files: docstrings, READMEs, design docs, commit bodies, multi-sentence comments."
+description: "Christian Garbin's personal writing style guide for both blog posts and academic papers. Use this skill whenever Christian asks you to write anything, including blog posts, articles, explanations, tutorials, documentation, academic papers, literature reviews, systematic reviews, conference papers, journal submissions, abstracts, or any prose content. Also use it when he says 'write this in my style', 'draft a post', 'draft a paper', 'help me write', or asks for any written content that should sound like him. If Christian is asking you to produce written text of any kind, consult this skill first. Also trigger when writing prose into files: docstrings, READMEs, design docs, commit bodies, multi-sentence comments."
 ---
 
 # Christian Garbin's Writing Style
 
 This skill captures Christian's voice and writing patterns, distilled from his blog (cgarbin.github.io) and his published academic papers in journals including Radiology: Artificial Intelligence, Springer Multimedia Tools and Applications, Computer Methods and Programs in Biomedicine, and IEEE Potentials. When writing for Christian, internalize these patterns so the output reads as if he wrote it himself.
 
-Christian writes in two registers — **blog/informal** and **academic/formal** — but the underlying voice is the same person. The register should be chosen based on what he's asking for. If it's unclear, ask.
+Christian writes in two registers, **blog/informal** and **academic/formal**, but the underlying voice is the same person. The register should be chosen based on what he's asking for. If it's unclear, ask.
 
 ---
 
@@ -20,20 +20,20 @@ These qualities are present in everything Christian writes, regardless of regist
 Christian is a senior software engineer with a PhD-level research background. His writing reflects someone who genuinely enjoys understanding how things work and cares about getting the details right. He is:
 
 - **Measured and precise.** He avoids hype and overstatement. He'd rather undersell a finding with accurate hedging than overclaim. In his blog: "under these specific circumstances, for this specific application, AI has performed well." In his papers: "the results suggest" rather than "the results prove."
-- **Honest about limitations.** Every blog post acknowledges what it doesn't cover. Every paper has a thorough limitations section. He treats limitations not as a checkbox obligation but as a genuine contribution — helping readers understand the boundaries of what was found.
+- **Honest about limitations.** Every blog post acknowledges what it doesn't cover. Every paper has a thorough limitations section. He treats limitations not as a checkbox obligation but as a genuine contribution, helping readers understand the boundaries of what was found.
 - **Research-grounded.** In blog posts, he cites academic papers. In academic papers, he provides comprehensive literature reviews. He never asserts without evidence.
 - **Practical.** Even his most theoretical work connects back to real-world implications. His systematic reviews end with guidance for practitioners. His blog experiments include runnable code.
-- **Organized.** He uses clear structure — sections with descriptive headers, tables for comparison, progressive disclosure from simple to complex. He thinks about the reader's cognitive load.
+- **Organized.** He uses clear structure: sections with descriptive headers, tables for comparison, progressive disclosure from simple to complex. He thinks about the reader's cognitive load.
 
 ### Craft Principles (from Steven Pinker's *The Sense of Style*)
 
-Christian follows the principles in Pinker's *The Sense of Style*. These apply across both registers and should guide all prose decisions. They are craft principles that shape *how* sentences are built — they don't change *what* Christian sounds like.
+Christian follows the principles in Pinker's *The Sense of Style*. These apply across both registers and should guide all prose decisions. They are craft principles that shape *how* sentences are built. They don't change *what* Christian sounds like.
 
-**Write in classic style.** The writer sees something in the world and directs the reader's gaze to it. The prose is a window onto the subject, not a display of the writer's sophistication. This means: orient the reader toward the thing being discussed, not toward the act of discussing it. Avoid metaconcepts — don't write "This section discusses the approach we took" when you can write "We approached the problem by..." Don't write "It is important to note that X" when you can just state X. Show the reader the thing itself.
+**Write in classic style.** The writer sees something in the world and directs the reader's gaze to it. The prose is a window onto the subject, not a display of the writer's sophistication. This means: orient the reader toward the thing being discussed, not toward the act of discussing it. Avoid metaconcepts. Don't write "This section discusses the approach we took" when you can write "We approached the problem by..." Don't write "It is important to note that X" when you can just state X. Show the reader the thing itself.
 
-**Fight the curse of knowledge.** The writer knows things the reader doesn't, and the biggest threat to clear writing is forgetting that. This manifests as unexplained jargon, skipped logical steps, and abstractions where examples are needed. The antidote: when introducing a concept, briefly anchor it in something concrete before going abstract. Christian already does this naturally — he explains "units" vs. "neurons," he walks through Shapley values with an employee profit-sharing analogy. Keep doing this.
+**Fight the curse of knowledge.** The writer knows things the reader doesn't, and the biggest threat to clear writing is forgetting that. This manifests as unexplained jargon, skipped logical steps, and abstractions where examples are needed. The antidote: when introducing a concept, briefly anchor it in something concrete before going abstract. Christian already does this naturally. He explains "units" vs. "neurons," he walks through Shapley values with an employee profit-sharing analogy. Keep doing this. When evaluating a term, ask two questions. First, is it specialist shorthand used once without definition? Second, does a plain-language equivalent of similar length exist? If yes to either, prefer the plain term. The specialist term stays only when it is load-bearing, standard in the target audience, or rewording would introduce inaccuracy.
 
-**Keep prose vigorous — avoid zombie nouns.** Prefer verbs over nominalizations. Nominalizations turn actions into abstract things and drain the life from sentences:
+**Keep prose vigorous. Avoid zombie nouns.** Prefer verbs over nominalizations. Nominalizations turn actions into abstract things and drain the life from sentences:
 - "The identification of the factors" → "We identified the factors"
 - "The utilization of deep learning for the classification of images" → "We used deep learning to classify images"
 - "An investigation was conducted" → "We investigated"
@@ -44,17 +44,17 @@ This matters even in academic writing. Formal doesn't mean lifeless. Christian's
 - Good: "The neural network classified 65 out of 67 pictures correctly. This 97% accuracy is good for a relatively small network." (starts with the familiar network, ends with the new evaluation)
 - Weak: "A relatively good accuracy for a small network, 97%, was achieved when 65 of 67 pictures were classified correctly." (buries the familiar topic)
 
-**Manage the reader's cognitive load with syntax.** Keep the main subject and verb close together. Don't stack up long modifying phrases before the verb — the reader has to hold all of that in memory before they learn what the sentence is doing. When a sentence has a heavy qualifying phrase, put it at the end rather than wedging it between subject and verb:
+**Manage the reader's cognitive load with syntax.** Keep the main subject and verb close together. Don't stack up long modifying phrases before the verb. The reader has to hold all of that in memory before they learn what the sentence is doing. When a sentence has a heavy qualifying phrase, put it at the end rather than wedging it between subject and verb:
 - Heavy in the middle (hard to parse): "The model, which was trained on 10,000 images from three hospitals using a ResNet-50 architecture with data augmentation, achieved 94% accuracy."
 - Heavy at the end (easier): "The model achieved 94% accuracy after training on 10,000 images from three hospitals, using a ResNet-50 architecture with data augmentation."
 
-**Be concrete and specific.** Prefer concrete nouns and specific examples over abstract generalizations. Instead of "various factors can affect model performance," name the factors. Instead of "the system had issues," say what went wrong. This is one of Christian's strengths — he illustrates abstract points with misspelled school-zone signs, misclassified ducks, and X-rays with pen marks.
+**Be concrete and specific.** Prefer concrete nouns and specific examples over abstract generalizations. Instead of "various factors can affect model performance," name the factors. Instead of "the system had issues," say what went wrong. This is one of Christian's strengths. He illustrates abstract points with misspelled school-zone signs, misclassified ducks, and X-rays with pen marks.
 
 **Avoid hedging pileups.** Academic writing requires hedging, but don't stack hedges. One hedge per claim is enough:
 - Good: "The results suggest that larger training sets improve generalization."
 - Pileup: "It would seem to appear that the results might possibly suggest that larger training sets could potentially improve generalization."
 
-Christian hedges precisely — he picks the right hedge ("suggest," "may indicate," "one possible explanation") and uses it once.
+Christian hedges precisely. He picks the right hedge ("suggest," "may indicate," "one possible explanation") and uses it once.
 
 ### What to Avoid (Both Registers)
 
@@ -70,9 +70,11 @@ These patterns are never Christian's style, in any context:
 - Vague hand-waving instead of concrete evidence
 - Nominalizations where a verb would do ("the implementation of" → "we implemented")
 - Metacommentary that delays the actual content ("It is worth noting that..." / "It is important to mention...")
-- Hedging pileups — one hedge per claim, placed precisely
+- Hedging pileups. One hedge per claim, placed precisely.
 - Passive voice when the agent matters and active voice would be clearer
 - Long left-branching phrases that separate subject from verb
+- Em-dashes in Christian's own writing. Use periods or parentheses instead, unless Christian uses an em-dash first in the conversation.
+- Semicolons in prose. Prefer period-separated sentences (semicolons in pseudo-code, tables, or structural markup are fine).
 
 ---
 
@@ -86,7 +88,7 @@ Christian writes his blog like a senior engineer explaining something to a smart
 
 - **Conversational but substantive.** He doesn't dumb things down, but he also doesn't hide behind jargon. He'll use a technical term and then immediately explain it in plain language.
 - **Inclusive.** He uses "we" and "let's" frequently, bringing the reader along as a partner in exploration. ("Let's explore what 'learning' means for machine learning." / "We will start with a notebook that is not wrong but is not well written.")
-- **Intellectually humble.** He openly acknowledges when his own understanding has limits. ("well, it takes me some effort — your mileage may vary" / "The honest answer is 'we don't know'.")
+- **Intellectually humble.** He openly acknowledges when his own understanding has limits. ("well, it takes me some effort - your mileage may vary" / "The honest answer is 'we don't know'.")
 - **Gently humorous.** He uses parenthetical asides for dry wit:
   - "(well, it takes me some effort - your mileage may vary)"
   - "(presumably, the human would chuckle, then - hopefully - slow down)"
@@ -117,7 +119,7 @@ He uses rhetorical questions as transitions: "Should we be concerned that deep '
 - Italics for technical terms on first use and for emphasis
 - Bold sparingly, for key takeaways. Sometimes bold+italic for maximum emphasis: ***the neural network does not understand the concept of "square".***
 - Blockquotes with proper attribution for direct citations
-- Inline links, generously — to papers, repos, tools, concepts
+- Inline links to papers, repos, tools, concepts, used generously
 - Notice blocks (`{: .notice}`) for key insights or caveats
 - Code blocks with brief explanations
 - Images with alt text and captions explaining what to notice
@@ -144,7 +146,7 @@ Use this register for journal papers, conference papers, systematic reviews, lit
 In academic writing, Christian shifts to a more formal register while retaining his core qualities of clarity, honesty, and practical grounding. The humor and parenthetical asides disappear, but the commitment to making complex topics accessible remains.
 
 - **Formal but clear.** He writes precisely without becoming opaque. He favors direct, declarative sentences even in formal contexts. He avoids unnecessarily complex sentence structures or passive voice where active voice is clearer.
-- **"We" throughout.** He uses "we" consistently (even in single-author work), never "I." This is the formal academic "we" — less warm than the blog "let's explore together" but still collaborative in tone.
+- **"We" throughout.** He uses "we" consistently (even in single-author work), never "I." This is the formal academic "we," less warm than the blog "let's explore together" but still collaborative in tone.
 - **Carefully hedged.** He uses precise hedging: "the results suggest," "this may indicate," "one possible explanation is." He distinguishes clearly between what the data shows, what it suggests, and what remains uncertain.
 - **Evidence-dense.** Citation density is much higher than the blog. Nearly every substantive claim is backed by a reference. In systematic reviews, he cites dozens to hundreds of sources.
 
@@ -163,28 +165,28 @@ Characteristic patterns:
 Christian follows standard academic structure but organizes within it carefully:
 
 **For empirical/experimental papers** (e.g., Dropout vs. Batch Normalization, Patient Localization):
-1. Introduction — problem statement, motivation, contribution summary
-2. Related Work / Background — structured review of prior work
-3. Methods — experimental setup, datasets, models, training details, evaluation metrics
-4. Results — presented with specific numbers, tables, and figures
-5. Discussion — interpretation, comparison with prior work, practical implications
-6. Limitations — thorough and honest, not perfunctory
-7. Conclusion and Future Work — what was found, what comes next
+1. Introduction: problem statement, motivation, contribution summary
+2. Related Work / Background: structured review of prior work
+3. Methods: experimental setup, datasets, models, training details, evaluation metrics
+4. Results: presented with specific numbers, tables, and figures
+5. Discussion: interpretation, comparison with prior work, practical implications
+6. Limitations: thorough and honest, not perfunctory
+7. Conclusion and Future Work: what was found, what comes next
 
 **For systematic reviews and surveys** (e.g., Opioid Use Disorder review, RSNA Radiology AI paper):
-1. Introduction — the gap this review fills, clear research questions
-2. Methods — search strategy, inclusion/exclusion criteria, PRISMA or equivalent methodology
-3. Results — organized thematically or by research question, with summary tables
-4. Discussion — synthesis across studies, patterns, contradictions, implications for practice
-5. Limitations — of the reviewed studies AND of the review itself
-6. Conclusion — key takeaways and concrete recommendations
+1. Introduction: the gap this review fills, clear research questions
+2. Methods: search strategy, inclusion/exclusion criteria, PRISMA or equivalent methodology
+3. Results: organized thematically or by research question, with summary tables
+4. Discussion: synthesis across studies, patterns, contradictions, implications for practice
+5. Limitations: of the reviewed studies AND of the review itself
+6. Conclusion: key takeaways and concrete recommendations
 
 **For tutorial/overview papers** (e.g., IEEE Potentials edge computing):
-1. Introduction — accessible framing of the problem
-2. Background — concepts explained for a broader audience
-3. Core content — progressive, building from foundations
-4. Practical considerations — real-world deployment, cost, tradeoffs
-5. Conclusion — summary of key points and future directions
+1. Introduction: accessible framing of the problem
+2. Background: concepts explained for a broader audience
+3. Core content: progressive, building from foundations
+4. Practical considerations: real-world deployment, cost, tradeoffs
+5. Conclusion: summary of key points and future directions
 
 ### Tables and Figures (Academic)
 
@@ -211,11 +213,11 @@ Even in his most formal work, Christian connects findings to practice. This show
 
 ### Citations and References (Academic)
 
-- Dense citation throughout — nearly every substantive paragraph cites at least one source
+- Dense citation throughout. Nearly every substantive paragraph cites at least one source.
 - He synthesizes across sources rather than just listing them. He'll describe what multiple papers agree on, where they diverge, and what the overall picture suggests.
 - He cites primary sources (the original papers) rather than secondary summaries
 - References are formatted according to the target journal's style
-- When drafting in Obsidian markdown, use Pandoc citation syntax: `[@smith2023temporal]` for standard citations, `[@smith2023temporal, p. 42]` for page references, `[@smith2023temporal; @jones2022ehr]` for multiple sources, `[-@key]` to suppress the author name. These are resolved at compile time by Pandoc — never write out formatted references inline.
+- When drafting in Obsidian markdown, use Pandoc citation syntax: `[@smith2023temporal]` for standard citations, `[@smith2023temporal, p. 42]` for page references, `[@smith2023temporal; @jones2022ehr]` for multiple sources, `[-@key]` to suppress the author name. These are resolved at compile time by Pandoc. Never write out formatted references inline.
 
 ### Limitations Sections
 
@@ -225,7 +227,7 @@ This deserves special attention because it's a hallmark of Christian's academic 
 - In systematic reviews, he separately discusses limitations of the reviewed studies vs. limitations of the review process
 - He explains the practical impact of each limitation, not just its existence
 - He's direct about what the work cannot claim: "Our study has some limitations that should be acknowledged..."
-- This honesty is a feature, not a weakness — it builds credibility
+- This honesty is a feature, not a weakness. It builds credibility.
 
 ---
 
@@ -250,7 +252,7 @@ When Christian asks you to write something, determine the register based on cont
 
 ### Blending the Registers
 
-Some contexts call for something in between. For instance, an IEEE Potentials article is published in a journal but written for students — more accessible than a Springer paper but more structured than a blog post. In these cases:
+Some contexts call for something in between. For instance, an IEEE Potentials article is published in a journal but written for students, more accessible than a Springer paper but more structured than a blog post. In these cases:
 
 - Use the academic structure (clear sections, proper citations)
 - But lean toward the blog tone (more accessible language, occasional brief asides, less hedging)
