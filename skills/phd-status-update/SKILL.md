@@ -33,9 +33,10 @@ Key file paths:
 
 **Execution plan** contains:
 
-- A **progress log** with dated entries. Add a new entry when a phase completed, a phase slipped, or a deliverable in the writing plan was checked off. Each entry should be 2-4 sentences summarizing what changed at the phase level.
+- A **Status section** at the top with current phase, last milestone, in-progress work, and next gate. Update these lines when the phase advances, a milestone is committed, or the in-progress or gate items shift. No slip tracking here. That lives in the progress log.
+- A **progress log** at the bottom with dated entries. Add a new entry when a phase completed, a phase slipped, or a deliverable in the writing plan was checked off. Each entry is a `### YYYY-MM-DD: short summary` section followed by 2-4 sentences of prose (split with `####` subheadings if it grows). Entries are chronological, oldest first.
 - **Phase headers** with date ranges. If a phase completed or slipped, update the dates and status markers.
-- A **"Next concrete action"** section at the bottom. Update this to reflect what's actually next, based on recent daily notes and what was completed.
+- A **"Next concrete action"** section. Update this to reflect what's actually next, based on recent daily notes and what was completed.
 - A **Gantt chart** (Mermaid). Update if phase dates shifted.
 - A **phase table** with dates. Update if dates shifted.
 
