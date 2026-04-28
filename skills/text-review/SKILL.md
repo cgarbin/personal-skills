@@ -82,6 +82,7 @@ Before finalizing the review, run a mechanical pass for patterns that judgment a
 
 - Em-dashes in prose (Christian does not use them in his own writing).
 - Semicolons in prose (pseudo-code or table-structure semicolons excepted).
+- British spelling (*analyse*, *colour*, *behaviour*, *modelling*, *-ise* endings, *centre*, *defence*). Christian writes in US English. Flag every occurrence and rewrite in US spelling.
 - Nominalization markers at sentence start (-tion, -ment, -ance when the sentence could start with a verb).
 - Filler openers and single-word paragraph leads ("Interpretation.", "Interestingly,", "Note that", "It is worth noting").
 - Inconsistent capitalization or spelling of recurring technical terms.

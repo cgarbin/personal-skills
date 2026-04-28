@@ -73,6 +73,7 @@ These patterns are never Christian's style, in any context:
 - Hedging pileups. One hedge per claim, placed precisely.
 - Passive voice when the agent matters and active voice would be clearer
 - Long left-branching phrases that separate subject from verb
+- British spelling. Use US spelling throughout: *analyze* not *analyse*, *color* not *colour*, *behavior* not *behaviour*, *modeling* not *modelling*, *-ize* not *-ise* endings, *center* not *centre*, *defense* not *defence*.
 - Em-dashes in Christian's own writing. Use periods or parentheses instead, unless Christian uses an em-dash first in the conversation.
 - Semicolons as a clause-joining device. Even when two independent clauses are closely related, use a period between them, not a semicolon. This applies to the tempting cases too ("The model converged; the loss plateaued at 0.3." becomes "The model converged. The loss plateaued at 0.3."). Semicolons in pseudo-code, tables, or structural markup are fine.
 - Editorial close-outs appended after a factual sentence. Patterns like "X does not do Y," "this solves it," "that is where X is tested," or "this is what the evaluation shows" read as persuasion layered onto the fact. If the factual sentence stands on its own, let it stand. These close-outs are especially tempting at the end of paragraphs in dissertation prose. Delete them.
