@@ -13,12 +13,6 @@ description: >
 
 You are updating the dissertation's living planning documents to reflect recent work. Your job is to record what happened and fix anything that's stale. You are not proposing next steps, suggesting priorities, or making strategic recommendations unless explicitly asked.
 
-## Why this matters
-
-Christian tracks his PhD progress across several interconnected documents. When one gets updated (say, a task is completed in the code repo), others may become stale (the execution plan still says that task is pending). Stale documents mislead future sessions and waste time. This skill keeps the documents consistent.
-
-Planning documents drift *over time*; snapshots drift *at creation* and are never corrected. Snapshots therefore need more upfront rigor than planning docs, not less.
-
 ## What to update
 
 Two layers, in order of priority.
@@ -62,35 +56,41 @@ All prose written or edited by this skill (planning docs and snapshots) must fol
 
 ## How to do the update
 
-1. **Read first.** Read the most recent snapshot in `PhD dissertation - temporal EHR summary/Supporting material/Snapshots/` to establish the baseline — its date tells you how far back to look. Read daily notes since that date, the execution plan, and the repository map. Check git logs from all repos listed in the repository map using `git log --oneline --since=<snapshot date>` for each repo. Don't hardcode repo paths -- read the repository map at runtime.
-2. **Draft changes.** For each document you plan to modify, describe what you'll change and why. Show this to Christian before editing.
-3. **Apply edits.** Use the Edit tool. Make targeted changes, not wholesale rewrites.
-4. **Show the diff.** After editing, run `git diff` in the phd-dissertation-writing folder so Christian can review what changed. Do not commit -- Christian will decide when to commit.
+1. **Read first.** Read the most recent snapshot in `PhD dissertation - temporal EHR summary/Supporting material/Snapshots/` to establish the baseline. Its date tells you how far back to look. Then read:
+   - Daily notes since that date.
+   - The execution plan.
+   - The repository map (read at runtime, do not hardcode repo paths).
+   - Git logs for each repo in the map: `git log --oneline --since=<snapshot date>`.
+2. **Draft changes.** For each document, describe what you'll change and why. Show Christian before editing. Auto mode does not override this gate.
+3. **Apply edits.** Use the Edit tool. Targeted changes, not wholesale rewrites.
+4. **Show the diff.** After editing, run `git diff` in the phd-dissertation-writing folder so Christian can review. Do not commit. Christian decides when to commit.
 
 ## Creating snapshots
 
 Only create a snapshot when the request explicitly says so -- phrases like "update and snapshot" or "also create a snapshot", or an automated trigger whose prompt includes "snapshot". Absent that, skip this section. Save to `PhD dissertation - temporal EHR summary/Supporting material/Snapshots/Progress assessment YYYY-MM-DD.md`.
 
+Snapshots are frozen at creation. Mistakes stay forever, so apply more rigor up front than for planning docs.
+
 ### Required sections
 
 1. **Warning banner** (the standard `> [!warning]` block used by existing snapshots).
-2. **What got done** — grouped by phase or theme, not chronology.
-3. **Timeline assessment** — planned vs. actual dates, status markers (see legend below).
-4. **What's working** — concrete, quantified where possible.
-5. **Risks to watch** — each risk names (a) what specifically triggered it this period and (b) a concrete forcing function, not just a description.
-6. **What's next** — *summarized from the execution plan*, not invented. This is the one exception to "don't propose next steps": a snapshot states the plan-of-record, it does not recommend deviations from it.
-7. **Stale documents** — docs that need refresh before the next planning cycle.
+2. **What got done**: grouped by phase or theme, not chronology.
+3. **Timeline assessment**: planned vs. actual dates, status markers (see legend below).
+4. **What's working**: concrete, quantified where possible.
+5. **Risks to watch**: each risk names (a) what specifically triggered it this period and (b) a concrete forcing function, not just a description.
+6. **What's next**: *summarized from the execution plan*, not invented. This is the one exception to "don't propose next steps". A snapshot states the plan-of-record, it does not recommend deviations from it.
+7. **Stale documents**: docs that need refresh before the next planning cycle.
 
 ### Status-marker legend
 
 Use these consistently in timeline tables:
 
-- ✅ — on time and complete
-- ⚠️ — slipped but complete
-- 🚧 — in progress
-- ❌ — blocked
+- ✅: on time and complete
+- ⚠️: slipped but complete
+- 🚧: in progress
+- ❌: blocked
 
-Never combine ✅ with a slip. "✅ +4 days" is a mixed signal; use ⚠️ instead.
+Never combine ✅ with a slip. "✅ +4 days" is a mixed signal. Use ⚠️ instead.
 
 ### Internal-consistency checklist
 
@@ -99,7 +99,7 @@ Run this before writing the snapshot to disk. Every item must pass.
 - [ ] **No contradictory claims across sections.** If one section says results exist, another can't say "no results have been produced" without qualification.
 - [ ] **Every filepath and repo reference matches reality described elsewhere in the doc.** If a repo split is described, earlier references to the old path must be corrected or annotated.
 - [ ] **Every source citation is a `[[wikilink]]` or a backticked path.** No bare prose references ("the model selection document"). Mirrors Christian's general writing rule.
-- [ ] **Numeric claims are either precise per-item or aggregated with a single hedge — never mixed.** "Apr 2 (6), Apr 3 (4), Apr 5 (4-5), Apr 8 (varied)" is fake precision. Either commit to integers or drop the breakdown and cite the daily notes.
+- [ ] **Numeric claims are either precise per-item or aggregated with a single hedge, never mixed.** "Apr 2 (6), Apr 3 (4), Apr 5 (4-5), Apr 8 (varied)" is fake precision. Either commit to integers or drop the breakdown and cite the daily notes.
 - [ ] **Headline claims appear in one section.** If "~1 week behind" is the headline, other sections reference it rather than restate it.
 - [ ] **No adjacent softening of risks.** If a risk is named as active, the "What's working" section cannot praise the behavior that triggered it. Pick one framing.
 - [ ] **No vague praise.** "Paying forward," "unusual discipline," "strong habit," "held up well" do no work. Replace with quantified or concrete claims, or cut the sentence.
@@ -111,12 +111,11 @@ Run this before writing the snapshot to disk. Every item must pass.
 1. **Gather inputs.** Snapshot baseline, daily notes since then, planning docs, repo git logs. Same as the planning-doc update.
 2. **Draft sections.** Write against the required-sections list above.
 3. **Run the internal-consistency checklist.** Fix everything that fails before showing the draft.
-4. **Show Christian the draft before writing to disk.** Do not commit.
+4. **Show Christian the draft before writing to disk.** Auto mode does not override this gate. Do not commit.
 
 ## What NOT to do
 
-- Don't propose next steps for planning docs. The daily note's "Next tasks" section is Christian's domain. (Snapshots may summarize the plan-of-record; they still don't recommend deviations.)
-- Don't create snapshots unless the request explicitly says so (interactive ask or automated trigger prompt containing "snapshot").
+- Don't propose next steps for planning docs. The daily note's "Next tasks" section is Christian's domain. Snapshots may summarize the plan-of-record but still don't recommend deviations.
 - Don't update documents in code repos. This skill only touches the dissertation-writing vault.
 - Don't rewrite sections that are still accurate just to improve wording.
 - Don't add speculative content ("this suggests we should..." or "consider whether...").

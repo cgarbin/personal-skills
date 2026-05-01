@@ -17,17 +17,15 @@ Load the `christian-writing-style` skill before proceeding. The summary must mat
 
 ### Step 1: Determine the target date
 
-Determine today's date by running `date "+%Y-%m-%d"` (macOS). Do not rely on session metadata or context-injected dates, as these may be stale.
+Run `date "+%Y-%m-%d"` (macOS) for today. Do not rely on session metadata or context-injected dates.
 
-If the user provided a date as an argument (e.g., `/phd-close-daily-note yesterday`, `/phd-close-daily-note 2026-03-15`), use that date. Otherwise, default to yesterday.
+Resolve the target date:
 
-Date interpretation:
+- No argument or "yesterday": day before today.
+- "today": today.
+- Specific date ("March 15", "2026-03-15"): that date.
 
-- "today": use the current date
-- "yesterday" or no date specified: use the day before the current date
-- A specific date like "March 15" or "2026-03-15": use that date
-
-Convert to `YYYY-MM-DD` format. If the date is in the future, tell the user and stop. Confirm with the user before proceeding if there is any ambiguity (e.g., "last Friday" when you're unsure which Friday).
+Convert to `YYYY-MM-DD`. If the date is in the future, tell the user and stop. If ambiguous ("last Friday" with two plausible Fridays), confirm before proceeding.
 
 ### Step 2: Find the daily note
 
@@ -50,9 +48,13 @@ Extract:
 
 ### Step 4: Gather git commits across all repositories
 
-Read the repository map at `/Users/cgarbin/projects/phd-dissertation-writing/PhD dissertation - temporal EHR summary/Supporting material/Repository map.md` to get the current list of repositories. All repositories live under `~/projects/`. Extract the repository names from the `##` headings where the heading name corresponds to a directory under `~/projects/`. Skip headings that are not repositories (e.g., `## Shared patterns`).
+Read the repository map at `/Users/cgarbin/projects/phd-dissertation-writing/PhD dissertation - temporal EHR summary/Supporting material/Repository map.md`. Extract repos:
 
-For each candidate repo, verify the directory exists on disk before running git log. If a directory is missing, warn the user (mention which one) but continue with the remaining repos. If fewer than three valid repos are found after verification, something is wrong with the repository map or the paths. Stop and tell the user.
+- All repos live under `~/projects/`.
+- Repo names come from `##` headings whose name corresponds to a directory under `~/projects/`.
+- Skip headings that are not repositories (e.g., `## Shared patterns`).
+
+Verify each candidate directory exists before running git log. If a directory is missing, warn the user (mention which one) and continue with the rest. If fewer than three valid repos remain, something is wrong with the map or the paths. Stop and tell the user.
 
 For each repo, run:
 ```bash
