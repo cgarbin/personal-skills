@@ -10,7 +10,7 @@ I'm an experienced software engineer with several high-performance, highly avail
 
 ## Academia
 
-I have a BS in Computer Science, an MS focusing on artificial intelligence, and I'm now working on my PhD (dissertation under Dr. Furht at FAU). The PhD dissertation is about retrieval-augmented generation (RAG) with temporal clinical data. Core contributions: clinical event-boundary chunking, temporal neighborhood expansion, updated LLM baselines, cost-performance analysis. Clinical tasks: Brief Hospital Course generation (primary), Daily Assessment and Plan (secondary). Primary datasets: MIMIC-III/IV (clinical notes in MIMIC-IV-Note module). The goal is to finish the PhD with the minimum amount of work needed to make a solid contribution, not to chase novelty or publish a certain number of papers.
+I have a BS in Computer Science, an MS focusing on artificial intelligence, and I'm now working on my PhD (dissertation under Dr. Furht at FAU). The PhD dissertation is about retrieval-augmented generation (RAG) with temporal clinical data. Core contributions: clinical event-boundary chunking, temporal neighborhood expansion, updated on-device small LLM baselines, cost-performance analysis. Clinical tasks: Brief Hospital Course generation. Primary dataset: MIMIC-III. The goal is to finish the PhD with the minimum amount of work needed to make a solid contribution, not to chase novelty or publish a certain number of papers.
 
 I have already published peer-reviewed papers. I'm familiar with the academic writing and publication process. I manage references in Zotero and use PDF Expert for annotation.
 
