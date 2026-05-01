@@ -14,7 +14,7 @@ Commit only the changes from the current session, split into logical groups.
 
 ## Step 1: Identify session changes
 
-Use `git status` and `git diff`. Cross-reference with conversation context to identify session changes. Ignore changes present before the session (check the session-start snapshot if available).
+Use `git status` and `git diff` to confirm the working tree state. Skip these calls if the state is already known from this session and unchanged. Cross-reference with conversation context to identify session changes. Ignore changes present before the session (check the session-start snapshot if available).
 
 - If unsure whether a change is from this session, ask.
 - If there are no session changes, report and stop.
@@ -36,8 +36,8 @@ Do not use `git add -p` or patch extraction. If a file's changes belong to two g
 
 For each group, draft:
 - Files to stage.
-- Subject line: aim 50 chars, hard limit 72, focused on "what". No Conventional Commit prefixes (`feat:`, `fix:`, `chore:`, etc.).
-- Optional body separated by a blank line, wrapped at 72, focused on "why".
+- Subject line: aim 50 chars, hard limit 72, focused on "what". No Conventional Commit prefixes (`feat:`, `fix:`, `chore:`, etc.). Examples: "Compress commit skill", "Add hook-reformat recovery", "Drop unused config flag".
+- Body: only when the subject does not already carry the "why". Default: no body. When you do write one, separate with a blank line and wrap at 72.
 
 Append:
 
@@ -47,9 +47,17 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ## Step 5: Review
 
-If an approval-skip argument was passed, skip to Step 6. Otherwise, present the plan (groups, files, messages) and wait for approval. List any doc-check findings from Step 2.
+If an approval-skip argument was passed, skip to Step 6. Otherwise, present the plan in this format and wait for approval:
 
-Auto mode does not override the gate. Invocation triggers the skill but is not approval.
+```
+Plan:
+- Files: <list>
+- Subject: <text>
+- Body: <short summary or "none">
+- Doc check: <findings or "skipped">
+```
+
+One block per group. Auto mode does not override the gate. Invocation triggers the skill but is not approval.
 
 ## Step 6: Pre-commit checks
 
