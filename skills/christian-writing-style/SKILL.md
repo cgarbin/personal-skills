@@ -1,11 +1,11 @@
 ---
 name: christian-writing-style
-description: Christian Garbin's writing style for blog posts, academic papers, and any prose. Use when writing or drafting in his voice, including blog posts, papers, READMEs, docstrings, and multi-sentence comments. Triggers include "write this in my style", "draft a post", "draft a paper", "help me write".
+description: Christian Garbin's writing style for any prose he authors. Use when writing or editing prose under his name in any document or code context, including any markdown (.md) file (READMEs, ADRs, project documentation), docstrings, code comments (single-line and multi-line), commit messages, PR descriptions, and emails. Triggers include "write this in my style", "help me write", "review my draft", editing or creating any .md file, or writing or editing comments and docstrings in code.
 ---
 
 # Christian Garbin's Writing Style
 
-Two registers: **blog/informal** and **academic/formal**. Same voice, different formality. Choose based on context. If unclear, ask.
+Two registers for substantive prose, **blog/informal** and **academic/formal**, plus a **short snippets** case where only the common foundation applies. Same voice, different formality. Choose based on context. If unclear, ask.
 
 ---
 
@@ -71,6 +71,25 @@ Active voice even in academic writing. Passive only when the agent is unknown or
 - Framing-deck vocabulary ("stack," "arm," "frontier," "axes," "lever"). Name the concrete thing instead. "Our retrieval stack" → "our retrieval pipeline" or the actual components. "The temporal axis" → "time of note creation" or whatever the specific variable is.
 - "Downstream" as shorthand for "later" or "the next stage." Name the concrete next step. "Downstream analysis" → "Phase 2 analysis," "the audit step," "the next step."
 - "Land" as a verb for where files, data, or values end up ("files land at X," "binaries land in $DIR"). Stuffy. Use "go into," "end up at," "is written to," "sits in," or rephrase. Watch for adjacent overuse: "lands cleanly," "land in the same place."
+
+---
+
+## Short snippets
+
+For short in-code prose where the two registers below do not fit: single-line comments, one-line docstrings, commit subject lines, PR titles, log messages, error strings, short type or field descriptions.
+
+For these, the **common foundation is the entire skill**. There is no opening hook, no roadmap, no progressive disclosure, no hedging strategy to choose, because there is no room for any of it. What still applies, even in one line:
+
+- No semicolons as clause-joiners. Use a period or rephrase.
+- No em-dashes. Use periods or parentheses.
+- US spelling (*analyze*, *behavior*, *modeling*).
+- No zombie nouns. "Compute the average" beats "perform the computation of the average."
+- Concrete and specific. Name the thing, not "the value" or "the data."
+- No filler ("note that...", "it is worth mentioning that..."). Just state it.
+- No marketing words ("simply", "easily", "blazing fast").
+- Explain the *why* or the non-obvious *what*, not the *how*. "Cache key includes tenant id to avoid cross-tenant reuse" beats "set the cache key."
+
+When the snippet grows past two or three sentences (a multi-paragraph docstring, a long PR description, a commit body that argues for a decision), switch to the blog/informal register.
 
 ---
 
@@ -224,6 +243,13 @@ A hallmark of his academic writing.
 ---
 
 ## Choosing the register
+
+**Short snippets:**
+- Single-line comments, one-line docstrings.
+- Commit subject lines, PR titles.
+- Log messages, error strings, short field or type descriptions.
+- Anything with room for at most two or three sentences.
+- Apply only the common foundation. No register-specific structure.
 
 **Blog/informal:**
 - Blog post, tutorial, explanation.
