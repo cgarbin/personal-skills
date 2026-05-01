@@ -69,6 +69,8 @@ Active voice even in academic writing. Passive only when the agent is unknown or
 - Semicolons as a clause-joining device. Use a period between independent clauses, even closely related ones ("The model converged. The loss plateaued at 0.3."). Semicolons in pseudo-code or table structure are fine.
 - Editorial close-outs after factual sentences ("X does not do Y," "this solves it," "that is what the evaluation shows"). If the factual sentence stands on its own, let it stand. Especially tempting at the end of paragraphs in dissertation prose.
 - Framing-deck vocabulary ("stack," "arm," "frontier," "axes," "lever"). Name the concrete thing instead. "Our retrieval stack" → "our retrieval pipeline" or the actual components. "The temporal axis" → "time of note creation" or whatever the specific variable is.
+- "Downstream" as shorthand for "later" or "the next stage." Name the concrete next step. "Downstream analysis" → "Phase 2 analysis," "the audit step," "the next step."
+- "Land" as a verb for where files, data, or values end up ("files land at X," "binaries land in $DIR"). Stuffy. Use "go into," "end up at," "is written to," "sits in," or rephrase. Watch for adjacent overuse: "lands cleanly," "land in the same place."
 
 ---
 
