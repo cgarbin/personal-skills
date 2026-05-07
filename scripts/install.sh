@@ -3,14 +3,20 @@
 # skills directory, and symlink the global CLAUDE.md into ~/.claude/.
 #
 # Usage:
-#   ./scripts/install.sh                      # auto-detect repo path
-#   ./scripts/install.sh /path/to/repo        # explicit repo path
+#   ./scripts/install.sh                            # auto-detect paths
+#   ./scripts/install.sh /path/to/repo              # explicit repo path
 #   ./scripts/install.sh --target ~/.claude/skills  # custom target dir
+#   ./scripts/install.sh --projects-root ~/work     # custom projects root
+#
+# Personal skills default to global (symlinked into TARGET_DIR). A skill
+# becomes project-scoped by adding a SCOPE file next to its SKILL.md
+# containing the project's directory name. Project-scoped skills are
+# symlinked into <PROJECTS_ROOT>/<project>/.claude/skills/ instead.
 #
 # The script:
 #   1. Symlinks the global CLAUDE.md from <repo>/claude-md/
-#   2. Cleans up stale personal skill symlinks (deleted skill folders)
-#   3. Symlinks personal skills from <repo>/skills/
+#   2. Cleans up stale personal skill symlinks (deleted, or rescoped)
+#   3. Symlinks personal skills from <repo>/skills/ to global or project
 #   4. Fetches external skills listed in skills.manifest (if present)
 #   5. Cleans up stale external symlinks
 #   6. Symlinks external skills from <repo>/from-others/
@@ -21,6 +27,7 @@ set -euo pipefail
 
 REPO_DIR=""
 TARGET_DIR="$HOME/.claude/skills"
+PROJECTS_ROOT=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --target)
@@ -31,13 +38,25 @@ while [[ $# -gt 0 ]]; do
             TARGET_DIR="$2"
             shift 2
             ;;
+        --projects-root)
+            if [[ $# -lt 2 ]]; then
+                echo "Error: --projects-root requires a value." >&2
+                exit 1
+            fi
+            PROJECTS_ROOT="$2"
+            shift 2
+            ;;
         -h|--help)
-            echo "Usage: $0 [REPO_DIR] [--target SKILLS_DIR]"
+            echo "Usage: $0 [REPO_DIR] [--target SKILLS_DIR] [--projects-root DIR]"
             echo ""
-            echo "  REPO_DIR       Path to the personal-skills repository."
-            echo "                 Defaults to the parent directory of this script."
-            echo "  --target       Claude skills directory to symlink into."
-            echo "                 Default: ~/.claude/skills"
+            echo "  REPO_DIR         Path to the personal-skills repository."
+            echo "                   Defaults to the parent directory of this script."
+            echo "  --target         Claude skills directory to symlink into."
+            echo "                   Default: ~/.claude/skills"
+            echo "  --projects-root  Base directory containing your projects."
+            echo "                   Project-scoped skills (those with a SCOPE file)"
+            echo "                   are symlinked into <projects-root>/<project-name>"
+            echo "                   /.claude/skills/. Default: parent of REPO_DIR."
             exit 0
             ;;
         --*)
@@ -57,15 +76,26 @@ if [[ -z "$REPO_DIR" ]]; then
     REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 fi
 
+# If no projects root given, default to the parent of the repo directory.
+if [[ -z "$PROJECTS_ROOT" ]]; then
+    PROJECTS_ROOT="$(cd "$REPO_DIR/.." && pwd)"
+fi
+
 SKILLS_SRC="$REPO_DIR/skills"
 EXTERNAL_DIR="$REPO_DIR/from-others"
 MANIFEST="$REPO_DIR/skills.manifest"
 LOCKFILE="$REPO_DIR/skills.lock"
 CLAUDE_MD_SRC="$REPO_DIR/claude-md/CLAUDE.md"
 CLAUDE_MD_TARGET="$HOME/.claude/CLAUDE.md"
+SCOPE_FILENAME="SCOPE"
 
 if [[ ! -d "$SKILLS_SRC" ]]; then
     echo "Error: skills directory not found at $SKILLS_SRC" >&2
+    exit 1
+fi
+
+if [[ ! -d "$PROJECTS_ROOT" ]]; then
+    echo "Error: projects root not found at $PROJECTS_ROOT" >&2
     exit 1
 fi
 
@@ -379,7 +409,8 @@ fetch_external_skills() {
 
 # remove_stale_personal_symlinks
 #   Removes symlinks in TARGET_DIR that point into SKILLS_SRC but whose
-#   target no longer exists (i.e. the skill folder was deleted).
+#   target either no longer exists (skill deleted) or has gained a SCOPE
+#   file (skill moved from global to project-scoped).
 remove_stale_personal_symlinks() {
     for link in "$TARGET_DIR"/*; do
         [[ -L "$link" ]] || continue
@@ -390,22 +421,135 @@ remove_stale_personal_symlinks() {
                 if [[ ! -d "$target" ]]; then
                     echo "  remove    $(basename "$link") (skill folder deleted)"
                     rm "$link"
+                elif [[ -f "${target%/}/$SCOPE_FILENAME" ]]; then
+                    echo "  remove    $(basename "$link") from global (now project-scoped)"
+                    rm "$link"
                 fi
                 ;;
         esac
     done
 }
 
+# read_scope <scope_file>
+#   Prints the first non-comment, non-blank line of the SCOPE file, trimmed.
+#   Empty/comment-only files print nothing. Trim happens inside awk so the
+#   single-pipeline command can't surface "no match" exits under pipefail,
+#   and so values containing whitespace or quotes survive intact.
+read_scope() {
+    awk '
+        !/^[[:space:]]*#/ && !/^[[:space:]]*$/ {
+            sub(/^[[:space:]]+/, "")
+            sub(/[[:space:]]+$/, "")
+            print
+            exit
+        }
+    ' "$1"
+}
+
+# project_symlink_stale_reason <target> <project_name>
+#   Prints the reason a symlink should be removed, or nothing if it is still
+#   valid for this project. Reasons: source deleted, source has no SCOPE
+#   anymore, source SCOPE points to a different project.
+project_symlink_stale_reason() {
+    local target="$1"
+    local project_name="$2"
+
+    if [[ ! -d "$target" ]]; then
+        echo "skill folder deleted"
+        return
+    fi
+
+    local scope_file="${target%/}/$SCOPE_FILENAME"
+    if [[ ! -f "$scope_file" ]]; then
+        echo "now global"
+        return
+    fi
+
+    local current_scope
+    current_scope="$(read_scope "$scope_file")"
+    if [[ "$current_scope" != "$project_name" ]]; then
+        echo "re-scoped to $current_scope"
+    fi
+}
+
+# remove_stale_project_symlinks
+#   Walks every <PROJECTS_ROOT>/*/.claude/skills/ and removes symlinks that
+#   point into SKILLS_SRC but no longer belong to that project.
+remove_stale_project_symlinks() {
+    for project_dir in "$PROJECTS_ROOT"/*/; do
+        [[ -d "$project_dir" ]] || continue
+        local project_skills_dir="${project_dir}.claude/skills"
+        [[ -d "$project_skills_dir" ]] || continue
+
+        local project_name
+        project_name="$(basename "${project_dir%/}")"
+
+        for link in "$project_skills_dir"/*; do
+            [[ -L "$link" ]] || continue
+            local target
+            target="$(readlink "$link")"
+            case "$target" in
+                "$SKILLS_SRC"/*)
+                    local reason
+                    reason="$(project_symlink_stale_reason "$target" "$project_name")"
+                    if [[ -n "$reason" ]]; then
+                        echo "  remove    $(basename "$link") from $project_name ($reason)"
+                        rm "$link"
+                    fi
+                    ;;
+            esac
+        done
+    done
+}
+
 # ── Personal skills ──────────────────────────────────────────────────────
 
+# install_project_skill <skill_dir> <skill_name> <scope_file>
+#   Symlinks a skill into <PROJECTS_ROOT>/<project>/.claude/skills/.
+#   Skips with an error if the project directory does not exist.
+install_project_skill() {
+    local skill_dir="$1"
+    local skill_name="$2"
+    local scope_file="$3"
+
+    local project_name
+    project_name="$(read_scope "$scope_file")"
+
+    if [[ -z "$project_name" ]]; then
+        echo "  ERROR     $skill_name — SCOPE file is empty" >&2
+        conflicts=$((conflicts + 1))
+        return
+    fi
+
+    local project_dir="$PROJECTS_ROOT/$project_name"
+    if [[ ! -d "$project_dir" ]]; then
+        echo "  SKIP      $skill_name — project '$project_name' not found at $project_dir" >&2
+        conflicts=$((conflicts + 1))
+        return
+    fi
+
+    local project_skills_dir="$project_dir/.claude/skills"
+    mkdir -p "$project_skills_dir"
+    ensure_symlink "$skill_dir" "$project_skills_dir/$skill_name" "$skill_name -> $project_name"
+}
+
 # install_personal_skills
-#   Symlinks every skill folder under skills/ into TARGET_DIR.
+#   Walks skills/ and routes each skill: with a SCOPE file it goes to the
+#   named project's .claude/skills/, otherwise to the global TARGET_DIR.
 install_personal_skills() {
     echo "Personal skills:"
     remove_stale_personal_symlinks
+    remove_stale_project_symlinks
     for skill_dir in "$SKILLS_SRC"/*/; do
         [[ -d "$skill_dir" ]] || continue
-        symlink_skill "$skill_dir" "$(basename "$skill_dir")"
+        local skill_name
+        skill_name="$(basename "$skill_dir")"
+        local scope_file="${skill_dir%/}/$SCOPE_FILENAME"
+        if [[ -f "$scope_file" ]]; then
+            install_project_skill "$skill_dir" "$skill_name" "$scope_file"
+        else
+            symlink_skill "$skill_dir" "$skill_name"
+        fi
     done
 }
 

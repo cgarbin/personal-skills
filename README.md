@@ -31,7 +31,13 @@ If your Claude skills directory is somewhere else, pass it with `--target`:
 ./scripts/install.sh --target /path/to/skills
 ```
 
-With symlinks in place, any edit to the files in this repo (or any `git pull`) is live immediately — no reinstall step needed.
+If your projects live somewhere other than the parent of this repo, pass `--projects-root` so project-scoped skills (see below) land in the right place:
+
+```bash
+./scripts/install.sh --projects-root /path/to/projects
+```
+
+With symlinks in place, any edit to the files in this repo (or any `git pull`) is live immediately. No reinstall step needed.
 
 ### 3. Configure Claude Code permissions
 
@@ -73,6 +79,23 @@ mkdir skills/my-new-skill
 git add skills/my-new-skill
 git commit -m "Add my-new-skill"
 ```
+
+By default a personal skill is global and gets symlinked into `~/.claude/skills/`, so it loads in every Claude Code session.
+
+## Scoping a skill to a single project
+
+Some skills only make sense inside one project (for example, a skill that knows the layout of a specific dissertation repo). To scope a skill, drop a `SCOPE` file next to its `SKILL.md` containing the project's directory name:
+
+```bash
+echo "phd-dissertation" > skills/my-phd-skill/SCOPE
+./scripts/install.sh
+```
+
+The install script then symlinks the skill into `<projects-root>/phd-dissertation/.claude/skills/my-phd-skill/` instead of the global directory. Claude Code auto-discovers it whenever you start a session in that project.
+
+The projects root defaults to the parent of this repo (so `~/projects/personal-skills` resolves to `~/projects/`). Override it with `--projects-root` on machines where projects live elsewhere. Blank lines and lines starting with `#` are ignored in `SCOPE`, so comments are fine.
+
+If the named project directory does not exist, the script reports a skip and counts it as a conflict so the mistake is visible. Removing the `SCOPE` file (or pointing it at a different project) on the next run cleans up the old symlink.
 
 ## Adding an external skill
 
