@@ -14,7 +14,14 @@ Commit only the changes from the current session, split into logical groups.
 
 ## Step 1: Identify session changes
 
-Use `git status` and `git diff` to confirm the working tree state. Skip these calls if the state is already known from this session and unchanged. Cross-reference with conversation context to identify session changes. Ignore changes present before the session (check the session-start snapshot if available).
+Default: skip git inspection. If you made the edits in this session, the diff is already in your context and conversation history is the source of truth. Do not run `git status`, `git diff`, `git log`, or sample diffs as a "safety check" on your own work. Trust your context and proceed to Step 2.
+
+Run git inspection only when:
+- The session started with pre-existing modified files and you cannot tell from context what was changed before vs. during the session.
+- You suspect external tooling (formatter hook, IDE save action) altered files outside your edits.
+- The user reports unexpected state.
+
+When inspection is warranted, the minimum is one `git status` to confirm what is unstaged. Cross-reference with conversation context. Ignore changes present before the session.
 
 - If unsure whether a change is from this session, ask.
 - If there are no session changes, report and stop.
