@@ -87,7 +87,7 @@ Use plain markdown. Wikilinks to existing documents like `[[CareVue MetaVision d
 
 ### Step 7: Confirm the summary
 
-Tell the user the summary was written and show it in the conversation so they can review it without opening the file.
+Tell the user the summary was written and point to the daily note's file path. Do not echo the summary content in the conversation: the user will review it directly in the file.
 
 ## Part 2: Create the next day's note
 
