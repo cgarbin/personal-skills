@@ -35,7 +35,9 @@ Otherwise, grep `README.md`, `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `docs/
 
 ## Step 3: Group into logical commits
 
-Split session changes into logical groups. Each becomes one commit. Include doc updates with the code they describe.
+If all session changes are in a single file, use one commit. Skip grouping.
+
+Otherwise, split session changes into logical groups. Each becomes one commit. Include doc updates with the code they describe.
 
 Do not use `git add -p` or patch extraction. If a file's changes belong to two groups, put it in the most relevant one.
 
