@@ -1,6 +1,6 @@
 ---
 name: christian-writing-style
-description: Christian Garbin's writing style for any prose he authors. Use when writing or editing prose under his name in any document or code context, including any markdown (.md) file (READMEs, ADRs, project documentation), docstrings, code comments (single-line and multi-line), commit messages, PR descriptions, and emails. Triggers include "write this in my style", "help me write", "review my draft", editing or creating any .md file, or writing or editing comments and docstrings in code.
+description: Christian Garbin's writing style for any prose he authors. Use when writing or editing prose under his name: any markdown (.md) file (READMEs, ADRs, project documentation), commit messages, PR descriptions, and emails. Triggers include "write this in my style", "help me write", or editing or creating any .md file.
 ---
 
 # Christian Garbin's Writing Style
