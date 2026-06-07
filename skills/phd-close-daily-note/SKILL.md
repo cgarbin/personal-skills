@@ -11,10 +11,6 @@ Do not commit any changes. Leave everything for the user to review.
 
 ## Part 1: Generate the daily summary
 
-### Step 0: Load the writing style skill
-
-Load the `christian-writing-style` skill before proceeding. The summary must match Christian's voice.
-
 ### Step 1: Determine the target date
 
 Run `date "+%Y-%m-%d"` (macOS) for today. Do not rely on session metadata or context-injected dates.
@@ -27,11 +23,21 @@ Resolve the target date:
 
 Convert to `YYYY-MM-DD`. If the date is in the future, tell the user and stop. If ambiguous ("last Friday" with two plausible Fridays), confirm before proceeding.
 
+Once the target date is resolved, issue a single Bash call that computes every date value used downstream. Reuse these values in Steps 8 and 10 instead of calling `date` again (macOS only):
+
+```bash
+TARGET="<resolved YYYY-MM-DD>"
+echo "today=$(date '+%Y-%m-%d')"
+echo "now=$(date '+%Y-%m-%d %H:%M')"
+echo "next_day=$(date -j -v+1d -f '%Y-%m-%d' "$TARGET" '+%Y-%m-%d')"
+echo "next_dow=$(date -j -v+1d -f '%Y-%m-%d' "$TARGET" '+%a')"
+```
+
 ### Step 2: Find the daily note
 
 Daily notes live in `/Users/cgarbin/projects/phd-dissertation-writing/_daily-notes/`. Filenames follow the pattern `YYYY-MM-DD Ddd.md` (e.g., `2026-04-02 Thu.md`). Older notes may be in a monthly subdirectory (`_daily-notes/YYYY-MM/`).
 
-Glob for `_daily-notes/*YYYY-MM-DD*` and `_daily-notes/YYYY-MM/*YYYY-MM-DD*` to find the file. If the note doesn't exist, tell the user and stop.
+Run `find /Users/cgarbin/projects/phd-dissertation-writing/_daily-notes -maxdepth 2 -name "*YYYY-MM-DD*"` (substitute the actual date). The `-maxdepth 2` covers both the top-level directory and the `YYYY-MM/` subdirectory in one pass. If the note doesn't exist, tell the user and stop.
 
 ### Step 3: Read the daily note
 
@@ -65,6 +71,10 @@ Collect the commit messages. Skip repos with no commits on that date.
 
 If there are zero commits across all repos AND zero pomodoros in the daily note, there is nothing to summarize. Tell the user and stop.
 
+### Step 4.5: Load the writing style skill
+
+Load the `christian-writing-style` skill before proceeding. The summary must match Christian's voice.
+
 ### Step 5: Write the summary
 
 Write a summary as a bullet list in Christian's writing style (direct, concise, no filler). Each bullet should be a sentence or two covering a coherent group of related work. Don't create one bullet per commit or one per pomodoro. Instead, group related items together so each bullet tells a small story.
@@ -95,17 +105,17 @@ This part always runs after Part 1, regardless of how far back the target date i
 
 ### Step 8: Determine the next day's date
 
-Compute the next calendar day using `date -j -v+1d -f "%Y-%m-%d" "YYYY-MM-DD" "+%Y-%m-%d"` (macOS). Do not compute date arithmetic manually.
+Use `next_day` from the batched call in Step 1.
 
 ### Step 9: Check that the next day's note does not already exist
 
-Glob for `_daily-notes/*YYYY-MM-DD*` and `_daily-notes/YYYY-MM/*YYYY-MM-DD*`. If a note already exists for the next day, tell the user and skip Part 2. Do not overwrite it.
+Run `find /Users/cgarbin/projects/phd-dissertation-writing/_daily-notes -maxdepth 2 -name "*YYYY-MM-DD*"` (substitute the next day's date). If a note already exists for the next day, tell the user and skip Part 2. Do not overwrite it.
 
 ### Step 10: Create the next day's note from the template
 
-Create the new note at the top level using the `YYYY-MM-DD Ddd.md` naming convention from Step 2, where `YYYY-MM-DD` is the next day's date from Step 8. Compute the day-of-week abbreviation with `date -j -f "%Y-%m-%d" "<next-day-date>" "+%a"` (macOS). Do not infer it from the previous day's filename.
+Create the new note at the top level using the `YYYY-MM-DD Ddd.md` naming convention from Step 2, where `YYYY-MM-DD` is the next day's date from Step 8. Use `next_dow` from the batched call in Step 1 for the day-of-week abbreviation. Do not infer it from the previous day's filename.
 
-Use this template. The `created` field uses today's date and current time (when the file is physically created), not the note's target date:
+Use this template. For the `created` field, use `now` from the batched call in Step 1:
 
 ```markdown
 ---
@@ -118,12 +128,15 @@ created: YYYY-MM-DD HH:mm
 
 # Notes
 
-# Next tasks
 ```
 
 ### Step 11: Carry over the task list
 
-Copy the `# Next tasks` section (already read in Step 3) into the new note's `# Next tasks` section, preserving all content: headers, numbering, indentation, wikilinks, and checkbox states.
+Append the `# Next tasks` heading and everything after it from the source daily note to the new note:
+
+```bash
+awk '/^# Next tasks/,0' "<source-daily-note-path>" >> "<new-daily-note-path>"
+```
 
 The task list is a living document. Tasks that were checked off today should remain checked in the carried-over list (they serve as a record of progress). Do not remove completed items or modify the list in any way. The user will curate it manually.
 
