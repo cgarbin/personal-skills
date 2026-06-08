@@ -31,12 +31,6 @@ If your Claude skills directory is somewhere else, pass it with `--target`:
 ./scripts/install.sh --target /path/to/skills
 ```
 
-If your projects live somewhere other than the parent of this repo, pass `--projects-root` so project-scoped skills (see below) land in the right place:
-
-```bash
-./scripts/install.sh --projects-root /path/to/projects
-```
-
 With symlinks in place, any edit to the files in this repo (or any `git pull`) is live immediately. No reinstall step needed.
 
 ### 3. Configure Claude Code permissions
@@ -82,20 +76,22 @@ git commit -m "Add my-new-skill"
 
 By default a personal skill is global and gets symlinked into `~/.claude/skills/`, so it loads in every Claude Code session.
 
-## Scoping a skill to a single project
+## Opting in per repo
 
-Some skills only make sense inside one project (for example, a skill that knows the layout of a specific dissertation repo). To scope a skill, drop a `SCOPE` file next to its `SKILL.md` containing the project's directory name:
+Some skills should not load in every session. To mark a skill as opt-in, add an empty `OPTIN` file next to its `SKILL.md`:
 
 ```bash
-echo "phd-dissertation" > skills/my-phd-skill/SCOPE
+touch skills/my-narrow-skill/OPTIN
 ./scripts/install.sh
 ```
 
-The install script then symlinks the skill into `<projects-root>/phd-dissertation/.claude/skills/my-phd-skill/` instead of the global directory. Claude Code auto-discovers it whenever you start a session in that project.
+The next install run skips the skill (and removes any existing global symlink to it). Install it where you want it with `--link-into`:
 
-The projects root defaults to the parent of this repo (so `~/projects/personal-skills` resolves to `~/projects/`). Override it with `--projects-root` on machines where projects live elsewhere. Blank lines and lines starting with `#` are ignored in `SCOPE`, so comments are fine.
+```bash
+./scripts/install.sh --link-into /path/to/repo my-narrow-skill
+```
 
-If the named project directory does not exist, the script reports a skip and counts it as a conflict so the mistake is visible. Removing the `SCOPE` file (or pointing it at a different project) on the next run cleans up the old symlink.
+This creates a symlink at `/path/to/repo/.claude/skills/my-narrow-skill`, which Claude Code auto-discovers when you start a session in that repo. The symlink survives later runs of the script. The `--link-into` step is per-machine, so re-run it on each machine where you want the skill active.
 
 ## Adding an external skill
 
