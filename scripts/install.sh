@@ -95,6 +95,14 @@ if [[ ! -d "$SKILLS_SRC" ]]; then
     exit 1
 fi
 
+# Guard against pointing --target at the wrong place. The path must end
+# in .claude/skills so a typo cannot scatter symlinks into an unrelated
+# directory. Trailing slash is tolerated.
+if [[ "${TARGET_DIR%/}" != *"/.claude/skills" ]]; then
+    echo "Error: --target must end in .claude/skills (got: $TARGET_DIR)" >&2
+    exit 1
+fi
+
 # ── Counters ─────────────────────────────────────────────────────────────
 
 linked=0
