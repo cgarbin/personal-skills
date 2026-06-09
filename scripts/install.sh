@@ -194,17 +194,22 @@ read_locked_sha() {
 
 # write_locked_sha <repo_key> <sha>
 #   Upserts the SHA for repo_key in the lockfile, keeping it sorted.
+#   Uses awk + temp file (rather than sed -i) so the script stays portable
+#   across BSD and GNU userlands.
 write_locked_sha() {
     local repo_key="$1"
     local sha="$2"
+    local tmp="${LOCKFILE}.tmp"
+    local input="$LOCKFILE"
+    [[ -f "$input" ]] || input=/dev/null
 
-    if [[ -f "$LOCKFILE" ]] && grep -q "^${repo_key} " "$LOCKFILE"; then
-        sed -i '' "s|^${repo_key} .*|${repo_key} ${sha}|" "$LOCKFILE"
-    else
-        echo "${repo_key} ${sha}" >> "$LOCKFILE"
-    fi
-
-    sort -o "$LOCKFILE" "$LOCKFILE"
+    awk -v key="$repo_key" -v sha="$sha" '
+        $1 == key { print key, sha; found=1; next }
+        { print }
+        END { if (!found) print key, sha }
+    ' "$input" > "$tmp"
+    sort -o "$tmp" "$tmp"
+    mv "$tmp" "$LOCKFILE"
 }
 
 # show_changelog <clone_dir> <repo_key> <old_sha> <new_sha> <paths>
