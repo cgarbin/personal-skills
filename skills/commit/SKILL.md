@@ -63,7 +63,7 @@ Plan:
 - Files: <list>
 - Subject: <text>
 - Body: <short summary or "none">
-- Doc check: <findings or "skipped">
+- Doc check: <findings, "n/a" if Step 2 conditions not met, or "skipped">
 ```
 
 One block per group. Auto mode does not override the gate. Invocation triggers the skill but is not approval.
