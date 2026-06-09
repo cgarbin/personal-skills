@@ -88,10 +88,10 @@ touch skills/my-narrow-skill/OPTIN
 The next install run skips the skill (and removes any existing global symlink to it). Install it where you want it with `--link-into`:
 
 ```bash
-./scripts/install.sh --link-into /path/to/repo my-narrow-skill
+./scripts/install.sh --link-into /path/to/repo/.claude/skills my-narrow-skill
 ```
 
-This creates a symlink at `/path/to/repo/.claude/skills/my-narrow-skill`, which Claude Code auto-discovers when you start a session in that repo. The symlink survives later runs of the script. The `--link-into` step is per-machine, so re-run it on each machine where you want the skill active.
+The path must end in `.claude/skills` (same shape as `--target`). The script creates the directory if missing and symlinks `my-narrow-skill` inside it, which Claude Code auto-discovers when you start a session in that repo. The symlink survives later runs of the script. The `--link-into` step is per-machine, so re-run it on each machine where you want the skill active.
 
 ## Adding an external skill
 

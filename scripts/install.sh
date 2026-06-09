@@ -6,7 +6,7 @@
 #   ./scripts/install.sh                                 # repo = parent of this script's dir
 #   ./scripts/install.sh /path/to/repo                   # explicit repo path
 #   ./scripts/install.sh --target ~/.claude/skills       # custom target dir
-#   ./scripts/install.sh --link-into <path> <skill>     # opt-in per repo
+#   ./scripts/install.sh --link-into <skills-dir> <skill>  # opt-in per repo
 #
 # Personal skills default to global (symlinked into TARGET_DIR). A skill
 # becomes opt-in by placing an empty OPTIN file next to its SKILL.md.
@@ -41,7 +41,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         --link-into)
             if [[ $# -lt 3 ]]; then
-                echo "Error: --link-into requires <project-path> <skill-name>." >&2
+                echo "Error: --link-into requires <skills-dir> <skill-name>." >&2
                 exit 1
             fi
             LINK_INTO_PATH="$2"
@@ -50,7 +50,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         -h|--help)
             echo "Usage: $0 [REPO_DIR] [--target SKILLS_DIR]"
-            echo "       $0 --link-into <project-path> <skill-name>"
+            echo "       $0 --link-into <skills-dir> <skill-name>"
             echo ""
             echo "  REPO_DIR       Path to the personal-skills repository."
             echo "                 Defaults to the parent of the directory holding"
@@ -58,7 +58,8 @@ while [[ $# -gt 0 ]]; do
             echo "  --target       Claude skills directory to symlink into."
             echo "                 Default: ~/.claude/skills"
             echo "  --link-into    One-shot: symlink <skill-name> into"
-            echo "                 <project-path>/.claude/skills/ and exit. Use"
+            echo "                 <skills-dir> and exit. <skills-dir> must end in"
+            echo "                 .claude/skills (same shape as --target). Use"
             echo "                 for skills marked opt-in (with an OPTIN file)."
             echo "                 The symlink survives later runs of the script."
             exit 0
@@ -95,12 +96,21 @@ if [[ ! -d "$SKILLS_SRC" ]]; then
     exit 1
 fi
 
-# Guard against pointing --target at the wrong place. The path must end
-# in .claude/skills so a typo cannot scatter symlinks into an unrelated
-# directory. Trailing slash is tolerated.
-if [[ "${TARGET_DIR%/}" != *"/.claude/skills" ]]; then
-    echo "Error: --target must end in .claude/skills (got: $TARGET_DIR)" >&2
-    exit 1
+# Guard against pointing --target or --link-into at the wrong place. The
+# path must end in .claude/skills so a typo cannot scatter symlinks into
+# an unrelated directory. Trailing slash is tolerated.
+require_skills_dir() {
+    local flag="$1"
+    local path="$2"
+    if [[ "${path%/}" != *"/.claude/skills" ]]; then
+        echo "Error: $flag must end in .claude/skills (got: $path)" >&2
+        exit 1
+    fi
+}
+
+require_skills_dir "--target" "$TARGET_DIR"
+if [[ -n "$LINK_INTO_PATH" ]]; then
+    require_skills_dir "--link-into" "$LINK_INTO_PATH"
 fi
 
 # ── Counters ─────────────────────────────────────────────────────────────
@@ -458,18 +468,13 @@ install_personal_skills() {
 
 # ── --link-into mode ───────────────────────────────────────────────────
 
-# link_into <project_path> <skill_name>
-#   One-shot: symlink a single skill into <project_path>/.claude/skills/
-#   and exit. Used for opt-in skills. The project path must already exist;
-#   the .claude/skills/ subdirectory is created if needed.
+# link_into <skills_dir> <skill_name>
+#   One-shot: symlink a single skill into <skills_dir> and exit. Used for
+#   opt-in skills. <skills_dir> must end in .claude/skills (validated
+#   above) and is created if missing.
 link_into() {
-    local project_path="$1"
+    local skills_dir="$1"
     local skill_name="$2"
-
-    if [[ ! -d "$project_path" ]]; then
-        echo "Error: project path not found: $project_path" >&2
-        exit 1
-    fi
 
     local skill_dir="$SKILLS_SRC/$skill_name"
     if [[ ! -d "$skill_dir" ]]; then
@@ -477,14 +482,13 @@ link_into() {
         exit 1
     fi
 
+    mkdir -p "$skills_dir"
     # Resolve to an absolute, canonical path so the symlink target is
     # stable regardless of how the user invoked the script.
-    project_path="$(cd "$project_path" && pwd)"
-    local project_skills_dir="$project_path/.claude/skills"
-    mkdir -p "$project_skills_dir"
+    skills_dir="$(cd "$skills_dir" && pwd)"
 
-    echo "Installing $skill_name into $project_path:"
-    ensure_symlink "$skill_dir" "$project_skills_dir/$skill_name" "$skill_name"
+    echo "Installing $skill_name into $skills_dir:"
+    ensure_symlink "$skill_dir" "$skills_dir/$skill_name" "$skill_name"
     echo ""
     echo "Done. $linked linked, $up_to_date already up to date, $conflicts conflicts."
 }
