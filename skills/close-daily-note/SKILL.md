@@ -149,16 +149,7 @@ When extra signal is present, also note:
 
 Use plain past-tense narration of what was completed. Do not invent times, ordering, or causality that the source does not support.
 
-Aim for 3-6 bullets. No headers within the summary. No filler phrases like "productive day" or "good progress was made." Do not use semicolons or em-dashes in the summary text.
-
-Example shape for a no-git, task-only day with one large parent task and a few one-line notes:
-
-```markdown
-- Closed out the <feature> work: finished the remaining subtasks and submitted the PR. One subtask is still open and deferred.
-- Settled one design question along the way: kept the existing serialization approach after a review pass.
-- Handled the standing review item and gave feedback on the team's proposal doc.
-- Queued for next: a working-group discussion item, a boundary bug, and a stats pull for the upcoming size change.
-```
+Let the day's content set the length. One bullet per coherent group of work, not one per commit or task. If the day has two stories, write two bullets. If it has five, write five. Stop when you've covered the day honestly. No headers within the summary. No filler phrases like "productive day" or "good progress was made." Do not use semicolons or em-dashes in the summary text.
 
 ### Step 7: Append to the daily note
 
