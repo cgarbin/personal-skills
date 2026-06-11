@@ -102,6 +102,12 @@ fi
 require_skills_dir() {
     local flag="$1"
     local path="$2"
+    # Reject relative paths up front. Otherwise a missing leading slash lets
+    # the path be resolved against the cwd, silently creating a doubled tree.
+    if [[ "$path" != /* ]]; then
+        echo "Error: $flag must be an absolute path (got: $path)" >&2
+        exit 1
+    fi
     if [[ "${path%/}" != *"/.claude/skills" ]]; then
         echo "Error: $flag must end in .claude/skills (got: $path)" >&2
         exit 1
