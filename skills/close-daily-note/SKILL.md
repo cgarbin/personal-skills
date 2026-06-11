@@ -79,15 +79,7 @@ Extract:
 
 ### Step 4: Gather git commits
 
-First, decide which repos to query. Then run the same git command against each.
-
-**Command to run per repo:**
-
-```bash
-git -C "<repo-path>" log --after="YYYY-MM-DDT00:00:00" --before="YYYY-MM-DDT23:59:59" --oneline --branches
-```
-
-`--branches` counts commits on any local branch that day, so work done on an unmerged feature branch is not silently dropped. Collect the commit messages, de-duplicating any that appear on more than one branch. Skip repos with no commits on that date.
+The loop below needs two values: `TARGET`, the target date resolved in Step 1, and `REPOS`, set per the cases below. Variables do not carry across separate Bash calls, so assign both in the same call as the loop.
 
 **Which repos to run it on:**
 
@@ -97,9 +89,37 @@ Detect the multi-repo case first. Look for a repository map under the project ro
 find "$PROJECT_ROOT" -maxdepth 4 -name "Repository map.md"
 ```
 
-- **Multi-repo (map found)**: read the map and extract repos. Repo names come from `##` headings whose name corresponds to a directory under the parent of the project root (`$(dirname "$PROJECT_ROOT")`, i.e., sibling projects). Skip headings that are not repositories (e.g., `## Shared patterns`). Verify each candidate directory exists before running `git log`. If a directory is missing, warn the user (mention which one) and continue with the rest. If fewer than two valid repos remain, the map or the paths are likely wrong. Stop and tell the user.
-- **Single-repo (no map, `PROJECT_ROOT` is a git repository)**: run against `PROJECT_ROOT`.
-- **No git (no map, `PROJECT_ROOT` is not a git repository)**: skip the git step entirely. The summary will rely on the pomodoro, task, and Notes data from Step 3.
+Set `REPOS` per case:
+
+- **Multi-repo (map found)**: read the map and extract repos. Repo names come from `##` headings whose name corresponds to a directory under the parent of the project root (`$(dirname "$PROJECT_ROOT")`, i.e., sibling projects). Skip headings that are not repositories (e.g., `## Shared patterns`). Put each candidate's absolute path in `REPOS`:
+  ```bash
+  REPOS=(
+    "/abs/path/to/repo-a"
+    "/abs/path/to/repo-b"
+  )
+  ```
+  The loop reports any path that is missing or not a git repository with a `MISSING ...` line. Warn the user about those (name them) and continue with the rest. If fewer than two valid repos remain, the map or the paths are likely wrong. Stop and tell the user.
+- **Single-repo (no map, `PROJECT_ROOT` is a git repository)**: `REPOS=("$PROJECT_ROOT")`.
+- **No git (no map, `PROJECT_ROOT` is not a git repository)**: skip the loop entirely. The summary will rely on the pomodoro, task, and Notes data from Step 3.
+
+**Gather:**
+
+```bash
+for repo_path in "${REPOS[@]}"; do
+  if ! git -C "$repo_path" rev-parse --git-dir >/dev/null 2>&1; then
+    echo "MISSING or not a git repo: $repo_path"
+    continue
+  fi
+  commits=$(git -C "$repo_path" log \
+    --after="${TARGET}T00:00:00" --before="${TARGET}T23:59:59" \
+    --oneline --branches)
+  if [ -n "$commits" ]; then
+    printf '=== %s ===\n%s\n\n' "$repo_path" "$commits"
+  fi
+done
+```
+
+`--branches` counts commits on any local branch that day, so work on an unmerged feature branch is not silently dropped. De-duplicate any commit that appears on more than one branch.
 
 **Stop condition:**
 
