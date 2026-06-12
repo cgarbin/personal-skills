@@ -138,7 +138,8 @@ The summary should answer:
 - What the main focus was.
 - What was completed.
 - What's still open or in progress.
-- What's queued next, based on the Next tasks section.
+
+Do not summarize what's queued next. The Next tasks section is carried over verbatim into the next day's note in Step 9, so restating it in prose duplicates the same information.
 
 Use whatever signal is present. Pomodoros, commits, checked tasks, and the Notes section each contribute when available, and the summary gets thinner when fewer of them have content. Resist filling in detail the source does not provide.
 
