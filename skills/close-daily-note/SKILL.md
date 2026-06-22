@@ -227,8 +227,10 @@ awk -v now="$now" '
     if (phase == "tasks" || phase == "skip") { phase = "freeform"; print; next }
   }
   phase == "tasks" || phase == "freeform" { print }
-' "<source-daily-note-path>" > "<new-daily-note-path>"
+' "<source-daily-note-path>" | cat -s > "<new-daily-note-path>"
 ```
+
+One blank like after each heading: The `\n` in `print "# Next tasks\n"` and `print "\n# Notes\n"` guarantees at least one blank line after each heading even when the source has none. The `cat -s` collapses any run of consecutive blank lines down to one.
 
 The Notes section itself is day-specific and is not carried over. The awk keys off heading names, not position, so an older source note with `# Notes` before `# Next tasks` still produces a correctly-ordered output. If the source has no Categories comment, `emit_pomodoro_template()` still fires when the first carryover heading is hit, so the Pomodoros section is structurally complete.
 
