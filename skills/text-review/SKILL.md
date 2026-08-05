@@ -50,6 +50,7 @@ Work through these in order. Each builds on the previous.
 - **Sentence complexity.** Sentences that try to do too much. christian-writing-style covers heavy left-branching, subject-verb separation, nominalizations.
 - **Paragraph focus.** One main idea per paragraph. Split if it covers two or three. Merge if consecutive paragraphs make the same point.
 - **Conciseness.** Filler ("it is worth noting that"), redundancy ("each and every"), throat-clearing ("as mentioned previously").
+- **Paragraph-tail test.** Read the last sentence of each paragraph on its own and ask what it adds beyond the paragraph. Editorial close-outs are almost always final sentences, and they are invisible while reading forward because they feel like the landing. Run this as a separate pass, not while following the argument. Restatements go, conclusions stay (christian-writing-style, side commentary).
 
 ### 4. Style alignment
 
@@ -70,6 +71,7 @@ Backstop for patterns judgment alone misses. Cheap to search for.
 - British spelling (*analyse*, *colour*, *behaviour*, *modelling*, *-ise*, *centre*, *defence*). Flag every occurrence.
 - Nominalization markers at sentence start (-tion, -ment, -ance when the sentence could start with a verb).
 - Filler openers and single-word paragraph leads ("Interpretation.", "Interestingly,", "Note that", "It is worth noting").
+- Side commentary. Grep word stems, not full phrases. This family reappears in new wording each time, so a literal phrase catches one instance and never fires again. `deliberat`, `intentional`, `on purpose`, `by design`, `we do not claim`, `does not (claim|argue)`, `(attributes|makes|takes) no`, `rather than the reverse`, `the other way around`, `not just`, `which is worth`, `That is the`. Unlike the rest of this list, judge these before reporting: delete the clause and reread. If no fact, number, constraint, or claim is lost, the deletion stands. See christian-writing-style on side commentary.
 - Inconsistent capitalization or spelling of recurring technical terms.
 
 Flag every hit, even false positives. Especially important during iterative editing, where corrections in one round can reintroduce patterns cleaned up in the previous round.

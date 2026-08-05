@@ -67,10 +67,22 @@ Active voice even in academic writing. Passive only when the agent is unknown or
 - British spelling. Use US: *analyze*, *color*, *behavior*, *modeling*, *-ize*, *center*, *defense*.
 - Em-dashes in his own writing. Use periods or parentheses unless Christian uses one first in the conversation.
 - Semicolons as a clause-joining device. Use a period between independent clauses, even closely related ones ("The model converged. The loss plateaued at 0.3."). Semicolons in pseudo-code or table structure are fine.
-- Editorial close-outs after factual sentences ("X does not do Y," "this solves it," "that is what the evaluation shows"). If the factual sentence stands on its own, let it stand. Especially tempting at the end of paragraphs in dissertation prose.
+- Side commentary that comments on the text instead of stating the fact. Three forms: editorial close-outs, announcing a choice as deliberate, and narrating a disclosure instead of disclosing. See [Side commentary](#side-commentary) below.
 - Framing-deck vocabulary ("stack," "arm," "frontier," "axes," "lever"). Name the concrete thing instead. "Our retrieval stack" → "our retrieval pipeline" or the actual components. "The temporal axis" → "time of note creation" or whatever the specific variable is.
 - "Downstream" as shorthand for "later" or "the next stage." Name the concrete next step. "Downstream analysis" → "Phase 2 analysis," "the audit step," "the next step."
 - "Land" as a verb for where files, data, or values end up ("files land at X," "binaries land in $DIR"). Stuffy. Use "go into," "end up at," "is written to," "sits in," or rephrase. Watch for adjacent overuse: "lands cleanly," "land in the same place."
+
+### Side commentary
+
+Three forms, all of which comment on the text instead of stating the fact.
+
+**Editorial close-outs** after factual sentences ("X does not do Y," "this solves it," "that is what the evaluation shows"). If the factual sentence stands on its own, let it stand. Especially tempting at the end of paragraphs. Two variants hide well. The empty contrastive tail names what the fact is *not*, where no reader would have assumed otherwise ("the actual header forms, not just a number in a table"). The paragraph-closing restatement says again what the paragraph just showed ("...so what remains in the score is a difference in content. That is the whole purpose of the labels."). Keep a contrast only when the alternative was actually tried, or a reader would plausibly assume it, or the argument depends on ruling it out.
+
+**Announcing a choice as deliberate** ("the choice was deliberate," "we take X deliberately," "on purpose," "by design"). The reason follows and carries the content. Delete the announcement, keep the reason. Two exceptions. Keep it when the deliberateness is itself the fact, because a reader would otherwise read oversight or accident ("the same defect, arrived at deliberately rather than by accident"). Rewrite when the announcement heads an enumeration, where deleting it orphans the list: "We use a single-pass design, for three reasons. First..."
+
+**Narrating a disclosure instead of disclosing** ("we do not claim otherwise," "we record that as a limitation," "and the write-up has to say so," "to state in the limitations rather than let a reviewer state it"). The sentence performs the act it describes. State the limitation and stop.
+
+**Restatements go, conclusions stay.** A restatement repeats a fact already on the page. A conclusion asserts an inference the facts support but do not state, and it stays: "Low recall is not a retrieval problem," after numbers showing the gap is ten times what retrieval moves. Cutting a conclusion leaves the reader holding evidence with no claim attached. In results and decision documents the verdict is the deliverable, so when the call is close, keep it.
 
 ---
 
