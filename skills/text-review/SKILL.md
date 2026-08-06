@@ -26,11 +26,23 @@ Work through these in order. Each builds on the previous.
 
 ### 1. Accuracy and technical correctness
 
-- **Factual claims.** Verify statements about specific numbers, dates, algorithms, papers, results. Flag anything that looks wrong or unverifiable.
-- **Technical terminology.** Used correctly and consistently? Watch for terms that shift meaning between paragraphs.
-- **Citations and attributions.** Do cited sources actually say what the text claims? Are ideas attributed correctly? Claims that need a citation but lack one?
+The most important layer. Elegant prose built on wrong claims is worse than clunky prose built on right ones.
+
+- **Factual claims.** Verify statements about specific numbers, dates, algorithms, papers, results. Flag anything that looks wrong or that you can't verify.
+- **Technical terminology.** Used correctly and consistently? Watch for terms that are close but not quite right, or that shift meaning between paragraphs.
+- **Citations and attributions.** Do cited sources actually say what the text claims? Are ideas attributed correctly? Claims that need a citation but lack one? Three failure modes to watch:
+  - Crediting a popularizer instead of the originator.
+  - Naming a real source that argues something adjacent, not the claim being made.
+  - Verbs that overstate how settled the evidence is ("X established that" when X argued it, or when it stays contested).
 - **Logic and reasoning.** Argument holds together? Watch for unstated assumptions, logical jumps, conclusions that don't follow from evidence, correlation-causation conflation, overgeneralization.
 - **Numbers and data.** Add up? Percentages consistent with raw counts? Fair comparisons (same baseline, same conditions)?
+
+**Memory-sourced citations are unverified by default.** A citation written from recall is not a checked citation, even when it looks precise and turns out to be right. Author lists, years, journal names, page numbers, book titles, and "X coined this" claims feel certain and are often wrong by one name or one year. Flag every one as Must fix, including citations *you* wrote. If checking isn't possible now, suggest marking it unverified in the text rather than leaving it looking settled.
+
+Two related checks:
+
+- **"Needs a source" versus "has a source nobody checked."** Different problems, different fixes, and the second one hides better.
+- **Primary versus secondary sourcing.** If claims about a work come from summaries, reviews, or interviews rather than the work, suggest the piece say so. A short "sources and confidence" note at the end tells a future reader which claims are safe to cite onward.
 
 ### 2. Argument and organization
 
@@ -73,6 +85,7 @@ Backstop for patterns judgment alone misses. Cheap to search for.
 - Filler openers and single-word paragraph leads ("Interpretation.", "Interestingly,", "Note that", "It is worth noting").
 - Side commentary. Grep word stems, not full phrases. This family reappears in new wording each time, so a literal phrase catches one instance and never fires again. `deliberat`, `intentional`, `on purpose`, `by design`, `we do not claim`, `does not (claim|argue)`, `(attributes|makes|takes) no`, `rather than the reverse`, `the other way around`, `not just`, `which is worth`, `That is the`. Unlike the rest of this list, judge these before reporting: delete the clause and reread. If no fact, number, constraint, or claim is lost, the deletion stands. See christian-writing-style on side commentary.
 - Inconsistent capitalization or spelling of recurring technical terms.
+- Every citation key (`[@`) and every named attribution. Confirm each was checked against a source rather than recalled, including ones you wrote yourself.
 
 Flag every hit, even false positives. Especially important during iterative editing, where corrections in one round can reintroduce patterns cleaned up in the previous round.
 
