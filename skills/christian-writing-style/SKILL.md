@@ -53,6 +53,7 @@ Active voice even in academic writing. Passive only when the agent is unknown or
 
 - Breathless enthusiasm or marketing language ("revolutionary," "game-changing," "incredible," "novel" without justification).
 - Claims without sources.
+- Attribution verbs stronger than the evidence ("established," "proved," "showed" for what a source argued or proposed)
 - Jargon without explanation.
 - Overpromising or hyping results.
 - Emojis.
