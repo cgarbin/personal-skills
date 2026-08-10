@@ -141,7 +141,7 @@ ensure_symlink() {
     if [[ -L "$link_path" ]] && [[ "$(readlink "$link_path")" == "$src" || "$(readlink "$link_path")" == "${src%/}" ]]; then
         echo "  ok        $display_name (already linked)"
         up_to_date=$((up_to_date + 1))
-        return
+        return 0
     fi
 
     # Stale symlink (points elsewhere or is broken) — safe to replace.
@@ -153,7 +153,7 @@ ensure_symlink() {
         echo "  CONFLICT  $display_name — a file or folder already exists at $link_path" >&2
         echo "            Remove or rename it, then re-run this script." >&2
         conflicts=$((conflicts + 1))
-        return
+        return 0
     fi
 
     ln -s "$src" "$link_path"
@@ -252,7 +252,7 @@ show_changelog() {
 #   Symlinks <repo>/claude-md/CLAUDE.md → CLAUDE_MD_TARGET.
 #   Skips if claude-md/CLAUDE.md doesn't exist in the repo.
 install_claude_md() {
-    [[ -f "$CLAUDE_MD_SRC" ]] || return
+    [[ -f "$CLAUDE_MD_SRC" ]] || return 0
 
     mkdir -p "$(dirname "$CLAUDE_MD_TARGET")"
     echo "CLAUDE.md:"
@@ -308,6 +308,10 @@ parse_manifest() {
 #   one per line.
 collect_paths_for_repo() {
     local target_repo="$1"
+    # bash 3.2 trips set -u on an empty array.
+    if [[ ${#manifest_entries[@]} -eq 0 ]]; then
+        return 0
+    fi
     for entry in "${manifest_entries[@]}"; do
         local repo="${entry%%|*}"
         if [[ "$repo" == "$target_repo" ]]; then
@@ -368,19 +372,25 @@ copy_skills_from_repo() {
 # fetch_external_skills
 #   Reads the manifest, clones/updates repos, and copies skill folders.
 fetch_external_skills() {
-    [[ -f "$MANIFEST" ]] || return
-
-    echo "Fetching external skills..."
-    echo ""
-
-    mkdir -p "$EXTERNAL_DIR"
-    clean_external_skills
+    [[ -f "$MANIFEST" ]] || return 0
 
     manifest_entries=()
     parse_manifest
 
+    mkdir -p "$EXTERNAL_DIR"
+    # Emptying the manifest must still remove what earlier runs fetched.
+    clean_external_skills
+
+    # No entries means no external skills. The caller clears stale symlinks.
+    if [[ ${#manifest_entries[@]} -eq 0 ]]; then
+        return 0
+    fi
+
+    echo "Fetching external skills..."
+    echo ""
+
     # Deduplicate repos so we clone each once. Uses string matching because
-    # macOS ships bash 3.2, which lacks associative arrays.
+    # bash 3.2 lacks associative arrays.
     local processed_repos=""
     for entry in "${manifest_entries[@]}"; do
         local repo_key="${entry%%|*}"
@@ -513,7 +523,7 @@ install_external_skills() {
     fetch_external_skills
     remove_stale_external_symlinks
 
-    [[ -d "$EXTERNAL_DIR" ]] || return
+    [[ -d "$EXTERNAL_DIR" ]] || return 0
 
     local has_external_skills=false
     for skill_dir in "$EXTERNAL_DIR"/*/; do
