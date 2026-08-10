@@ -7,15 +7,15 @@ description: Review Christian's writing for accuracy, organization, and clarity.
 
 How to review Christian's writing: what to examine, in what order, and how to present feedback. For voice, tone, sentence patterns, and formatting conventions, consult **christian-writing-style**.
 
-Always load **christian-writing-style** alongside this skill.
+Always load **christian-writing-style** alongside this skill, plus the reference file for the register under review: `references/blog.md` or `references/academic.md`. Short snippets need neither. Several checks below cite rules that live only in those files.
 
 ---
 
 ## Before you start
 
-Determine the register (blog or academic) and the draft stage. Both shape what feedback is useful.
+Determine the register (blog, academic, or short snippets) and the draft stage. Both shape what feedback is useful.
 
-- **Register.** Blog post, journal paper, email? christian-writing-style defines the registers.
+- **Register.** Blog post, journal paper, email, commit message? christian-writing-style routes these at the top of its SKILL.md.
 - **Draft stage.** Ask if unclear. Early drafts: feedback on structure, argument, missing pieces. Late drafts: sentence-level editing and polish. Reviewing an early draft for comma placement wastes time. Reviewing a final draft without checking the argument is worse.
 
 ---
@@ -53,7 +53,7 @@ Two related checks:
 - **Transitions.** Each section connects to the next. Reader can follow opening to conclusion without getting lost.
 - **Tables, figures, lists.** Look for places where prose does work that structure would do better: comparisons across multiple items, step-by-step processes, chronological progressions, dense numerical results. Christian's tables are a signature strength. If a paragraph is "X does A, Y does B, Z does C," suggest a table. If a process would be clearer as a diagram, say so. Parallel alternatives (options explored, candidate approaches, variants, rejected designs) often read better as a bulleted list than as prose.
 - **Overloaded existing tables.** If a table tries to capture too many dimensions, suggest splitting into focused tables that each make one clear point.
-- **Academic papers:** structure matches conventions for the paper type (empirical, systematic review, tutorial). christian-writing-style documents these.
+- **Academic papers:** structure matches conventions for the paper type (empirical, systematic review, tutorial). christian-writing-style `references/academic.md` documents these.
 
 ### 3. Clarity and readability
 
@@ -63,6 +63,7 @@ Two related checks:
 - **Paragraph focus.** One main idea per paragraph. Split if it covers two or three. Merge if consecutive paragraphs make the same point.
 - **Conciseness.** Filler ("it is worth noting that"), redundancy ("each and every"), throat-clearing ("as mentioned previously").
 - **Paragraph-tail test.** Read the last sentence of each paragraph on its own and ask what it adds beyond the paragraph. Editorial close-outs are almost always final sentences, and they are invisible while reading forward because they feel like the landing. Run this as a separate pass, not while following the argument. Restatements go, conclusions stay (christian-writing-style, side commentary).
+- **Paragraph-opening test.** Read the first clause of each paragraph on its own. Flag runs of consecutive paragraphs that open on a reaction to the material rather than on the material. One such opening is voice and belongs in the blog register. Three in a row means every paragraph tells the reader how to feel before saying what the thing is, and the fact arrives late each time. Run it in the same pass as the tail test (christian-writing-style, `references/blog.md`).
 
 ### 4. Style alignment
 
@@ -84,10 +85,15 @@ Backstop for patterns judgment alone misses. Cheap to search for.
 - Nominalization markers at sentence start (-tion, -ment, -ance when the sentence could start with a verb).
 - Filler openers and single-word paragraph leads ("Interpretation.", "Interestingly,", "Note that", "It is worth noting").
 - Side commentary. Grep word stems, not full phrases. This family reappears in new wording each time, so a literal phrase catches one instance and never fires again. `deliberat`, `intentional`, `on purpose`, `by design`, `we do not claim`, `does not (claim|argue)`, `(attributes|makes|takes) no`, `rather than the reverse`, `the other way around`, `not just`, `which is worth`, `That is the`. Unlike the rest of this list, judge these before reporting: delete the clause and reread. If no fact, number, constraint, or claim is lost, the deletion stands. See christian-writing-style on side commentary.
+- Empty contrastive tails. Grep `,\snot\s` and `\srather\sthan\s`, then keep only the short-tail form where the contrast is the whole clause and sits at the end of a sentence ("One gate, not two"). The stems above catch fixed phrasings. This catches the bare construction, which reappears in new words each time. Expect a high false-positive rate, since most hits will be mid-sentence contrasts that carry real content. Bold lead-in labels ("Restatements go, conclusions stay") are a house pattern, not hits. Judge before reporting: keep the contrast only when the alternative was actually tried, a reader would plausibly assume it, or the argument depends on ruling it out.
+- Feeling-words spent on a fact: `uncomfortable`, `surprising`, `surprised`, `striking`, `remarkable`. One per piece is fine when the reaction is itself information. Flag the second.
+- Layout announcements: "the rest of this section", "the sections below", "what the table cannot carry", "each item gets". A table followed by per-item sections needs no sentence describing it.
+- Vocabulary that stands in for the concrete thing: `land`/`lands`/`landed` as a verb for where things end up, `stack`, `arm`, `frontier`, `axes`, `lever`, `downstream`.
+- Vague quantifiers where a number exists: "elevated", "tighten", "various factors", "had issues", "up" without a value.
 - Inconsistent capitalization or spelling of recurring technical terms.
 - Every citation key (`[@`) and every named attribution. Confirm each was checked against a source rather than recalled, including ones you wrote yourself.
 
-Flag every hit, even false positives. Especially important during iterative editing, where corrections in one round can reintroduce patterns cleaned up in the previous round.
+Flag every hit, even false positives, except for side commentary and empty contrastive tails. Those two fire often enough on legitimate prose that reporting them raw buries the real findings, so judge them first. Flagging the rest matters most during iterative editing, where corrections in one round can reintroduce patterns cleaned up in the previous round.
 
 ---
 
