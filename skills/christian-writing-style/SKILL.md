@@ -144,6 +144,10 @@ The common foundation is the entire skill here. There is no opening hook, no roa
 - No filler ("note that...", "it is worth mentioning that..."). Just state it.
 - No marketing words ("simply", "easily", "blazing fast").
 
+**A snippet earns its place by carrying a fact its context cannot.** A comment carries what the code does not, a commit subject what the diff does not, an error string what the stack trace does not. That fact is usually the constraint that shaped the work, the hazard it avoids, or the reason the obvious alternative fails. The test while drafting: what would a reader who skipped it get wrong? If nothing, delete it. If one clause answers it, that clause is the whole snippet. A constraint that shaped the code and appears nowhere on the page is a missing comment, not a clean one.
+
+**Do not document what the code shows.** Reachability ("callers always pass a non-empty list"), position ("runs before the validation step"), and the operation itself ("set the cache key") are all visible in the code. The reason behind the operation is not: "Cache key includes tenant id to avoid cross-tenant reuse." (Side commentary)
+
 **Lead with the contract, then the why.** State what the thing returns or does, then why it exists. Both as plain statements. Opening on an argument makes the reader accept a premise before learning what the code does.
 
 ```python
@@ -156,9 +160,9 @@ The common foundation is the entire skill here. There is no opening hook, no roa
 
 Weak: "A markdown table only makes sense with its header row." True, and it is an argument rather than a description, so the reader still does not know what the function returns.
 
-Explain the *why* or the non-obvious *what*, never the *how*. "Cache key includes tenant id to avoid cross-tenant reuse" beats "set the cache key."
+The example above is the upper bound, not the norm. Five lines is what a genuinely non-obvious invariant costs. Most comments carry one fact and run one line.
 
-When the snippet grows past two or three sentences (a multi-paragraph docstring, a long PR description, a commit body that argues for a decision), switch to the blog register.
+When a snippet still runs past two or three sentences after every sentence has earned its place (a multi-paragraph docstring, a long PR description, a commit body that argues for a decision), switch to the blog register.
 
 ---
 

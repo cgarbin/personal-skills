@@ -1,6 +1,6 @@
 ---
 name: text-review
-description: Review Christian's writing for accuracy, organization, and clarity. Use whenever he asks to review, critique, proofread, or give feedback on existing prose. Triggers include "check this", "does this read well", "review my draft". Always use with the christian-writing-style skill.
+description: Review Christian's writing for accuracy, organization, and clarity. Covers prose and the writing inside code: comments, docstrings, commit messages, PR descriptions. Use whenever he asks to review, critique, proofread, or give feedback on anything already written, even a single comment. Triggers include "check this", "does this read well", "review my draft", "review these comments", "do these comments earn their place". Always use with the christian-writing-style skill.
 ---
 
 # Text Review
@@ -64,6 +64,7 @@ Two related checks:
 - **Conciseness.** Filler ("it is worth noting that"), redundancy ("each and every"), throat-clearing ("as mentioned previously").
 - **Paragraph-tail test.** Read the last sentence of each paragraph on its own and ask what it adds beyond the paragraph. Editorial close-outs are almost always final sentences, and they are invisible while reading forward because they feel like the landing. Run this as a separate pass, not while following the argument. Restatements go, conclusions stay (christian-writing-style, side commentary).
 - **Paragraph-opening test.** Read the first clause of each paragraph on its own. Flag runs of consecutive paragraphs that open on a reaction to the material rather than on the material. One such opening is voice and belongs in the blog register. Three in a row means every paragraph tells the reader how to feel before saying what the thing is, and the fact arrives late each time. Run it in the same pass as the tail test (christian-writing-style, `references/blog.md`).
+- **Code-comment test.** Read each comment against the code it sits on and ask what a reader who skipped it would get wrong. Flag the ones where the answer is nothing. A one-line comment restates the code as easily as a four-line one (christian-writing-style, Short snippets).
 
 ### 4. Style alignment
 
