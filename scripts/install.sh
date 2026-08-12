@@ -205,6 +205,12 @@ read_locked_sha() {
 write_locked_sha() {
     local repo_key="$1"
     local sha="$2"
+
+    # Rewriting churns a tracked file's mtime for nothing when the SHA matches.
+    if [[ "$(read_locked_sha "$repo_key")" == "$sha" ]]; then
+        return 0
+    fi
+
     local tmp="${LOCKFILE}.tmp"
     local input="$LOCKFILE"
     [[ -f "$input" ]] || input=/dev/null
@@ -216,6 +222,44 @@ write_locked_sha() {
     ' "$input" > "$tmp"
     sort -o "$tmp" "$tmp"
     mv "$tmp" "$LOCKFILE"
+}
+
+# prune_lockfile
+#   Drops lock entries for repos the manifest no longer lists. write_locked_sha
+#   only upserts, so nothing else ever removes them.
+prune_lockfile() {
+    [[ -f "$LOCKFILE" ]] || return 0
+
+    # bash 3.2 has no associative arrays, so membership is a substring test.
+    local keys=""
+    if [[ ${#manifest_entries[@]} -gt 0 ]]; then
+        for entry in "${manifest_entries[@]}"; do
+            keys="${keys}|${entry%%|*}|"
+        done
+    fi
+
+    local tmp="${LOCKFILE}.tmp"
+    local dropped=0
+    local repo_key
+    local sha
+    : > "$tmp"
+    # A loop, not awk: kept lines go to the temp file, messages to stdout.
+    while read -r repo_key sha || [[ -n "$repo_key" ]]; do
+        [[ -z "$repo_key" ]] && continue
+        if [[ "$keys" == *"|${repo_key}|"* ]]; then
+            echo "$repo_key $sha" >> "$tmp"
+        else
+            echo "  unlock    $repo_key (no longer in manifest)"
+            dropped=1
+        fi
+    done < "$LOCKFILE"
+
+    if [[ $dropped -eq 1 ]]; then
+        sort -o "$tmp" "$tmp"
+        mv "$tmp" "$LOCKFILE"
+    else
+        rm -f "$tmp"
+    fi
 }
 
 # show_changelog <clone_dir> <repo_key> <old_sha> <new_sha> <paths>
@@ -370,12 +414,15 @@ copy_skills_from_repo() {
 }
 
 # fetch_external_skills
-#   Reads the manifest, clones/updates repos, and copies skill folders.
+#   Reads the manifest, prunes stale lock entries, clones/updates repos, and
+#   copies skill folders.
 fetch_external_skills() {
     [[ -f "$MANIFEST" ]] || return 0
 
     manifest_entries=()
     parse_manifest
+    # An empty manifest orphans every entry, so prune before the early return.
+    prune_lockfile
 
     mkdir -p "$EXTERNAL_DIR"
     # Emptying the manifest must still remove what earlier runs fetched.
