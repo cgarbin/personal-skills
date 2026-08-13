@@ -111,7 +111,7 @@ if [[ ! -d "$SKILLS_SRC" ]]; then
     exit 1
 fi
 
-# Guard against pointing --target or --link-into at the wrong place. The
+# Reject a --target or --link-into that points at the wrong place. The
 # path must end in .claude/skills so a typo cannot scatter symlinks into
 # an unrelated directory. Trailing slash is tolerated.
 require_skills_dir() {
@@ -651,8 +651,8 @@ link_into() {
     fi
 
     mkdir -p "$skills_dir"
-    # Resolve to an absolute, canonical path so the symlink target is
-    # stable regardless of how the user invoked the script.
+    # Resolve to a full absolute path so the symlink target is stable
+    # regardless of how the user invoked the script.
     skills_dir="$(cd "$skills_dir" && pwd)"
 
     echo "Installing $skill_name into $skills_dir:"
