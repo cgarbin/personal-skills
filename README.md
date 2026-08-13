@@ -155,7 +155,7 @@ Two signs the description is not the problem:
 - Two differently worded descriptions fail the same queries.
 - Trigger rates sit at 0 or 1 with nothing in between. A rate in the middle means wording still has room to move it.
 
-**Workaround to help difficult trigger cases:** Add a line to `claude-md/CLAUDE.md` that explicitly calls out the skill you want to use. Keep the rules in the skill and only the pointer in CLAUDE.md, so it stays short. `install.sh` symlinks it to `~/.claude/CLAUDE.md`.
+A line in `claude-md/CLAUDE.md` naming the skill looks like a way around this, since that file is in context for every session. Tested on one skill, it changed nothing. The queries that scored zero still scored zero with the line in place, and the work produced with it was no better and carried about twice the commentary. Treat the queries you cannot reach as out of reach.
 
 ## Adding an external skill
 
