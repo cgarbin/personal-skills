@@ -8,11 +8,11 @@ External skills I use are listed in `skills.manifest`. The install script fetche
 
 ## The skills
 
-- **christian-writing-style**: the writing rules for anything under my name, from a technical article to a commit subject line.
-- **text-review**: reviews writing for accuracy, organization, and clarity. Presents findings by severity and waits before editing.
-- **code-comments**: Rules to write useful comments and docstrings. It works together with `christian-writing-style`.
-- **commit**: commits the session's changes in logical groups, with a review step before each commit.
-- **python-dev-process** (opt-in): my Python process, covering project phases, tooling, testing, and refactoring discipline.
+- **[christian-writing-style](skills/christian-writing-style/)**: the writing rules for anything under my name, from a technical article to a commit subject line.
+- **[text-review](skills/text-review/)**: reviews writing for accuracy, organization, and clarity. Presents findings by severity and waits before editing.
+- **[code-comments](skills/code-comments/)**: Rules to write useful comments and docstrings. It works together with `christian-writing-style`.
+- **[commit](skills/commit/)**: commits the session's changes in logical groups, with a review step before each commit.
+- **[python-dev-process](skills/python-dev-process/)** (opt-in): my Python process, covering project phases, tooling, testing, and refactoring discipline.
 
 ## Repository structure
 
