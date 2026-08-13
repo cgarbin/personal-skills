@@ -1,0 +1,60 @@
+{
+  "skill_name": "code-comments",
+  "evals": [
+    {
+      "id": 0,
+      "name": "clean-up-agent-generated-comments",
+      "prompt": "I had Claude write this chunker for the ingestion pipeline and the comments read like a design doc. Clean them up. Leave the code alone, I only care about the comments and docstrings.",
+      "files": ["fixtures/chunker.py"],
+      "assertions": [
+        "Keeps the comment '8192 is the largest input the tokenizer accepts in one call' or an equivalent statement of that constraint",
+        "Removes the plan labels 'Cluster A1' and 'Step 3'",
+        "Removes the paragraph about the rejected regex-based detector",
+        "Removes the sentence naming the indexer as the caller of is_table_start",
+        "Removes the description of split_markdown's inner loop from is_table_start's docstring",
+        "Removes the comment about normalize_headings no longer running after decoupling",
+        "Removes the reachability comment 'Callers always pass a non-empty string'",
+        "Removes the comment explaining what the caller does with the returned list",
+        "Removes the comment re-arguing the whole-file read benchmark",
+        "Removes the redundant comment '# Set the running size.'",
+        "Removes 'Takes a string and returns a list of strings' from split_markdown's docstring",
+        "Removes the words guard, canonical, idempotent, load-bearing, and downstream from all comments and docstrings",
+        "Removes the 'rows drift apart' metaphor",
+        "Rewrites the is_table_start docstring to open with a plain action rather than a noun-pile",
+        "Does not add any new comment that restates what a line of code does",
+        "Leaves the executable code unchanged"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "new-code-comes-with-comments",
+      "prompt": "Write a Go helper for our ingestion service that reads a JSONL file of documents and returns them in batches. Batch size is capped at 4 MB because that is the request limit on the embedding endpoint we call. Skip malformed lines rather than failing the whole file, we get a few every run from a bad exporter upstream.",
+      "files": [],
+      "assertions": [
+        "Comments or doc comments state why the batch cap is 4 MB, tying it to the embedding endpoint request limit",
+        "No comment restates what an adjacent line of code plainly does",
+        "No comment names a caller or describes what a consumer will do with the result",
+        "No comment discusses an alternative implementation that was not used",
+        "No comment contains the words guard, invariant, idempotent, canonical, downstream, or load-bearing",
+        "No comment carries a label from a plan or task list",
+        "The exported function's doc comment opens with the action it performs",
+        "Total comment volume is proportional to the non-obvious facts, not one comment per block"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "review-a-diff-without-editing",
+      "prompt": "Review the comments in this file and tell me which ones you would cut and why. Don't change anything yet.",
+      "files": ["fixtures/chunker.py"],
+      "assertions": [
+        "Reports findings without modifying the file",
+        "Identifies the rejected regex-based detector paragraph as removable",
+        "Identifies the plan labels Cluster A1 and Step 3 as removable",
+        "Identifies at least one comment that describes code outside the unit it sits on",
+        "Identifies the comment about code that no longer runs",
+        "Does not recommend cutting the comment about the tokenizer's 8192 input limit",
+        "Gives a reason for each finding rather than only listing line numbers"
+      ]
+    }
+  ]
+}

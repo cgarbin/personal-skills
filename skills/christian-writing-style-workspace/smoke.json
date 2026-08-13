@@ -1,0 +1,10 @@
+[
+  {
+    "query": "need to write the limitations section for the RAG chapter. main things: single dataset (MIMIC-IV discharge summaries), only 3 open models, and the concept extraction relies on a UMLS mapping that misses abbreviations. maybe 3-4 paragraphs",
+    "should_trigger": true
+  },
+  {
+    "query": "grep my vault for every note that mentions splade and give me the file paths",
+    "should_trigger": false
+  }
+]

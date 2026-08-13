@@ -1,0 +1,81 @@
+{
+  "skill_name": "christian-writing-style",
+  "evals": [
+    {
+      "id": 0,
+      "name": "blog-post-section",
+      "prompt": "I'm writing a blog post about why retrieval recall is a bad proxy for RAG answer quality. I ran an experiment on 200 questions over my Obsidian vault: retrieval recall@10 was 0.42 but the model answered 71% of them correctly when I graded by hand. Write the section that explains why those two numbers can diverge. Four to six paragraphs. Markdown, goes on my Jekyll site.",
+      "assertions": [
+        "No em-dashes anywhere in the prose",
+        "No semicolons used to join independent clauses in prose",
+        "US spelling throughout (analyze, behavior, modeling, color, center, defense)",
+        "No emojis",
+        "No marketing or hype words (revolutionary, game-changing, seamless, powerful, simply, easily, blazing)",
+        "No filler openers or metacommentary (it is worth noting, it is important to note, in today's)",
+        "Opens with a hook (question, scenario, or concrete problem), not throat-clearing",
+        "Names concrete mechanisms for the divergence rather than 'various factors'",
+        "Hedges each claim once rather than stacking hedges",
+        "Acknowledges at least one limit of the experiment or of the conclusion"
+      ],
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "academic-results-with-table",
+      "prompt": "Draft the opening paragraph of the results subsection for my paper. Table 3 has per-model context precision: Gemma 0.61, Qwen 0.58, Llama 0.44. It rises with admission length for Gemma and Qwen and is flat for Llama. The pooled value across all three is 0.54. Context precision here counts how much of the retrieved context the answer actually used, so a low value is partly a property of the retriever and partly a property of the model. Write the paragraph that opens the subsection and sets up what follows.",
+      "assertions": [
+        "No em-dashes anywhere in the prose",
+        "No semicolons used to join independent clauses in prose",
+        "US spelling throughout (analyze, behavior, modeling, color, center, defense)",
+        "No emojis",
+        "No marketing or hype words (revolutionary, game-changing, seamless, powerful, simply, easily, blazing)",
+        "No filler openers or metacommentary (it is worth noting, it is important to note, in today's)",
+        "Prose does not restate the per-model numbers that already live in Table 3 (0.61, 0.58, 0.44)",
+        "Prose does not quote the pooled value 0.54 as the opening claim",
+        "References the table explicitly rather than reproducing it",
+        "Names the mechanism with a precise term instead of a vague framing",
+        "Ends with at most one signpost clause describing what the subsection does",
+        "Uses 'we' rather than 'I'",
+        "Per-model trend qualifiers are not stacked under the opening claim"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "short-snippets",
+      "prompt": "Fixed our chunker. It was splitting on \\n\\n, which cut markdown tables in half, so retrieval returned half a table with no header row. Changed it to keep table blocks intact. I need three things: the commit message, the PR title and description, and the comment above the new `_is_table_block` helper.",
+      "assertions": [
+        "No em-dashes anywhere in the prose",
+        "No semicolons used to join independent clauses in prose",
+        "US spelling throughout (analyze, behavior, modeling, color, center, defense)",
+        "No emojis",
+        "No marketing or hype words (revolutionary, game-changing, seamless, powerful, simply, easily, blazing)",
+        "No filler openers or metacommentary (it is worth noting, it is important to note, in today's)",
+        "Commit subject line is imperative mood and 72 characters or fewer",
+        "The code comment explains why the helper exists, not how it works line by line",
+        "PR description states the user-visible failure (retrieval returning a headerless table fragment), not only the code change",
+        "No opening hook, roadmap, or progressive disclosure in any of the three snippets"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "investigation-writeup",
+      "prompt": "Write up my debugging notes for the team. Our nightly eval score dropped from 0.78 to 0.61 on Aug 3. I checked four possible causes. One, the embedding model version pinned in requirements.txt, unchanged, ruled out. Two, new documents added to the corpus that week, 1,400 of them, all from a new source with different formatting. Three, the reranker service, latency was up but scores were identical on replay, ruled out. Four, the grader prompt, someone edited it on Aug 2 to add a strictness clause. I think it is a mix of two and four. This goes in docs/incidents/.",
+      "assertions": [
+        "No em-dashes anywhere in the prose",
+        "No semicolons used to join independent clauses in prose",
+        "US spelling throughout (analyze, behavior, modeling, color, center, defense)",
+        "No emojis",
+        "No marketing or hype words (revolutionary, game-changing, seamless, powerful, simply, easily, blazing)",
+        "No filler openers or metacommentary (it is worth noting, it is important to note, in today's)",
+        "The four candidate causes appear in a table or list, not as a run of paragraphs",
+        "States a verdict, not only the evidence",
+        "Each ruled-out cause states what ruled it out",
+        "No editorial close-out as the final sentence of a paragraph",
+        "Distinguishes the measurement change (grader prompt) from the possible real regression (new corpus)"
+      ],
+      "files": []
+    }
+  ]
+}

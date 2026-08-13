@@ -8,8 +8,18 @@ manifest.json
 .DS_Store
 Thumbs.db
 
-# Workspace/eval artifacts from skill-creator
-*-workspace/
+# Python bytecode, produced when an eval fixture gets imported
+__pycache__/
+*.pyc
+
+# Run outputs from skill-creator workspaces. The eval inputs (evals/ and
+# trigger-eval.json) stay tracked so the test sets travel with the skills
+# and a later maintainer can check a claim instead of re-deriving it.
+skills/*-workspace/iteration-*/
+skills/*-workspace/trigger-*.json
+!skills/*-workspace/trigger-eval.json
+skills/*-workspace/*.log
+skills/*-workspace/feedback.json
 
 # Claude Code local settings (machine-specific)
 .claude/settings.local.json

@@ -1,0 +1,82 @@
+[
+  {
+    "query": "add a retry wrapper around the embedding client in internal/embed/client.go. 3 attempts, exponential backoff starting at 200ms. the endpoint 429s pretty often around the top of the hour",
+    "should_trigger": true
+  },
+  {
+    "query": "can you look at PR 412 before i approve it? it's the chunker rewrite, about 300 lines. mostly want a sanity check on whether it reads clearly",
+    "should_trigger": true
+  },
+  {
+    "query": "i had claude write this whole ingestion module and the comments are exhausting. every single line has one. can you thin them out",
+    "should_trigger": true
+  },
+  {
+    "query": "the eval harness has zero docstrings. add them to the public functions in harness/runner.py. it's a CLI that runs retrieval evals against a corpus and writes a json report",
+    "should_trigger": true
+  },
+  {
+    "query": "does this comment earn its place? `# Retry three times before giving up` sitting on top of `for attempt in range(3):`",
+    "should_trigger": true
+  },
+  {
+    "query": "refactor split_markdown in chunker.py, it's doing three things at once. pull the table detection and the overlap handling into their own functions",
+    "should_trigger": true
+  },
+  {
+    "query": "write tests for the concept extraction path. it maps discharge summary text to UMLS codes and i want the abbreviation misses covered specifically",
+    "should_trigger": true
+  },
+  {
+    "query": "rename `df2` and `tmp_out` throughout notebooks/analysis.py to something that says what they hold. df2 is the per-model precision table, tmp_out is the merged frame",
+    "should_trigger": true
+  },
+  {
+    "query": "add the recall@k query to queries/retrieval_metrics.sql. our AGENTS.md wants a plain-english note at every decision point in sql so keep that in mind",
+    "should_trigger": true
+  },
+  {
+    "query": "getting a nil map panic in the batcher when the first jsonl line is malformed. fix it and make sure the skip path is obvious to whoever reads it next",
+    "should_trigger": true
+  },
+  {
+    "query": "write the commit message for what's staged. it's the chunker rewrite plus the two test files",
+    "should_trigger": false
+  },
+  {
+    "query": "draft the PR description for the chunker branch. reviewers are two people who haven't touched the ingestion code before",
+    "should_trigger": false
+  },
+  {
+    "query": "the README for eval-harness is basically empty. fill it in, python CLI, yaml config, json report out",
+    "should_trigger": false
+  },
+  {
+    "query": "our error message when the corpus path doesn't exist is just 'file error'. rewrite it so the user knows what to do",
+    "should_trigger": false
+  },
+  {
+    "query": "the log lines in the ingestion service are useless during an incident. rewrite them so oncall can tell which phase failed",
+    "should_trigger": false
+  },
+  {
+    "query": "read the section i wrote for the blog post about the chunking experiment and tell me if the argument holds. heading-based beat semantic by 8 points on recall",
+    "should_trigger": false
+  },
+  {
+    "query": "draft the limitations section for the RAG chapter. single dataset, three open models, UMLS mapping misses abbreviations",
+    "should_trigger": false
+  },
+  {
+    "query": "review the ADR i wrote for moving the index build off the ingestion box. mostly want to know if the tradeoffs section is honest",
+    "should_trigger": false
+  },
+  {
+    "query": "close out today's daily note, i spent most of it on the retrieval eval and the rest in the advisor meeting",
+    "should_trigger": false
+  },
+  {
+    "query": "write the release notes for v0.4 of the eval harness. new yaml schema, dropped the old csv output, added per-model breakdowns",
+    "should_trigger": false
+  }
+]

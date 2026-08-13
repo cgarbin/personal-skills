@@ -1,0 +1,86 @@
+[
+  {
+    "query": "need to write the limitations section for the RAG chapter. main things: single dataset (MIMIC-IV discharge summaries), only 3 open models, and the concept extraction relies on a UMLS mapping that misses abbreviations. maybe 3-4 paragraphs",
+    "should_trigger": true
+  },
+  {
+    "query": "draft a blog post about the chunking experiment. i tested fixed-size vs heading-based vs semantic chunking on my obsidian vault, heading-based won on recall by about 8 points but semantic was better on the long notes. want it practical, with code",
+    "should_trigger": true
+  },
+  {
+    "query": "the README for the eval-harness repo is basically empty. can you fill it in? it's a python CLI that runs retrieval evals against a corpus, config is yaml, outputs a json report",
+    "should_trigger": true
+  },
+  {
+    "query": "writing an ADR for why we're keeping the reranker despite the latency. context: p99 went from 180ms to 340ms but ndcg@10 improved 0.11. goes in docs/adr/0007-keep-reranker.md",
+    "should_trigger": true
+  },
+  {
+    "query": "i just refactored the chunker to take a strategy object instead of five boolean flags. need a commit message for it",
+    "should_trigger": true
+  },
+  {
+    "query": "write the PR description for this branch. it swaps our bm25 baseline for splade and updates the eval config. needs a migration note because the index format changed",
+    "should_trigger": true
+  },
+  {
+    "query": "email to my advisor summarizing where the experiments stand. concept recall came back lower than expected and i want to propose the ablation before our next meeting, without sounding like i'm making excuses",
+    "should_trigger": true
+  },
+  {
+    "query": "add docstrings to the functions in src/retrieval/rerank.py, there are none right now",
+    "should_trigger": true
+  },
+  {
+    "query": "clean up docs/setup.md, it's grown organically and reads badly now",
+    "should_trigger": true
+  },
+  {
+    "query": "help me write the abstract, 250 word limit for the workshop. it's the temporal-context work, finding is that adding note creation time to the prompt doesn't help but filtering by it does",
+    "should_trigger": true
+  },
+  {
+    "query": "can you take a pass at the intro paragraph of section 4? feels flabby to me but i can't pin down why",
+    "should_trigger": true
+  },
+  {
+    "query": "reformat the tables in docs/results.md so the pipe characters line up, they're ragged and hard to read in the raw file",
+    "should_trigger": false
+  },
+  {
+    "query": "grep my vault for every note that mentions splade and give me the file paths",
+    "should_trigger": false
+  },
+  {
+    "query": "what's the actual difference between context precision and context recall in ragas? i keep mixing them up",
+    "should_trigger": false
+  },
+  {
+    "query": "the chunker test is failing on test_table_block_not_split, figure out why",
+    "should_trigger": false
+  },
+  {
+    "query": "summarize this paper for me, it's at ~/Downloads/2602.20040v1.pdf. i mainly care about how they set up the retrieval eval",
+    "should_trigger": false
+  },
+  {
+    "query": "add a table of contents to docs/guide.md, it's gotten long. just the h2s",
+    "should_trigger": false
+  },
+  {
+    "query": "convert README.md to rst, the new docs site needs that format",
+    "should_trigger": false
+  },
+  {
+    "query": "write a python function that takes a list of chunks and returns the ones whose token count exceeds a limit",
+    "should_trigger": false
+  },
+  {
+    "query": "what did i write in the daily note last tuesday about the grader prompt change?",
+    "should_trigger": false
+  },
+  {
+    "query": "bump the version in pyproject.toml and update CHANGELOG.md with entries from the last 5 commits",
+    "should_trigger": false
+  }
+]
