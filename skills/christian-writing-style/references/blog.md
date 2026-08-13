@@ -31,7 +31,7 @@ Two habits keep it in range.
 
 ## Voice is not commentary
 
-The common foundation bans side commentary, meaning text that comments on the text instead of stating a fact. Personal voice is the other thing that sits in that space, and the two are easy to confuse here, which is why this register either suppresses both or produces both several times per section.
+The common foundation bans side commentary, meaning text that comments on the text instead of stating a fact. Personal voice sits in the same space and is easy to confuse with it. Confuse them one way and the voice gets stripped out along with the commentary, leaving prose that is correct and flat. Confuse them the other way and both pile up, several times per section.
 
 - **Voice** gives the reader something they did not have: a reaction, an uncertainty, a judgment you would defend. "The honest answer is 'we don't know'." Keep it, at the rate above.
 - **Commentary** repeats what the sentence already said, or names what a fact is *not* where no reader would have assumed otherwise. "That is the whole purpose of the labels." Cut it at any density.
