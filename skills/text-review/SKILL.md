@@ -14,10 +14,11 @@ Always load **christian-writing-style** alongside this skill, plus the reference
 
 ## Before you start
 
-Determine the register (blog, academic, or short snippets) and the draft stage. Both shape what feedback is useful.
+Three things shape what feedback is useful. Settle them first.
 
-- **Register.** Blog post, journal paper, email, commit message? christian-writing-style routes these at the top of its SKILL.md.
+- **Register.** Blog post, journal paper, email, commit message? christian-writing-style routes these at the top of its SKILL.md, and the reference file to load follows from that routing.
 - **Draft stage.** Ask if unclear. Early drafts: feedback on structure, argument, missing pieces. Late drafts: sentence-level editing and polish. Reviewing an early draft for comma placement wastes time. Reviewing a final draft without checking the argument is worse.
+- **Scope.** A whole document, or a single comment, commit subject, or paragraph. A snippet needs the mechanical scan and, for comments, the code-comment test. Layers 1, 2, and 4 and the two-phase gate assume a document.
 
 **Reviewing an edit pass is not reviewing a draft.** When the subject is a set of changes rather than a document, read each changed passage together with the passages that depend on it, in full and in order, whether or not they changed. "Check consumers, not just usages" under Applying changes names the three kinds of dependent passage to look for. A diff shows the side that changed and hides the side that depended on it, so coupling breakage is invisible from the diff by construction.
 
@@ -67,7 +68,7 @@ Two related checks:
 - **Conciseness.** Filler ("it is worth noting that"), redundancy ("each and every"), throat-clearing ("as mentioned previously").
 - **Paragraph-tail test.** Read the last sentence of each paragraph on its own and ask what it adds beyond the paragraph. Editorial close-outs are almost always final sentences, and they are invisible while reading forward because they feel like the landing. Run this as a separate pass, not while following the argument. Restatements go, conclusions stay (christian-writing-style, side commentary).
 - **Paragraph-opening test.** Read the first clause of each paragraph on its own. Flag runs of consecutive paragraphs that open on a reaction to the material rather than on the material. One such opening is voice and belongs in the blog register. Three in a row means every paragraph tells the reader how to feel before saying what the thing is, and the fact arrives late each time. Run it in the same pass as the tail test (christian-writing-style, `references/blog.md`).
-- **Code-comment test.** Read each comment against the code it sits on and ask what a reader who skipped it would get wrong. Flag the ones where the answer is nothing. A one-line comment restates the code as easily as a four-line one (christian-writing-style, Short snippets). When the review covers comments or docstrings, read **code-comments** and run its scan first.
+- **Code-comment test.** Read each comment against the code it sits on and ask what a reader who skipped it would get wrong. Flag the ones where the answer is nothing. A one-line comment restates the code as easily as a four-line one. When the review covers comments or docstrings, read **code-comments** and run its scan first.
 
 ### 4. Style alignment
 
@@ -81,23 +82,25 @@ Consult christian-writing-style for the full specification. Common issues:
 
 ### 5. Mechanical scan
 
-Backstop for patterns judgment alone misses. Cheap to search for.
+Backstop for patterns judgment alone misses. `scripts/scan.py` holds the patterns and the reasoning behind each one. It exits 0 clean, 1 with hits, 2 on a usage error.
 
-- Em-dashes in prose (Christian doesn't use them in his own writing).
-- Semicolons in prose (pseudo-code or table semicolons excepted).
-- British spelling (*analyse*, *colour*, *behaviour*, *modelling*, *-ise*, *centre*, *defence*). Flag every occurrence.
-- Nominalization markers at sentence start (-tion, -ment, -ance when the sentence could start with a verb).
-- Filler openers and single-word paragraph leads ("Interpretation.", "Interestingly,", "Note that", "It is worth noting").
-- Side commentary. Grep word stems, not full phrases. This family reappears in new wording each time, so a literal phrase catches one instance and never fires again. `deliberat`, `intentional`, `on purpose`, `by design`, `we do not claim`, `does not (claim|argue)`, `(attributes|makes|takes) no`, `rather than the reverse`, `the other way around`, `not just`, `which is worth`, `That is the`. Unlike the rest of this list, judge these before reporting: delete the clause and reread. If no fact, number, constraint, or claim is lost, the deletion stands. See christian-writing-style on side commentary.
-- Empty contrastive tails. Grep `,\snot\s` and `\srather\sthan\s`, then keep only the short-tail form where the contrast is the whole clause and sits at the end of a sentence ("One gate, not two"). The stems above catch fixed phrasings. This catches the bare construction, which reappears in new words each time. Expect a high false-positive rate, since most hits will be mid-sentence contrasts that have real content. Bold lead-in labels ("Restatements go, conclusions stay") are a house pattern, not hits. Judge before reporting: keep the contrast only when the alternative was actually tried, a reader would plausibly assume it, or the argument depends on ruling it out.
-- Feeling-words spent on a fact: `uncomfortable`, `surprising`, `surprised`, `striking`, `remarkable`. One per piece is fine when the reaction is itself information. Flag the second.
-- Layout announcements: "the rest of this section", "the sections below", "what the table cannot hold", "each item gets". A table followed by per-item sections needs no sentence describing it.
-- Vocabulary that stands in for the concrete thing: `land`/`lands`/`landed` as a verb for where things end up, `carr(y|ies|ied)` for what text or code conveys, `stack`, `arm`, `frontier`, `axes`, `lever`, `downstream`.
-- Vague quantifiers where a number exists: "elevated", "tighten", "various factors", "had issues", "up" without a value.
+```bash
+scripts/scan.py draft.md                    # prose
+scripts/scan.py --comments src/chunker.py   # comment lines only, code-comments rules
+scripts/scan.py --summary draft.md          # counts per check
+scripts/scan.py --only citation paper.md    # named checks, and the only way to run citation
+```
+
+Prose mode covers em-dashes, semicolons, British spelling, nominalization and filler openers, side commentary, empty contrastive tails, feeling-words, layout announcements, vocabulary that stands in for the concrete thing, and vague quantifiers. It joins hard-wrapped lines first, so a phrase split across a line break still matches. `--comments` runs the code-comments jargon, dead-code, and plan-label stems against comment lines, which is where they mean something rather than being ordinary identifiers.
+
+Two checks need a read instead:
+
 - Inconsistent capitalization or spelling of recurring technical terms.
-- Every citation key (`[@`) and every named attribution. Confirm each was checked against a source rather than recalled, including ones you wrote yourself.
+- Whether each citation key and named attribution was checked against a source rather than recalled, including ones you wrote yourself. `--only citation` finds the keys but not where they came from. It stays opt-in because eighty citations in a paper would drown every other check.
 
-Flag every hit, even false positives, except for side commentary and empty contrastive tails. Those two fire often enough on legitimate prose that reporting them raw buries the real findings, so judge them first. Flagging the rest matters most during iterative editing, where corrections in one round can reintroduce patterns cleaned up in the previous round. Save the scan as a script and re-run it each round rather than repeating it by hand (see Iterated reviews).
+Report every hit, false positives included, except the four tagged `JUDGE`. Side commentary, empty contrastive tails, and the concrete-thing vocabulary fire often enough on correct prose that reporting them raw buries the real findings, since "axes" and "stack" are ordinary words in a paper about models. Judge all three the same way: delete the clause and reread. If no fact, number, constraint, or claim is lost, the deletion stands. Keep a contrast only when the alternative was actually tried, a reader would plausibly assume it, or the argument depends on ruling it out. Feeling-words are tagged for a different reason. One per piece is fine when the reaction is itself information, and the script cannot count across a document.
+
+Reporting the rest matters most during iterative editing, where corrections in one round reintroduce patterns cleaned up in the previous one.
 
 ---
 
@@ -167,7 +170,7 @@ For each change:
 3. **Wait for Christian's decision.** Accept, ask for a different approach, or skip.
 4. **Do not move to the next finding** until Christian says he is done with the current one.
 
-No batching. One change at a time, at his pace. If he stops partway through, the remaining items aren't going anywhere.
+No batching. One change at a time, at his pace.
 
 ### Check consumers, not just usages
 
@@ -177,7 +180,7 @@ Before marking any change done, list what was only correct because of the fact y
 - **Derivations.** Another passage ranks, counts, or orders by the fact. A priority list built from a table, a total that has to sum, a count repeated in a second document.
 - **Negations.** Another passage says what the fact is not, departs from it, or reconciles it with something else. Delete the fact and the negation is left denying nothing.
 
-Renames are the easy case, and the one a scan catches: updating a heading and leaving the old term in the body is hard to see from inside the edit. Additions, deletions, and changed numbers break consumers without leaving a stale string anywhere.
+Renames are the case a scan catches, because the old term is still sitting somewhere as a string, however hard it is to spot from inside the edit. Additions, deletions, and changed numbers are the case it misses. They break a passage elsewhere without leaving a stale string to search for.
 
 ### Responding to refinements
 
