@@ -18,7 +18,15 @@ External skills I use are listed in `skills.manifest`. The install script fetche
 
 Personal skills live under `skills/`, each in its own folder with a `SKILL.md`. External skills from GitHub are listed in `skills.manifest` and fetched into `from-others/` at install time. The `scripts/` folder holds `install.sh`, `configure-permissions.sh`, and `trigger-eval.py`.
 
-## Setting up a new machine
+- [Set up a new machine](#set-up-a-new-machine)
+- [Update a skill](#update-a-skill)
+- [Add a new personal skill](#add-a-new-personal-skill)
+- [Install skills in specific repos](#install-skills-in-specific-repos)
+- [Evaluate a skill](#evaluate-a-skill)
+- [Add an external skill](#add-an-external-skill)
+- [Track external skill changes](#track-external-skill-changes)
+
+## Set up a new machine
 
 ### 1. Clone the repository
 
@@ -70,7 +78,7 @@ The `configure-permissions.sh` script manages the allow/deny permission lists in
 
 The desired allow/deny lists are defined at the top of the script. Edit them to change your defaults.
 
-## Updating a skill
+## Update a skill
 
 1. Edit the skill's `SKILL.md` in this repo.
 2. Test it in a Cowork or Claude Code session. For a change worth measuring, see [Evaluating a skill](#evaluating-a-skill).
@@ -84,7 +92,7 @@ git push
 
 On other machines, `git pull` picks up the changes.
 
-## Adding a personal skill
+## Add a new personal skill
 
 ```bash
 mkdir skills/my-new-skill
@@ -117,7 +125,7 @@ The path must end in `.claude/skills` (same format as `--target`). The script cr
 
 Repeat on all machines where you want the skill active.
 
-## Evaluating a skill
+## Evaluate a skill
 
 A skill can fail in two independent ways. It can fail to trigger when it should, or it can trigger and then apply its rules badly.
 
@@ -169,7 +177,7 @@ Two signs the description is not the problem:
 
 A line in `claude-md/CLAUDE.md` naming the skill looks like a way around this, since that file is in context for every session. Tested on one skill, it changed nothing. The queries that scored zero still scored zero with the line in place, and the work produced with it was no better and carried about twice the commentary. Treat the queries you cannot reach as out of reach.
 
-## Adding an external skill
+## Add an external skill
 
 Add a GitHub URL to `skills.manifest` and re-run the install script:
 
@@ -180,7 +188,7 @@ echo "https://github.com/<owner>/<repo>/tree/<branch>/<path-to-skill>" >> skills
 
 External skills are fetched into `from-others/` (git-ignored) and symlinked alongside personal skills. The manifest is committed, so other machines get the same set of external skills after `git pull && ./scripts/install.sh`.
 
-## Tracking external skill changes
+## Track external skill changes
 
 The install script maintains a `skills.lock` file that records the commit SHA fetched for each external repo. On subsequent runs, if the upstream repo has new commits, the script shows a full diff of what changed in the skill files before updating. This lets you review upstream changes instead of silently replacing skills.
 
