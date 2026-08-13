@@ -1,6 +1,6 @@
 ---
 name: text-review
-description: Review Christian's writing for accuracy, organization, and clarity. Covers prose and the writing inside code: comments, docstrings, commit messages, PR descriptions. Use whenever he asks to review, critique, proofread, or give feedback on anything already written, even a single comment. Triggers include "check this", "does this read well", "review my draft", "review these comments", "do these comments earn their place". Always use with the christian-writing-style skill.
+description: Review Christian's writing for accuracy, organization, and clarity: prose, the writing inside code (comments, docstrings, commit messages, PR descriptions), and sets of edits rather than whole documents (a diff, an edit pass, another round after changes). Use whenever he asks to review, critique, proofread, or give feedback on anything already written, down to a single comment or a single edit, including casual asks like "check this" or "does this read well". Always use with the christian-writing-style skill.
 ---
 
 # Text Review
@@ -17,6 +17,8 @@ Determine the register (blog, academic, or short snippets) and the draft stage. 
 
 - **Register.** Blog post, journal paper, email, commit message? christian-writing-style routes these at the top of its SKILL.md.
 - **Draft stage.** Ask if unclear. Early drafts: feedback on structure, argument, missing pieces. Late drafts: sentence-level editing and polish. Reviewing an early draft for comma placement wastes time. Reviewing a final draft without checking the argument is worse.
+
+**Reviewing an edit pass is not reviewing a draft.** When the subject is a set of changes rather than a document, read each changed passage together with the passages that depend on it, in full and in order, whether or not they changed. "Check consumers, not just usages" under Applying changes names the three kinds of dependent passage to look for. A diff shows the side that changed and hides the side that depended on it, so coupling breakage is invisible from the diff by construction.
 
 ---
 
@@ -94,7 +96,7 @@ Backstop for patterns judgment alone misses. Cheap to search for.
 - Inconsistent capitalization or spelling of recurring technical terms.
 - Every citation key (`[@`) and every named attribution. Confirm each was checked against a source rather than recalled, including ones you wrote yourself.
 
-Flag every hit, even false positives, except for side commentary and empty contrastive tails. Those two fire often enough on legitimate prose that reporting them raw buries the real findings, so judge them first. Flagging the rest matters most during iterative editing, where corrections in one round can reintroduce patterns cleaned up in the previous round.
+Flag every hit, even false positives, except for side commentary and empty contrastive tails. Those two fire often enough on legitimate prose that reporting them raw buries the real findings, so judge them first. Flagging the rest matters most during iterative editing, where corrections in one round can reintroduce patterns cleaned up in the previous round. Save the scan as a script and re-run it each round rather than repeating it by hand (see Iterated reviews).
 
 ---
 
@@ -155,6 +157,8 @@ Present the complete review using the severity structure above. This gives Chris
 
 When Christian is ready, work through findings as a task list. Order them logically, not by severity. Structural reorganization comes before polishing prose that will move. Factual fixes come before refining the sentences they appear in. If applying one change makes another irrelevant or requires re-doing it, put the upstream change first.
 
+**The unit of a change is the argument, not the sentence.** While ordering, merge findings that are two symptoms of one argument spread across passages. They are one change: rewrite those passages together and read them back before moving on. Applied separately, each fix satisfies its own finding and breaks the pair, and the breakage surfaces as a new must-fix in the next round.
+
 For each change:
 
 1. **Show the current text.** Quote the passage.
@@ -162,9 +166,17 @@ For each change:
 3. **Wait for Christian's decision.** Accept, ask for a different approach, or skip.
 4. **Do not move to the next finding** until Christian says he is done with the current one.
 
-No batching. One finding at a time, at his pace. If he stops partway through, the remaining items aren't going anywhere.
+No batching. One change at a time, at his pace. If he stops partway through, the remaining items aren't going anywhere.
 
-When a change renames a term, reframes a decision, or deprecates a concept, scan the full document for residual usages before marking it done. Updating a heading but leaving the old term in the body creates confusion that is hard to see from inside the edit.
+### Check consumers, not just usages
+
+Before marking any change done, list what was only correct because of the fact you just changed. Grep finds the old wording. It does not find a passage that reads fine on its own and is now wrong in context, which is the failure that survives review. Three kinds. Find them by reading in full rather than grepping, and look beyond the file you edited:
+
+- **Restatements.** Another passage states the same fact. Adding detail in one place makes the other a duplicate. Removing detail makes it the only copy.
+- **Derivations.** Another passage ranks, counts, or orders by the fact. A priority list built from a table, a total that has to sum, a count repeated in a second document.
+- **Negations.** Another passage says what the fact is not, departs from it, or reconciles it with something else. Delete the fact and the negation is left denying nothing.
+
+Renames are the easy case, and the one a scan catches: updating a heading and leaving the old term in the body is hard to see from inside the edit. Additions, deletions, and changed numbers break consumers without leaving a stale string anywhere.
 
 ### Responding to refinements
 
@@ -176,6 +188,18 @@ When Christian asks for a different approach, don't treat it as a literal instru
 - If his suggestion creates a new issue, say so directly and propose what you'd do instead.
 
 Goal: collaborative back-and-forth between peers, not order-taking.
+
+---
+
+## Iterated reviews
+
+A review that follows an earlier round of edits needs a stopping rule, because the loop can sustain itself indefinitely on its own output.
+
+**Read what a round's findings are about, not how many there are.** If they are confined to text introduced in the previous round, the review is chasing its own churn rather than the work. Consolidate in one pass, verify mechanically, and stop. Say so plainly rather than running another round: a fourth pass that finds one defect you created in the third is not evidence the work is unsound.
+
+**Prefer a script to another read for anything countable.** Cross-document totals, references that have to resolve, a table that recomputes from its source, a term that should have exactly one phrasing. Write the check, keep it, and re-run it instead of re-reading. It costs nothing per run and does not depend on judgment, which is what fails on the fifth pass over the same paragraph.
+
+Recompute derived numbers from the current file every time. Never adjust them by arithmetic on what you believe changed, and never reconcile two scripts by hand. Two counting methods produce two answers, and the difference between them looks exactly like a real change.
 
 ---
 
