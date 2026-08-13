@@ -1,6 +1,20 @@
 # Personal Skills
 
-Personal skills for Claude (Cowork and Claude Code), version-controlled and portable across machines.
+Personal skills, mostly for writing. Use at your own risk.
+
+The text refers to "Claude" and "CLAUDE.md", but should be generalizable to any agent that can load skills from a folder.
+
+External skills I use are listed in `skills.manifest`. The install script fetches them and symlinks them into `~/.claude/skills/` alongside personal skills.
+
+## The skills
+
+- **christian-writing-style**: the writing rules for anything under my name, from a dissertation chapter to a commit subject line. Routes to one of three registers (short snippets, blog and informal, academic and formal) and applies the rules that register needs.
+- **code-comments**: when a comment or a docstring earns its place, and what it should say once it does. Read together with `christian-writing-style`.
+- **text-review**: reviews writing for accuracy, organization, and clarity. Presents findings by severity and waits before editing.
+- **commit**: commits the session's changes in logical groups, with a review gate before each commit.
+- **python-dev-process** (opt-in): my Python process, covering project phases, tooling, testing, and refactoring discipline.
+
+The three marked opt-in load only in the repos I link them into. See [Install skills in specific repos](#install-skills-in-specific-repos).
 
 ## Repository structure
 
@@ -58,7 +72,7 @@ The `configure-permissions.sh` script manages the allow/deny permission lists in
 
 The desired allow/deny lists are defined at the top of the script. Edit them to change your defaults.
 
-## Day-to-day workflow
+## Updating a skill
 
 1. Edit the skill's `SKILL.md` in this repo.
 2. Test it in a Cowork or Claude Code session. For a change worth measuring, see [Evaluating a skill](#evaluating-a-skill).
