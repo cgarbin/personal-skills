@@ -8,6 +8,9 @@
 #   ./scripts/install.sh --target ~/.claude/skills       # custom target dir
 #   ./scripts/install.sh --link-into <skills-dir> <skill>  # opt-in per repo
 #
+# A folder is a skill only if it holds a SKILL.md. Folders without one are
+# never installed, and an existing symlink to one is removed.
+#
 # Personal skills default to global (symlinked into TARGET_DIR). A skill
 # becomes opt-in by placing an empty OPTIN file next to its SKILL.md.
 # Opt-in skills are skipped by the normal install pass and must be
@@ -15,7 +18,8 @@
 #
 # The script:
 #   1. Symlinks the global CLAUDE.md from <repo>/claude-md/
-#   2. Cleans up stale personal skill symlinks (deleted, or now opt-in)
+#   2. Cleans up stale personal skill symlinks (deleted, no SKILL.md, or
+#      now opt-in)
 #   3. Symlinks non-opt-in personal skills from <repo>/skills/ globally
 #   4. Fetches external skills listed in skills.manifest (if present)
 #   5. Cleans up stale external symlinks
@@ -83,6 +87,16 @@ if [[ -z "$REPO_DIR" ]]; then
     REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 fi
 
+# Canonicalize even when the caller passed the path. A relative path would
+# be stored verbatim in every symlink and resolve against the link's own
+# directory, and a trailing slash (what tab-completion produces) doubles the
+# separator in SKILLS_SRC, which stops the stale-symlink patterns matching.
+if [[ ! -d "$REPO_DIR" ]]; then
+    echo "Error: repo directory not found: $REPO_DIR" >&2
+    exit 1
+fi
+REPO_DIR="$(cd "$REPO_DIR" && pwd)"
+
 SKILLS_SRC="$REPO_DIR/skills"
 EXTERNAL_DIR="$REPO_DIR/from-others"
 MANIFEST="$REPO_DIR/skills.manifest"
@@ -90,6 +104,7 @@ LOCKFILE="$REPO_DIR/skills.lock"
 CLAUDE_MD_SRC="$REPO_DIR/claude-md/CLAUDE.md"
 CLAUDE_MD_TARGET="$HOME/.claude/CLAUDE.md"
 OPTIN_FILENAME="OPTIN"
+SKILL_FILENAME="SKILL.md"
 
 if [[ ! -d "$SKILLS_SRC" ]]; then
     echo "Error: skills directory not found at $SKILLS_SRC" >&2
@@ -124,6 +139,54 @@ fi
 linked=0
 up_to_date=0
 conflicts=0
+removed=0
+
+# Names a cleanup pass already reported this run, newline separated.
+# Without it the same folder prints a remove line and a skip line, which
+# reads like two different things happened.
+handled=""
+
+# The External header is printed on first use so an empty from-others adds
+# no section. Both the cleanup pass and the install loop can be first.
+external_header_printed=false
+
+# ── Skill detection ──────────────────────────────────────────────────────
+
+# is_skill <dir>
+#   True when the folder holds a SKILL.md, which is what makes it a skill
+#   rather than a workspace or a stray folder.
+#
+#   The name is compared against the directory entry instead of tested with
+#   -f, which is case-insensitive on macOS. Otherwise a folder holding
+#   skill.md installs here and is skipped on Linux from the same checkout.
+is_skill() {
+    local entry
+    for entry in "${1%/}"/*; do
+        [[ "${entry##*/}" == "$SKILL_FILENAME" && -f "$entry" ]] && return 0
+    done
+    return 1
+}
+
+# was_handled <name>
+#   True when a cleanup pass already reported this folder.
+was_handled() {
+    [[ $'\n'"$handled" == *$'\n'"$1"$'\n'* ]]
+}
+
+# mark_handled <name>
+mark_handled() {
+    handled+="$1"$'\n'
+}
+
+# print_external_header
+#   Emits the External section header once, whichever pass reaches it first.
+print_external_header() {
+    if [[ "$external_header_printed" == false ]]; then
+        echo ""
+        echo "External skills:"
+        external_header_printed=true
+    fi
+}
 
 # ── Symlink helpers ──────────────────────────────────────────────────────
 
@@ -179,8 +242,17 @@ remove_stale_external_symlinks() {
         case "$target" in
             "$EXTERNAL_DIR"/*)
                 if [[ ! -d "$target" ]]; then
+                    print_external_header
                     echo "  remove    $(basename "$link") (no longer in manifest)"
                     rm "$link"
+                    removed=$((removed + 1))
+                    mark_handled "$(basename "$link")"
+                elif ! is_skill "$target"; then
+                    print_external_header
+                    echo "  remove    $(basename "$link") (no $SKILL_FILENAME)"
+                    rm "$link"
+                    removed=$((removed + 1))
+                    mark_handled "$(basename "$link")"
                 fi
                 ;;
         esac
@@ -491,9 +563,10 @@ fetch_external_skills() {
 
 # remove_stale_personal_symlinks
 #   Removes global symlinks that point into SKILLS_SRC but whose target
-#   either no longer exists (skill deleted) or has gained an OPTIN file
-#   (skill moved from global to opt-in). Per-repo symlinks created by
-#   --link-into are not touched here; they live outside TARGET_DIR.
+#   no longer exists (skill deleted), lost its SKILL.md, or gained an
+#   OPTIN file (skill moved from global to opt-in). Per-repo symlinks
+#   created by --link-into are not touched here; they live outside
+#   TARGET_DIR.
 remove_stale_personal_symlinks() {
     for link in "$TARGET_DIR"/*; do
         [[ -L "$link" ]] || continue
@@ -504,9 +577,18 @@ remove_stale_personal_symlinks() {
                 if [[ ! -d "$target" ]]; then
                     echo "  remove    $(basename "$link") (skill folder deleted)"
                     rm "$link"
+                    removed=$((removed + 1))
+                    mark_handled "$(basename "$link")"
+                elif ! is_skill "$target"; then
+                    echo "  remove    $(basename "$link") (no $SKILL_FILENAME)"
+                    rm "$link"
+                    removed=$((removed + 1))
+                    mark_handled "$(basename "$link")"
                 elif [[ -f "${target%/}/$OPTIN_FILENAME" ]]; then
                     echo "  remove    $(basename "$link") from global (now opt-in)"
                     rm "$link"
+                    removed=$((removed + 1))
+                    mark_handled "$(basename "$link")"
                 fi
                 ;;
         esac
@@ -516,9 +598,9 @@ remove_stale_personal_symlinks() {
 # ── Personal skills ──────────────────────────────────────────────────────
 
 # install_personal_skills
-#   Walks skills/ and symlinks each skill globally, except those marked
-#   opt-in by an OPTIN file. Opt-in skills are installed per repo with
-#   --link-into.
+#   Walks skills/ and symlinks each skill globally, skipping folders with
+#   no SKILL.md and those marked opt-in by an OPTIN file. Opt-in skills
+#   are installed per repo with --link-into.
 install_personal_skills() {
     echo "Personal skills:"
     remove_stale_personal_symlinks
@@ -526,8 +608,15 @@ install_personal_skills() {
         [[ -d "$skill_dir" ]] || continue
         local skill_name
         skill_name="$(basename "$skill_dir")"
+        # skill-creator writes eval workspaces next to the skill they test,
+        # so skills/ holds folders that are not installable.
+        if ! is_skill "$skill_dir"; then
+            was_handled "$skill_name" ||
+                echo "  skip      $skill_name (no $SKILL_FILENAME)"
+            continue
+        fi
         if [[ -f "${skill_dir%/}/$OPTIN_FILENAME" ]]; then
-            echo "  skip      $skill_name (opt-in — use --link-into)"
+            echo "  skip      $skill_name (opt-in, use --link-into)"
             continue
         fi
         symlink_skill "$skill_dir" "$skill_name"
@@ -549,6 +638,17 @@ link_into() {
         echo "Error: skill not found: $skill_name (looked in $SKILLS_SRC)" >&2
         exit 1
     fi
+    # Reject a name with a path separator. Otherwise ../elsewhere resolves to
+    # a real skill outside skills/ and lands the symlink outside the
+    # directory require_skills_dir just validated.
+    if [[ "$skill_name" == */* ]]; then
+        echo "Error: skill name must not contain '/' (got: $skill_name)" >&2
+        exit 1
+    fi
+    if ! is_skill "$skill_dir"; then
+        echo "Error: not a skill: $skill_name (no $SKILL_FILENAME in $skill_dir)" >&2
+        exit 1
+    fi
 
     mkdir -p "$skills_dir"
     # Resolve to an absolute, canonical path so the symlink target is
@@ -558,7 +658,7 @@ link_into() {
     echo "Installing $skill_name into $skills_dir:"
     ensure_symlink "$skill_dir" "$skills_dir/$skill_name" "$skill_name"
     echo ""
-    echo "Done. $linked linked, $up_to_date already up to date, $conflicts conflicts."
+    echo "Done. $linked linked, $up_to_date already up to date, $removed removed, $conflicts conflicts."
 }
 
 # ── External skills ──────────────────────────────────────────────────────
@@ -572,17 +672,20 @@ install_external_skills() {
 
     [[ -d "$EXTERNAL_DIR" ]] || return 0
 
-    local has_external_skills=false
     for skill_dir in "$EXTERNAL_DIR"/*/; do
         [[ -d "$skill_dir" ]] || continue
         local skill_name
         skill_name="$(basename "$skill_dir")"
-        # Skip the .repos cache directory — it's not a skill.
+        # Skip the .repos cache directory. It's not a skill.
         [[ "$skill_name" == ".repos" ]] && continue
-        if [[ "$has_external_skills" == false ]]; then
-            echo ""
-            echo "External skills:"
-            has_external_skills=true
+        print_external_header
+        # A manifest path can point at a folder that is not a skill, for
+        # instance when the upstream repo reorganizes and the path now
+        # resolves to a parent directory.
+        if ! is_skill "$skill_dir"; then
+            was_handled "$skill_name" ||
+                echo "  skip      $skill_name (no $SKILL_FILENAME)"
+            continue
         fi
         symlink_skill "$skill_dir" "$skill_name"
     done
@@ -601,4 +704,4 @@ echo ""
 install_personal_skills
 install_external_skills
 echo ""
-echo "Done. $linked linked, $up_to_date already up to date, $conflicts conflicts."
+echo "Done. $linked linked, $up_to_date already up to date, $removed removed, $conflicts conflicts."
