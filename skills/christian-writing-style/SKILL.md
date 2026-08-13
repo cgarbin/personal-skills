@@ -1,6 +1,6 @@
 ---
 name: christian-writing-style
-description: Apply Christian Garbin's writing style to prose under his name: papers, abstracts, systematic reviews, dissertation chapters, blog posts, tutorials, READMEs, ADRs, docs, emails, commit messages, PR descriptions, code comments, docstrings. Use it whenever he asks to write, draft, or edit prose, and whenever you create or edit a hand-written .md file, even when he says nothing about style.
+description: Apply Christian Garbin's writing style to prose under his name: papers, abstracts, systematic reviews, dissertation chapters, blog posts, tutorials, READMEs, ADRs, docs, emails, commit messages, PR descriptions, code comments, docstrings. Use it whenever he asks to write, draft, edit, fill in, or clean up any of those, including an empty README or a doc that has grown messy, even when he says nothing about style. Not for mechanical edits to a markdown file that need no prose judgment, such as aligning table pipes or inserting a table of contents.
 ---
 
 # Christian Garbin's Writing Style
