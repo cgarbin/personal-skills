@@ -57,7 +57,7 @@ Follow "The Sense of Style" (Pinker) as a general guide, not dogma. When editing
 - Only report issues you can point to in actual code. Don't fabricate.
 - When removing code, verify it's not still used (TYPE_CHECKING guards, future imports).
 - Modular. Extend, don't rewrite monolithically.
-- Comments explain why, not how.
+- Comments explain why, not how. Apply the `code-comments` skill to every comment and docstring you write or edit, including in code you are writing from scratch. It does not load on its own for ordinary coding work.
 - Write tests first, verify they fail, then implement.
 - Given a spec: ask clarifying questions, outline the structure, then code.
 - Don't use numeric prefixes on filenames for ordering. Use explicit configuration.
