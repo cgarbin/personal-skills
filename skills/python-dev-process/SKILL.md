@@ -1,6 +1,7 @@
 ---
 name: python-dev-process
-description: Christian's Python development process: phases, tooling, testing, refactoring discipline. Use when starting Python projects, structuring or refactoring code, adding tests or linting. Triggers include "set up a new project", "add tests", "refactor this".
+description: >-
+  Christian's Python development process: phases, tooling, testing, refactoring discipline. Use when starting Python projects, structuring or refactoring code, adding tests or linting. Triggers include "set up a new project", "add tests", "refactor this".
 ---
 
 # Python Development Process

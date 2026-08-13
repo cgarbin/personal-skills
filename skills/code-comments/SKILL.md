@@ -1,6 +1,7 @@
 ---
 name: code-comments
-description: Rules for comments and docstrings in Christian's code. Use when comments or docstrings are part of the work: writing or editing them, thinning out comments an agent generated, adding docstrings to a module or a function, refactoring code that already has them, reviewing the comments in a diff or a PR, or judging whether one comment earns its place. Also when a repo mandates decision-point comments in SQL. Not for error strings, log messages, commit messages, or PR description prose, which follow christian-writing-style Short snippets. Read with christian-writing-style.
+description: >-
+  Rules for comments and docstrings in Christian's code. Use when comments or docstrings are part of the work: writing or editing them, thinning out comments an agent generated, adding docstrings to a module or a function, refactoring code that already has them, reviewing the comments in a diff or a PR, or judging whether one comment earns its place. Also when a repo mandates decision-point comments in SQL. Not for error strings, log messages, commit messages, or PR description prose, which follow christian-writing-style Short snippets. Read with christian-writing-style.
 ---
 
 # Code Comments
