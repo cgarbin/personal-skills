@@ -8,7 +8,7 @@ description: >-
 
 Three registers share one voice and differ in formality. Route first, read the common foundation, then read the reference file for the register you picked. Loading the wrong reference wastes context and pulls in conventions that do not apply.
 
-Copying a phrase from these files, an example sentence, or a description of layout into the writing produces text about the writing instead of text about the subject.
+Write about the subject, not about the writing. The example sentences and layout descriptions in these files are here to be applied, not copied.
 
 ## Choose the register first
 
@@ -18,7 +18,7 @@ Copying a phrase from these files, an example sentence, or a description of layo
 
 **Academic and formal.** Paper, review, abstract, dissertation chapter, submission. Mentions a journal, conference, or peer review. Audience is academic researchers or reviewers. Format needs a methods section, literature review, or PRISMA diagram. Prompts like "write a paper about..." or "draft a review of...". Read `references/academic.md`.
 
-**Blended.** Some venues sit in between. IEEE Potentials articles are journal-published but written for students, more accessible than a Springer paper and more structured than a blog post. Use academic structure with proper citations, lean toward blog tone with more accessible language and less hedging. Blog rigor with academic structure. Read both reference files.
+**Blended.** Some venues sit in between. IEEE Potentials articles are journal-published but written for students, more accessible than a Springer paper and more structured than a blog post. Use academic structure with proper citations, lean toward blog tone with more accessible language and less hedging. Read both reference files.
 
 **When in doubt:** ask.
 
@@ -64,15 +64,13 @@ Active voice even in academic writing. Passive only when the agent is unknown or
 
 ### Name the concrete thing
 
-An abstraction standing in for a specific thing makes the reader do the decoding.
+An abstraction standing in for a specific thing makes the reader do the decoding. Christian illustrates abstract points with misspelled school-zone signs, misclassified ducks, X-rays with pen marks.
 
 - **Framing-deck vocabulary**: "stack," "arm," "frontier," "axes," "lever." "Our retrieval stack" → "our retrieval pipeline" or the actual components. "The temporal axis" → "time of note creation" or whatever the specific variable is.
 - **"Downstream"** as shorthand for "later" or "the next stage." "Downstream analysis" → "Phase 2 analysis," "the audit step," "the next step."
 - **"Land"** as a verb for where files, data, or values end up ("files land at X," "binaries land in $DIR"). Use "go into," "end up at," "is written to," "sits in," or rephrase. Watch for adjacent overuse: "lands cleanly," "the changes landed in the same window."
 - **"Carry"** as a verb for what text, code, or a table conveys ("the comment carries the constraint," "the reason carries the content," "what the table cannot carry"). Use "state," "describe," "hold," or name what the text actually does.
 - **Vague quantifiers where a number exists.** "Latency was elevated" → give the value. "Various factors" → name them. "The system had issues" → name what went wrong. "Tighten grading" → say which metric moved and by how much.
-
-Christian illustrates abstract points with misspelled school-zone signs, misclassified ducks, X-rays with pen marks. New offenders belong in this list as examples of the principle, not as new top-level rules.
 
 ### Show, don't tell
 
@@ -92,9 +90,14 @@ Watch the table count as well. Many tables in one section means many measurement
 
 ### Side commentary
 
-Three forms, all of which comment on the text instead of stating the fact.
+Three forms comment on the text instead of stating the fact. Each spends a sentence without telling the reader anything about the subject, so cut them.
 
-**Editorial close-outs** after factual sentences ("X does not do Y," "this solves it," "that is what the evaluation shows"). If the factual sentence stands on its own, let it stand. Especially tempting at the end of paragraphs. Two variants hide well. The empty contrastive tail names what the fact is *not*, where no reader would have assumed otherwise ("the actual header forms, not just a number in a table"). The paragraph-closing restatement says again what the paragraph just showed ("...so what remains in the score is a difference in content. That is the whole purpose of the labels."). Keep a contrast only when the alternative was actually tried, or a reader would plausibly assume it, or the argument depends on ruling it out.
+**Editorial close-outs** after factual sentences ("X does not do Y," "this solves it," "that is what the evaluation shows"). If the factual sentence stands on its own, let it stand. Especially tempting at the end of paragraphs. Two variants hide well.
+
+- **The empty contrastive tail** names what the fact is *not*, where no reader would have assumed otherwise ("the actual header forms, not just a number in a table").
+- **The paragraph-closing restatement** says again what the paragraph just showed ("...so what remains in the score is a difference in content. That is the whole purpose of the labels.").
+
+Keep a contrast only when the alternative was actually tried, or a reader would plausibly assume it, or the argument depends on ruling it out.
 
 **Announcing a choice as deliberate** ("the choice was deliberate," "we take X deliberately," "on purpose," "by design"). The reason that follows is the content. Delete the announcement, keep the reason. Two exceptions. Keep it when the deliberateness is itself the fact, because a reader would otherwise read oversight or accident ("the same defect, arrived at deliberately rather than by accident"). Rewrite when the announcement heads an enumeration, where deleting it orphans the list: "We use a single-pass design, for three reasons. First..."
 
@@ -106,7 +109,7 @@ Side commentary is not the same as personal voice, which `references/blog.md` ca
 
 ### What to avoid
 
-Items ending in a section name are explained above and repeated here because they reappear during iterative editing, and because **text-review** scans this list.
+Items ending in a section name are explained above.
 
 - Breathless enthusiasm or marketing language ("revolutionary," "game-changing," "incredible," "novel" without justification).
 - Claims without sources.
@@ -126,15 +129,13 @@ Items ending in a section name are explained above and repeated here because the
 - Long left-branching phrases that separate subject from verb. (Craft principles)
 - Vague hand-waving instead of concrete evidence. "Various factors" → name them. (Name the concrete thing)
 - Framing-deck vocabulary ("stack," "arm," "frontier," "axes," "lever"), "downstream" for "later," "land" as a verb for where things end up, "carry" for what text conveys. (Name the concrete thing)
-- Side commentary: editorial close-outs, announcing a choice as deliberate, narrating a disclosure instead of disclosing. (Side commentary)
+- Editorial close-outs, announcing a choice as deliberate, narrating a disclosure instead of disclosing. (Side commentary)
 
 ---
 
 ## Short snippets
 
 Skip to **Editing existing text** if you routed to blog or academic.
-
-For short in-code prose where neither register fits: single-line comments, one-line docstrings, commit subject lines, PR titles, log messages, error strings, short type or field descriptions.
 
 Comments and docstrings have a second layer of rules on top of this section. Read **code-comments** before writing or editing one.
 
@@ -150,22 +151,6 @@ The common foundation is the entire skill here. There is no opening hook, no roa
 
 **A snippet earns its place by stating a fact its context cannot.** The context is the code for a comment, the diff for a commit subject, the stack trace for an error string. That fact is usually the constraint that shaped the work or the hazard it avoids. In a commit body or PR description it can also be the reason the obvious alternative fails. In a comment the rejected alternative goes, whatever the reasoning (**code-comments**, road not taken). The test while drafting: what would a reader who skipped it get wrong? If nothing, delete it. If one clause answers it, that clause is the whole snippet. A constraint that shaped the code and appears nowhere on the page is a missing comment, not a clean one.
 
-**Do not document what the code shows.** Reachability ("callers always pass a non-empty list"), position ("runs before the validation step"), and the operation itself ("set the cache key") are all visible in the code. The reason behind the operation is not: "Cache key includes tenant id to avoid cross-tenant reuse." (Side commentary)
-
-**Lead with the contract, then the why.** State what the thing returns or does, then why it exists. Both as plain statements. Opening on an argument makes the reader accept a premise before learning what the code does.
-
-```python
-# True if the line starts a markdown table: a header row followed by a
-# delimiter row of dashes.
-#
-# Table blocks stay in one chunk. Rows split away from their header row
-# lose the column names, and retrieval then returns bare numbers.
-```
-
-Weak: "A markdown table only makes sense with its header row." True, and it is an argument rather than a description, so the reader still does not know what the function returns.
-
-The example above is the upper bound, not the norm. Five lines is what a genuinely non-obvious invariant costs. Most comments state one fact and run one line.
-
 When a snippet still runs past two or three sentences after every sentence has earned its place (a multi-paragraph docstring, a long PR description, a commit body that argues for a decision), switch to the blog register.
 
 ---
@@ -177,6 +162,6 @@ The default is minimal intervention.
 - Fix what violates this skill. Leave what merely differs from how you would have written it.
 - Preserve his structure unless the structure is the problem. Reordering sections is a finding to raise, not an edit to make silently.
 - Preserve the voice already on the page, including asides and reactions he wrote himself. The rate limit in `references/blog.md` governs what you add, not what he already has.
-- After renaming a term or reframing a decision, scan the whole document for the old usage. Updating a heading and leaving the old term in the body is hard to see from inside the edit.
+- After renaming a term or reframing a decision, scan the whole document for the old usage. Anything beyond a rename needs the consumer check in **text-review**, because an addition or a changed number breaks a passage elsewhere without leaving a stale string to find.
 
 A fix confined to a sentence or two goes in directly. Anything larger is a review, so switch to **text-review** and use its gate: present every finding grouped by severity, wait, then work through them one at a time. Do not describe a large rewrite and apply it in the same turn.

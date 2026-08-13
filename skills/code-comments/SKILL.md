@@ -16,22 +16,18 @@ Comment-specific rules on top of **christian-writing-style**, Short snippets. Th
 2. **Comment the unit's own contract, not things outside it.** No other-module rules, no naming the consumer, no "why current callers work", no who-sets-this-field. Let types and tests speak.
 3. **Docstrings lead with the plain action**, not a noun-pile. No metaphor: counts don't "land", rows don't "drift apart", spans aren't "coordinate systems". Someone scanning for what the function does should have it from the first few words.
 4. **Cut redundancy and drift.** Delete anything the signature, summary line, or a referenced definition already says. No field lists another constant owns. Every clause true of the exact thing it sits on, using in-scope names. Reach for delete before rephrase, because a rephrased duplicate drifts from its source on the next edit and a deleted one cannot.
-5. **Three over-explanation patterns, cut on sight:** naming the caller's use for each return value, explaining another function's internals, re-arguing a decision a review or a benchmark already settled. Also don't narrate what the code does *not* do.
+5. **Four over-explanation patterns, cut on sight:** naming the caller's use for each return value, explaining another function's internals, re-arguing a decision a review or a benchmark already settled, and narrating what the code does *not* do.
 6. **Road not taken.** Every sentence about a rejected alternative goes, however good the reasoning. The rejected design drags its vocabulary in with it. That knowledge belongs in a test or in the plan.
 7. **"A future edit could violate this" is not enough.** The constraint must also be invisible in the code it sits on. Survivors answer a question the reader cannot resolve by looking.
-8. **No comments about code that no longer runs.** Grep `used to`, `no longer`, `after decoupling`, `the old`, `the deleted`. Exception: when comparing old vs new behavior *is* the subject.
+8. **No comments about code that no longer runs.** Watch for `used to`, `no longer`, `after decoupling`, `the old`, `the deleted`. Exception: when comparing old vs new behavior *is* the subject.
 9. **No labels from the plan that produced the code.** "Cluster A1", "F1:", "E1", "Step 3", "this task". The plan is not in the repo, so the label points nowhere. Runtime log phase numbers are fine. A numbering scheme used consistently across files is a decision, so raise it once and leave it.
 10. **SQL is the exception where a repo mandates it.** Where AGENTS.md requires decision-point comments in plain English, contrastive explanations and written-out alternative implementations are required, not redundancy. Check before cutting inside a SQL string.
 
 ## Scan
 
-Rules 1, 8, and 9 are the mechanical ones. Search the comment lines of the diff for these stems before reading it, so the read is spent on the rules that need judgment.
+Rules 1, 8, and 9 are the mechanical ones. Run **text-review**'s `scripts/scan.py --comments` on the changed files before reading the diff, so the read is spent on the rules that need judgment.
 
-- Rule 1, jargon: `guard`, `invariant`, `idempotent`, `canonical`, `downstream`, `load-bearing`.
-- Rule 8, code that no longer runs: `used to`, `no longer`, `after decoupling`, `the old`, `the deleted`.
-- Rule 9, plan labels: `Cluster`, `Step` followed by a digit, `this task`, and a bare letter-digit label opening a comment (`F1:`, `E1`).
-
-Every stem here is also ordinary code vocabulary, so a file-wide search buries the hits in identifiers and string literals. Hits are candidates, not verdicts.
+It covers the stems for all three, and it looks at comment lines only. Every stem is also ordinary code vocabulary, so a file-wide search buries the hits in identifiers and string literals. Hits are candidates, not verdicts.
 
 ## What a survivor looks like
 
@@ -51,9 +47,23 @@ Keep. Nothing in the file says it, and the next person to raise the number needs
 CHUNK_SIZE = 8192
 ```
 
-**christian-writing-style**, Short snippets, has a longer docstring example and shows the contract-first opening.
+Reachability ("callers always pass a non-empty list") is rule 2. Position ("runs before the validation step") and the operation itself ("set the cache key") are visible in the code, so rule 7 cuts them. The reason behind the operation is not visible: "Cache key includes tenant id to avoid cross-tenant reuse."
+
+Rule 3 decides how a survivor opens. State what the thing returns or does, then why it exists. Both as plain statements. Opening on an argument makes the reader accept a premise before learning what the code does.
+
+```python
+# True if the line starts a markdown table: a header row followed by a
+# delimiter row of dashes.
+#
+# Table blocks stay in one chunk. Rows split away from their header row
+# lose the column names, and retrieval then returns bare numbers.
+```
+
+Weak: "A markdown table only makes sense with its header row." True, and it is an argument rather than a description, so the reader still does not know what the function returns.
+
+Five lines is the upper bound, not the norm. It is what a genuinely non-obvious constraint costs. Most comments state one fact and run one line.
 
 ## Where this fits
 
-- **christian-writing-style**, Short snippets: two of its paragraphs are rules from this list stated for every snippet type. "Do not document what the code shows" is rule 2. "Lead with the contract, then the why" is rule 3. Change them there, not here.
+- **christian-writing-style**, Short snippets: no semicolons, no em-dashes, US spelling, no zombie nouns, no filler, no marketing words.
 - **text-review**, code-comment test: reading a comment against the code it sits on during a review.
