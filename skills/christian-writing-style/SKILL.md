@@ -68,6 +68,7 @@ An abstraction standing in for a specific thing makes the reader do the decoding
 - **Framing-deck vocabulary**: "stack," "arm," "frontier," "axes," "lever." "Our retrieval stack" → "our retrieval pipeline" or the actual components. "The temporal axis" → "time of note creation" or whatever the specific variable is.
 - **"Downstream"** as shorthand for "later" or "the next stage." "Downstream analysis" → "Phase 2 analysis," "the audit step," "the next step."
 - **"Land"** as a verb for where files, data, or values end up ("files land at X," "binaries land in $DIR"). Use "go into," "end up at," "is written to," "sits in," or rephrase. Watch for adjacent overuse: "lands cleanly," "the changes landed in the same window."
+- **"Carry"** as a verb for what text, code, or a table conveys ("the comment carries the constraint," "the reason carries the content," "what the table cannot carry"). Use "state," "describe," "hold," or name what the text actually does.
 - **Vague quantifiers where a number exists.** "Latency was elevated" → give the value. "Various factors" → name them. "The system had issues" → name what went wrong. "Tighten grading" → say which metric moved and by how much.
 
 Christian illustrates abstract points with misspelled school-zone signs, misclassified ducks, X-rays with pen marks. New offenders belong in this list as examples of the principle, not as new top-level rules.
@@ -94,7 +95,7 @@ Three forms, all of which comment on the text instead of stating the fact.
 
 **Editorial close-outs** after factual sentences ("X does not do Y," "this solves it," "that is what the evaluation shows"). If the factual sentence stands on its own, let it stand. Especially tempting at the end of paragraphs. Two variants hide well. The empty contrastive tail names what the fact is *not*, where no reader would have assumed otherwise ("the actual header forms, not just a number in a table"). The paragraph-closing restatement says again what the paragraph just showed ("...so what remains in the score is a difference in content. That is the whole purpose of the labels."). Keep a contrast only when the alternative was actually tried, or a reader would plausibly assume it, or the argument depends on ruling it out.
 
-**Announcing a choice as deliberate** ("the choice was deliberate," "we take X deliberately," "on purpose," "by design"). The reason follows and carries the content. Delete the announcement, keep the reason. Two exceptions. Keep it when the deliberateness is itself the fact, because a reader would otherwise read oversight or accident ("the same defect, arrived at deliberately rather than by accident"). Rewrite when the announcement heads an enumeration, where deleting it orphans the list: "We use a single-pass design, for three reasons. First..."
+**Announcing a choice as deliberate** ("the choice was deliberate," "we take X deliberately," "on purpose," "by design"). The reason that follows is the content. Delete the announcement, keep the reason. Two exceptions. Keep it when the deliberateness is itself the fact, because a reader would otherwise read oversight or accident ("the same defect, arrived at deliberately rather than by accident"). Rewrite when the announcement heads an enumeration, where deleting it orphans the list: "We use a single-pass design, for three reasons. First..."
 
 **Narrating a disclosure instead of disclosing** ("we do not claim otherwise," "we record that as a limitation," "and the write-up has to say so," "to state in the limitations rather than let a reviewer state it"). The sentence performs the act it describes. State the limitation and stop.
 
@@ -123,7 +124,7 @@ Items ending in a section name are explained above and repeated here because the
 - Passive voice when the agent matters and active voice would be clearer. (Craft principles)
 - Long left-branching phrases that separate subject from verb. (Craft principles)
 - Vague hand-waving instead of concrete evidence. "Various factors" → name them. (Name the concrete thing)
-- Framing-deck vocabulary ("stack," "arm," "frontier," "axes," "lever"), "downstream" for "later," "land" as a verb for where things end up. (Name the concrete thing)
+- Framing-deck vocabulary ("stack," "arm," "frontier," "axes," "lever"), "downstream" for "later," "land" as a verb for where things end up, "carry" for what text conveys. (Name the concrete thing)
 - Side commentary: editorial close-outs, announcing a choice as deliberate, narrating a disclosure instead of disclosing. (Side commentary)
 
 ---
@@ -133,6 +134,8 @@ Items ending in a section name are explained above and repeated here because the
 Skip to **Editing existing text** if you routed to blog or academic.
 
 For short in-code prose where neither register fits: single-line comments, one-line docstrings, commit subject lines, PR titles, log messages, error strings, short type or field descriptions.
+
+Comments and docstrings have a second layer of rules on top of this section. Read **code-comments** before writing or editing one.
 
 The common foundation is the entire skill here. There is no opening hook, no roadmap, no progressive disclosure, no hedging strategy to choose, because there is no room for any of it. What still applies, even in one line:
 
@@ -144,7 +147,7 @@ The common foundation is the entire skill here. There is no opening hook, no roa
 - No filler ("note that...", "it is worth mentioning that..."). Just state it.
 - No marketing words ("simply", "easily", "blazing fast").
 
-**A snippet earns its place by carrying a fact its context cannot.** A comment carries what the code does not, a commit subject what the diff does not, an error string what the stack trace does not. That fact is usually the constraint that shaped the work, the hazard it avoids, or the reason the obvious alternative fails. The test while drafting: what would a reader who skipped it get wrong? If nothing, delete it. If one clause answers it, that clause is the whole snippet. A constraint that shaped the code and appears nowhere on the page is a missing comment, not a clean one.
+**A snippet earns its place by stating a fact its context cannot.** The context is the code for a comment, the diff for a commit subject, the stack trace for an error string. That fact is usually the constraint that shaped the work or the hazard it avoids. In a commit body or PR description it can also be the reason the obvious alternative fails. In a comment the rejected alternative goes, whatever the reasoning (**code-comments**, road not taken). The test while drafting: what would a reader who skipped it get wrong? If nothing, delete it. If one clause answers it, that clause is the whole snippet. A constraint that shaped the code and appears nowhere on the page is a missing comment, not a clean one.
 
 **Do not document what the code shows.** Reachability ("callers always pass a non-empty list"), position ("runs before the validation step"), and the operation itself ("set the cache key") are all visible in the code. The reason behind the operation is not: "Cache key includes tenant id to avoid cross-tenant reuse." (Side commentary)
 
@@ -160,7 +163,7 @@ The common foundation is the entire skill here. There is no opening hook, no roa
 
 Weak: "A markdown table only makes sense with its header row." True, and it is an argument rather than a description, so the reader still does not know what the function returns.
 
-The example above is the upper bound, not the norm. Five lines is what a genuinely non-obvious invariant costs. Most comments carry one fact and run one line.
+The example above is the upper bound, not the norm. Five lines is what a genuinely non-obvious invariant costs. Most comments state one fact and run one line.
 
 When a snippet still runs past two or three sentences after every sentence has earned its place (a multi-paragraph docstring, a long PR description, a commit body that argues for a decision), switch to the blog register.
 

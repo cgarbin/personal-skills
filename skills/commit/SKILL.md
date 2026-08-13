@@ -46,7 +46,7 @@ Do not use `git add -p` or patch extraction. If a file's changes belong to two g
 For each group, draft:
 - Files to stage.
 - Subject line: aim 50 chars, hard limit 72, focused on "what". No Conventional Commit prefixes (`feat:`, `fix:`, `chore:`, etc.). Examples: "Compress commit skill", "Add hook-reformat recovery", "Drop unused config flag".
-- Body: only when the subject does not already carry the "why". Default: no body. When you do write one, separate with a blank line and wrap at 72.
+- Body: only when the subject does not already state the "why". Default: no body. When you do write one, separate with a blank line and wrap at 72.
 
 Append:
 

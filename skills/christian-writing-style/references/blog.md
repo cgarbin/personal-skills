@@ -70,7 +70,7 @@ Rhetorical questions as transitions: "Should we be concerned that deep 'learning
 
 ## Bullets vs. prose
 
-If content is naturally a list, write it as a list: scannable reference items, parallel options, discrete steps, side-by-side comparisons. If it carries an argument where items connect with "because" or "but," write prose. Those connectives are part of the reasoning, and bullets hide them.
+If content is naturally a list, write it as a list: scannable reference items, parallel options, discrete steps, side-by-side comparisons. If the items connect with "because" or "but," write prose. Those connectives are part of the reasoning, and bullets hide them.
 
 ## Transitions
 
