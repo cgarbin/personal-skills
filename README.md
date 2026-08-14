@@ -2,6 +2,14 @@
 
 Personal skills, mostly for writing. Use at your own risk.
 
+- [Set up a new machine](#set-up-a-new-machine)
+- [Update a skill](#update-a-skill)
+- [Add a new personal skill](#add-a-new-personal-skill)
+- [Install skills in specific repos](#install-skills-in-specific-repos)
+- [Evaluate a skill](#evaluate-a-skill)
+- [Add an external skill](#add-an-external-skill)
+- [Track external skill changes](#track-external-skill-changes)
+
 The text refers to "Claude" and "CLAUDE.md", but should be generalizable to any agent that can load skills from a folder.
 
 External skills I use are listed in `skills.manifest`. The install script fetches them and symlinks them into `~/.claude/skills/` alongside personal skills.
@@ -11,14 +19,6 @@ External skills I use are listed in `skills.manifest`. The install script fetche
 - **[code-comments](skills/code-comments/)**: Rules to write useful comments and docstrings. It works together with `christian-writing-style`.
 - **[commit](skills/commit/)**: commits the session's changes in logical groups, with a review step before each commit.
 - **[python-dev-process](skills/python-dev-process/)** (opt-in): my Python process, covering project phases, tooling, testing, and refactoring discipline.
-
-- [Set up a new machine](#set-up-a-new-machine)
-- [Update a skill](#update-a-skill)
-- [Add a new personal skill](#add-a-new-personal-skill)
-- [Install skills in specific repos](#install-skills-in-specific-repos)
-- [Evaluate a skill](#evaluate-a-skill)
-- [Add an external skill](#add-an-external-skill)
-- [Track external skill changes](#track-external-skill-changes)
 
 ## Set up a new machine
 
@@ -75,7 +75,7 @@ The desired allow/deny lists are defined at the top of the script. Edit them to 
 ## Update a skill
 
 1. Edit the skill's `SKILL.md` in this repo.
-2. Test it in a Cowork or Claude Code session. For a change worth measuring, see [Evaluating a skill](#evaluating-a-skill).
+2. Test it in a Cowork or Claude Code session. For a change worth measuring, see [Evaluate a skill](#evaluate-a-skill).
 3. Commit when you're happy with the changes.
 
 ```bash
