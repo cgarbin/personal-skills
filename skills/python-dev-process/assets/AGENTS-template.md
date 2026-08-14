@@ -7,14 +7,14 @@
 
 ## Architecture
 
-<!-- One line per module. State its responsibility and what it must NOT import. This section encodes module boundaries — keep it current. -->
+<!-- One line per module. State its responsibility and what it must NOT import. This section encodes module boundaries. Keep it current. -->
 
-- `app.py` — UI only. No business logic.
+- `app.py`: UI only. No business logic.
 
 <!-- Example entries (delete these and replace with actual modules):
-- `screening.py` — Screening logic. Calls `llm_provider.call_llm()`. No direct API client imports.
-- `results.py` — Result persistence and accessors. No UI imports.
-- `parser.py` — File parsing. No UI or API imports.
+- `screening.py`: Screening logic. Calls `llm_provider.call_llm()`. No direct API client imports.
+- `results.py`: Result persistence and accessors. No UI imports.
+- `parser.py`: File parsing. No UI or API imports.
 -->
 
 ## Setup
@@ -51,10 +51,10 @@ uv run ruff format .       # format
 
 - Python 3.12+ features are fine (type hints with `list[dict]`, etc.).
 - No type stubs or docstrings required on test functions.
-- Use `monkeypatch` and `tmp_path` for file I/O tests — never write to real project files.
-- Mock external services in tests — never make real API calls.
+- Use `monkeypatch` and `tmp_path` for file I/O tests. Never write to real project files.
+- Mock external services in tests. Never make real API calls.
 
 ## Testing philosophy
 
 - Trust third-party libraries to parse their own formats. Test our logic on top of their output: field extraction, fallbacks, filtering.
-- Don't test the UI layer with framework-specific test harnesses — the business logic is already covered through the logic module tests.
+- Don't test the UI layer with framework-specific test harnesses. The business logic is already covered through the logic module tests.

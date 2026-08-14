@@ -35,7 +35,7 @@ Follow "The Sense of Style" (Pinker) as a general guide, not dogma. When editing
 - Point out structural issues (wrong section in roadmap, etc.). Don't silently fix.
 - Never hallucinate citations. Say when a reference is needed.
 - In Obsidian markdown, use Pandoc citation syntax: `[@key]`, `[@key, p. 42]`, `[-@key]` to suppress author.
-- For literature work: surface gaps and contradictions, not summaries. Frame in terms of dissertation positioning.
+- For literature work: report gaps and contradictions, not summaries. Frame in terms of dissertation positioning.
 
 ## Diagrams
 

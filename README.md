@@ -16,7 +16,7 @@ External skills I use are listed in `skills.manifest`. The install script fetche
 
 - **[christian-writing-style](skills/christian-writing-style/)**: the writing rules for anything under my name, from a technical article to a commit subject line.
 - **[text-review](skills/text-review/)**: reviews writing for accuracy, organization, and clarity. Presents findings by severity and waits before editing.
-- **[code-comments](skills/code-comments/)**: Rules to write useful comments and docstrings. It works together with `christian-writing-style`.
+- **[code-comments](skills/code-comments/)**: rules for useful comments and docstrings. Works together with `christian-writing-style`.
 - **[commit](skills/commit/)**: commits the session's changes in logical groups, with a review step before each commit.
 - **[python-dev-process](skills/python-dev-process/)** (opt-in): my Python process, covering project phases, tooling, testing, and refactoring discipline.
 
@@ -169,7 +169,7 @@ Two signs the description is not the problem:
 - Two differently worded descriptions fail the same queries.
 - Trigger rates sit at 0 or 1 with nothing in between. A rate in the middle means wording still has room to move it.
 
-A line in `claude-md/CLAUDE.md` naming the skill looks like a way around this, since that file is in context for every session. Tested on one skill, it changed nothing. The queries that scored zero still scored zero with the line in place, and the work produced with it was no better and carried about twice the commentary. Treat the queries you cannot reach as out of reach.
+A line in `claude-md/CLAUDE.md` naming the skill looks like a way around this, since that file is in context for every session. Tested on one skill, it changed nothing. The queries that scored zero still scored zero with the line in place, and the work produced with it was no better and had about twice the commentary. Treat the queries you cannot reach as out of reach.
 
 ## Add an external skill
 

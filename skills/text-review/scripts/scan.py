@@ -29,7 +29,7 @@ import sys
 from collections import Counter, namedtuple
 from pathlib import Path
 
-# note carries what the action needs: the replacement for FIX, the test to apply
+# note holds what the action needs: the replacement for FIX, the test to apply
 # for TEST. rule points at the prose that explains the pattern, because copying
 # that prose here would make a third place to keep in sync with the skill files.
 Check = namedtuple("Check", "name pattern action note rule")

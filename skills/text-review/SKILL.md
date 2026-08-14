@@ -165,7 +165,7 @@ Present the complete review using the severity structure above. This gives Chris
 
 When Christian is ready, work through findings as a task list. Order them logically, not by severity. Structural reorganization comes before polishing prose that will move. Factual fixes come before refining the sentences they appear in. If applying one change makes another irrelevant or requires re-doing it, put the upstream change first.
 
-**The unit of a change is the argument, not the sentence.** While ordering, merge findings that are two symptoms of one argument spread across passages. They are one change: rewrite those passages together and read them back before moving on. Applied separately, each fix satisfies its own finding and breaks the pair, and the breakage surfaces as a new must-fix in the next round.
+**The unit of a change is the argument, not the sentence.** While ordering, merge findings that are two symptoms of one argument spread across passages. They are one change: rewrite those passages together and read them back before moving on. Applied separately, each fix satisfies its own finding and breaks the pair, and the breakage shows up as a new must-fix in the next round.
 
 For each change:
 
@@ -213,7 +213,7 @@ Recompute derived numbers from the current file every time. Never adjust them by
 
 ## Retrospective
 
-Once the editing session is done, briefly check whether the session points to a broader change. Skip if nothing surfaced.
+Once the editing session is done, briefly check whether the session points to a broader change. Skip if nothing came up.
 
 - **Same issue type, multiple times?** May signal a gap in christian-writing-style. Suggest adding guidance.
 - **Friction in the review process itself?** Suggest an update to text-review.

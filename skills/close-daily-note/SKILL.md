@@ -11,7 +11,7 @@ This skill works for any project that keeps daily notes in the structured format
 
 Do not commit any changes. Leave everything for the user to review.
 
-## Canonical section order
+## Fixed section order
 
 Daily notes follow this top-level section order, and the skill produces output that conforms to it:
 
@@ -21,7 +21,7 @@ Daily notes follow this top-level section order, and the skill produces output t
 4. `# Notes`
 5. Free-form sections (any other top-level headings, in the order they appear)
 
-Step 5 inserts the summary at the top of the source note so it is the first thing the user sees. Step 6 builds the next day's note: it emits sections 2-4 in canonical order whatever order the source used, carries section 3 (Next tasks) and any free-form sections from (5) verbatim, and skips the Notes section's *content*, which is day-specific. The `# Notes` heading itself carries over as an empty stub so the new note's structure is complete from the start.
+Step 5 inserts the summary at the top of the source note so it is the first thing the user sees. Step 6 builds the next day's note: it emits sections 2-4 in a fixed order whatever order the source used, carries section 3 (Next tasks) and any free-form sections from (5) verbatim, and skips the Notes section's *content*, which is day-specific. The `# Notes` heading itself carries over as an empty stub so the new note's structure is complete from the start.
 
 ## Part 1: Generate the daily summary
 

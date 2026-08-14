@@ -207,13 +207,13 @@ ensure_symlink() {
         return 0
     fi
 
-    # Stale symlink (points elsewhere or is broken) — safe to replace.
+    # Stale symlink (points elsewhere or is broken). Safe to replace.
     if [[ -L "$link_path" ]]; then
         echo "  update    $display_name (re-linking)"
         rm "$link_path"
-    # Non-symlink file or folder — don't touch it.
+    # Non-symlink file or folder. Don't touch it.
     elif [[ -e "$link_path" ]]; then
-        echo "  CONFLICT  $display_name — a file or folder already exists at $link_path" >&2
+        echo "  CONFLICT  $display_name (a file or folder already exists at $link_path)" >&2
         echo "            Remove or rename it, then re-run this script." >&2
         conflicts=$((conflicts + 1))
         return 0
@@ -225,7 +225,7 @@ ensure_symlink() {
 }
 
 # symlink_skill <source_dir> <skill_name>
-#   Convenience wrapper: symlinks a skill into TARGET_DIR.
+#   Symlinks a skill into TARGET_DIR.
 symlink_skill() {
     ensure_symlink "$1" "$TARGET_DIR/$2" "$2"
 }
@@ -235,7 +235,7 @@ symlink_skill() {
 #   target no longer exists (i.e. the skill was removed from the manifest).
 remove_stale_external_symlinks() {
     for link in "$TARGET_DIR"/*; do
-        # Only inspect symlinks; skip regular files and folders.
+        # Only inspect symlinks. Skip regular files and folders.
         [[ -L "$link" ]] || continue
         local target
         target="$(readlink "$link")"
@@ -480,7 +480,7 @@ copy_skills_from_repo() {
             rm -rf "${EXTERNAL_DIR:?}/$skill_name"
             cp -R "$clone_dir/$skill_path" "$EXTERNAL_DIR/$skill_name"
         else
-            echo "  ERROR     $skill_name — path $skill_path not found" >&2
+            echo "  ERROR     $skill_name (path $skill_path not found)" >&2
         fi
     done <<< "$paths"
 }
@@ -565,7 +565,7 @@ fetch_external_skills() {
 #   Removes global symlinks that point into SKILLS_SRC but whose target
 #   no longer exists (skill deleted), lost its SKILL.md, or gained an
 #   OPTIN file (skill moved from global to opt-in). Per-repo symlinks
-#   created by --link-into are not touched here; they live outside
+#   created by --link-into are not touched here. They live outside
 #   TARGET_DIR.
 remove_stale_personal_symlinks() {
     for link in "$TARGET_DIR"/*; do
@@ -639,7 +639,7 @@ link_into() {
         exit 1
     fi
     # Reject a name with a path separator. Otherwise ../elsewhere resolves to
-    # a real skill outside skills/ and lands the symlink outside the
+    # a real skill outside skills/ and puts the symlink outside the
     # directory require_skills_dir just validated.
     if [[ "$skill_name" == */* ]]; then
         echo "Error: skill name must not contain '/' (got: $skill_name)" >&2

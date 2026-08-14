@@ -188,7 +188,7 @@ if [[ $NUM_EXTRAS -gt 0 ]]; then
 
   for ((i=0; i<NUM_EXTRA_ALLOW; i++)); do
     perm=$(echo "$EXTRAS_JSON" | jq -r ".allow[$i]")
-    # Show first line only for readability; multiline entries are truncated
+    # Show first line only for readability. Multiline entries are truncated
     first_line=$(echo "$perm" | head -1)
     if [[ $(echo "$perm" | wc -l) -gt 1 ]]; then
       echo "  [$idx] allow: ${first_line}..."

@@ -31,7 +31,7 @@ if ! grep -qiE '^# next tasks[[:space:]]*$' "$SOURCE"; then
     exit 1
 fi
 
-# Content is buffered and emitted from END, so the output follows canonical
+# Content is buffered and emitted from END, so the output follows a fixed
 # order (Pomodoros, Next tasks, Notes, free-form) whatever order the source
 # used. An older note with # Notes above # Next tasks still comes out right.
 #
@@ -74,7 +74,7 @@ if ! awk -v now="$NOW" '
   }
 ' "$SOURCE" | cat -s > "$DEST"; then
     # A failed redirect leaves either nothing or a partial file. Removing it
-    # keeps the existence guard above from blocking the retry.
+    # keeps the "already exists" check above from blocking a retry.
     rm -f "$DEST"
     echo "ERROR: could not write $DEST" >&2
     exit 1
