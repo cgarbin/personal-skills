@@ -184,4 +184,8 @@ Pass every file you touched in one call. The extension decides what gets read: a
 
 Work the groups in order. `FIX` and `REWRITE` hits are always violations. `TEST` hits print the test to apply, and every group prints a `see` line pointing at the rule behind the check.
 
-Two cases the scan cannot reach. Text that is never written to a file, such as a commit message or an answer in the conversation, needs a reread against What to avoid instead. Files that quote the banned vocabulary as examples, these skill files included, fire on every example, so read those rather than scanning them.
+A clean scan is not a clean draft.
+
+- **The rules with no stems.** Announcing the arrangement instead of stating it (Show, don't tell) has no mechanical form, and neither do the paragraph-tail and paragraph-opening tests in **text-review**. The wording is new every time. Read your own draft for them the way you would read someone else's.
+- **Text that never becomes a file**, such as a commit message or an answer in the conversation. Reread it against What to avoid instead.
+- **Files that quote the banned vocabulary as examples**, these skill files included. Every example fires, so read those rather than scanning them.
