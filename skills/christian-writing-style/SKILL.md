@@ -40,7 +40,7 @@ These shape *how* sentences are built, in every register.
 
 **Classic style.** Direct the reader's gaze to something in the world. Prose is a window onto the subject. Avoid metaconcepts. Don't write "This section discusses X" when you can state X. Don't write "It is important to note that X" when you can write X.
 
-**Fight the curse of knowledge.** Anchor abstract concepts in something concrete before going abstract. When evaluating a specialist term, ask: is it used once without definition? Does a plain-language equivalent of similar length exist? If yes to either, prefer plain. The specialist term stays only when it is load-bearing, standard for the audience, or rewording would lose accuracy.
+**Fight the curse of knowledge.** Anchor abstract concepts in something concrete before going abstract. When evaluating a specialist term, ask: is it used once without definition? Does a plain-language equivalent of similar length exist? If yes to either, prefer plain. The specialist term stays only when it is standard for the audience or rewording would lose accuracy.
 
 **Avoid zombie nouns.** Prefer verbs to nominalizations.
 
@@ -68,6 +68,7 @@ An abstraction standing in for a specific thing makes the reader do the decoding
 
 - **Framing-deck vocabulary**: "stack," "arm," "frontier," "axes," "lever." "Our retrieval stack" → "our retrieval pipeline" or the actual components. "The temporal axis" → "time of note creation" or whatever the specific variable is.
 - **"Downstream"** as shorthand for "later" or "the next stage." "Downstream analysis" → "Phase 2 analysis," "the audit step," "the next step."
+- **"Load-bearing"** for the part something depends on. "The comment is load-bearing" → "the comment is the only place the constraint is written down." Say what depends on it and what breaks without it.
 - **"Land"** as a verb for where files, data, or values end up ("files land at X," "binaries land in $DIR"). Use "go into," "end up at," "is written to," "sits in," or rephrase. Watch for adjacent overuse: "lands cleanly," "the changes landed in the same window."
 - **"Carry"** as a verb for what text, code, or a table conveys ("the comment carries the constraint," "the reason carries the content," "what the table cannot carry"). Use "state," "describe," "hold," or name what the text actually does.
 - **Vague quantifiers where a number exists.** "Latency was elevated" → give the value. "Various factors" → name them. "The system had issues" → name what went wrong. "Tighten grading" → say which metric moved and by how much.
@@ -165,3 +166,20 @@ The default is minimal intervention.
 - After renaming a term or reframing a decision, scan the whole document for the old usage. Anything beyond a rename needs the consumer check in **text-review**, because an addition or a changed number breaks a passage elsewhere without leaving a stale string to find.
 
 A fix confined to a sentence or two goes in directly. Anything larger is a review, so switch to **text-review** and use its gate: present every finding grouped by severity, wait, then work through them one at a time. Do not describe a large rewrite and apply it in the same turn.
+
+---
+
+## Before you finish
+
+Run the mechanical scan on every file you wrote or edited, and fix what it finds. It catches what survives a careful draft: em-dashes, semicolons joining clauses, British spelling, filler openers, and the vocabulary under Name the concrete thing.
+
+```bash
+~/.claude/skills/text-review/scripts/scan.py draft.md              # prose
+~/.claude/skills/text-review/scripts/scan.py --comments loader.py  # comments and docstrings
+```
+
+**text-review** owns the script and explains what each pattern is for. On a non-standard install it sits at `text-review/scripts/scan.py` in the skills directory.
+
+Fix the plain hits. Hits tagged `JUDGE` need the deletion test: cut the clause and reread. If no fact, number, constraint, or claim is lost, the deletion stands.
+
+Two cases the scan cannot reach. Text that is never written to a file, such as a commit message or an answer in the conversation, needs a reread against What to avoid instead. Files that quote the banned vocabulary as examples, these skill files included, fire on every example, so read those rather than scanning them.

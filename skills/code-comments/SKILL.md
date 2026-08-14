@@ -25,7 +25,11 @@ Comment-specific rules on top of **christian-writing-style**, Short snippets. Th
 
 ## Scan
 
-Rules 1, 8, and 9 are the mechanical ones. Run **text-review**'s `scripts/scan.py --comments` on the changed files before reading the diff, so the read is spent on the rules that need judgment.
+Rules 1, 8, and 9 are the mechanical ones. Run **text-review**'s scanner on the changed files before reading the diff, so the read is spent on the rules that need judgment. It sits at `text-review/scripts/scan.py` in the skills directory, which is `~/.claude/skills/text-review/scripts/scan.py` on a standard install.
+
+```bash
+~/.claude/skills/text-review/scripts/scan.py --comments loader.py chunker.go
+```
 
 It covers the stems for all three, and it looks at comment lines only. Every stem is also ordinary code vocabulary, so a file-wide search buries the hits in identifiers and string literals. Hits are candidates, not verdicts.
 
