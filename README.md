@@ -6,17 +6,11 @@ The text refers to "Claude" and "CLAUDE.md", but should be generalizable to any 
 
 External skills I use are listed in `skills.manifest`. The install script fetches them and symlinks them into `~/.claude/skills/` alongside personal skills.
 
-## The skills
-
 - **[christian-writing-style](skills/christian-writing-style/)**: the writing rules for anything under my name, from a technical article to a commit subject line.
 - **[text-review](skills/text-review/)**: reviews writing for accuracy, organization, and clarity. Presents findings by severity and waits before editing.
 - **[code-comments](skills/code-comments/)**: Rules to write useful comments and docstrings. It works together with `christian-writing-style`.
 - **[commit](skills/commit/)**: commits the session's changes in logical groups, with a review step before each commit.
 - **[python-dev-process](skills/python-dev-process/)** (opt-in): my Python process, covering project phases, tooling, testing, and refactoring discipline.
-
-## Repository structure
-
-Personal skills live under `skills/`, each in its own folder with a `SKILL.md`. External skills from GitHub are listed in `skills.manifest` and fetched into `from-others/` at install time. The `scripts/` folder holds `install.sh`, `configure-permissions.sh`, and `trigger-eval.py`.
 
 - [Set up a new machine](#set-up-a-new-machine)
 - [Update a skill](#update-a-skill)
