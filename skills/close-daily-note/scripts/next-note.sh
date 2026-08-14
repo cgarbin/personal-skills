@@ -43,6 +43,9 @@ if ! awk -v now="$NOW" '
     if (h ~ /^# pomodoros[[:space:]]*$/)  { phase = "pomodoros"; next }
     if (h ~ /^# next tasks[[:space:]]*$/) { phase = "tasks";     next }
     if (h ~ /^# notes[[:space:]]*$/)      { phase = "notes";     next }
+    # The summary belongs to the source day. Without this it falls through to
+    # the free-form tail and the prior recap reappears in the new note.
+    if (h ~ /^# generated daily summary[[:space:]]*$/) { phase = "summary"; next }
     # Any other top-level heading starts the free-form tail, which keeps its
     # own headings.
     phase = "freeform"
