@@ -28,10 +28,14 @@ Comment-specific rules on top of **christian-writing-style**, Short snippets. Th
 Rules 1, 8, and 9 are the mechanical ones. Run **text-review**'s scanner on the changed files before reading the diff, so the read is spent on the rules that need judgment. It sits at `text-review/scripts/scan.py` in the skills directory, which is `~/.claude/skills/text-review/scripts/scan.py` on a standard install.
 
 ```bash
-~/.claude/skills/text-review/scripts/scan.py --comments loader.py chunker.go
+~/.claude/skills/text-review/scripts/scan.py loader.py chunker.go
 ```
 
-It covers the stems for all three, and it looks at comment lines only. Every stem is also ordinary code vocabulary, so a file-wide search buries the hits in identifiers and string literals. Hits are candidates, not verdicts.
+It covers the stems for all three, and it looks at comment lines only. Every stem is also ordinary code vocabulary, so a file-wide search buries the hits in identifiers and string literals.
+
+It also runs the **christian-writing-style** voice checks over those same comment lines. An em-dash, a semicolon joining two clauses, and British spelling are wrong in a comment for the same reason they are wrong in a paragraph.
+
+Hits are candidates, not verdicts. They come grouped by the action each needs: `FIX` where the replacement is determined, `REWRITE` where the wording has to change, and `TEST` where the hit prints the test to apply first.
 
 ## What a survivor looks like
 

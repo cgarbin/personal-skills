@@ -119,6 +119,7 @@ Items ending in a section name are explained above.
 - Overpromising or hyping results.
 - Emojis.
 - Filler openers ("In today's rapidly evolving world...", "As we all know...").
+- Single-word paragraph leads that label the paragraph instead of stating its point ("Interpretation.", "Discussion."). A bold multi-word lead-in that states a claim is a house pattern and stays ("**Restatements go, conclusions stay.**").
 - Ignoring or minimizing limitations.
 - British spelling. Use US: *analyze*, *color*, *behavior*, *modeling*, *-ize*, *center*, *defense*.
 - Em-dashes in his own writing. Use periods or parentheses unless Christian uses one first in the conversation.
@@ -174,12 +175,13 @@ A fix confined to a sentence or two goes in directly. Anything larger is a revie
 Run the mechanical scan on every file you wrote or edited, and fix what it finds. It catches what survives a careful draft: em-dashes, semicolons joining clauses, British spelling, filler openers, and the vocabulary under Name the concrete thing.
 
 ```bash
-~/.claude/skills/text-review/scripts/scan.py draft.md              # prose
-~/.claude/skills/text-review/scripts/scan.py --comments loader.py  # comments and docstrings
+~/.claude/skills/text-review/scripts/scan.py draft.md README.md loader.py
 ```
+
+Pass every file you touched in one call. The extension decides what gets read: a source file is reduced to its comments and docstrings, anything else is read as prose.
 
 **text-review** owns the script and explains what each pattern is for. On a non-standard install it sits at `text-review/scripts/scan.py` in the skills directory.
 
-Fix the plain hits. Hits tagged `JUDGE` need the deletion test: cut the clause and reread. If no fact, number, constraint, or claim is lost, the deletion stands.
+Work the groups in order. `FIX` and `REWRITE` hits are always violations. `TEST` hits print the test to apply, and every group prints a `see` line pointing at the rule behind the check.
 
 Two cases the scan cannot reach. Text that is never written to a file, such as a commit message or an answer in the conversation, needs a reread against What to avoid instead. Files that quote the banned vocabulary as examples, these skill files included, fire on every example, so read those rather than scanning them.

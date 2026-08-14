@@ -84,21 +84,25 @@ Consult christian-writing-style for the full specification. Common issues:
 
 Backstop for patterns judgment alone misses. `scripts/scan.py` holds the patterns and the reasoning behind each one. It exits 0 clean, 1 with hits, 2 on a usage error.
 
+Hits come grouped by the action they need, `FIX` before `REWRITE` before `TEST`, so a find-and-replace does not sit in the same list as a call that needs judgment. Each group prints the fix or the test once, then the hits under it with the sentence around each one.
+
 ```bash
 scripts/scan.py draft.md                    # prose
-scripts/scan.py --comments src/chunker.py   # comment lines only, code-comments rules
+scripts/scan.py draft.md src/chunker.py     # any mix, routed by extension
 scripts/scan.py --summary draft.md          # counts per check
 scripts/scan.py --only citation paper.md    # named checks, and the only way to run citation
 ```
 
-Prose mode covers em-dashes, semicolons, British spelling, nominalization and filler openers, side commentary, empty contrastive tails, feeling-words, layout announcements, vocabulary that stands in for the concrete thing, and vague quantifiers. It joins hard-wrapped lines first, so a phrase split across a line break still matches. `--comments` runs the code-comments jargon, dead-code, and plan-label stems against comment lines, which is where they mean something rather than being ordinary identifiers.
+The voice checks cover em-dashes, semicolons, British spelling, nominalization and filler openers, side commentary, empty contrastive tails, feeling-words, layout announcements, vocabulary that stands in for the concrete thing, and vague quantifiers. They run on everything, since a rule about his voice holds wherever the text sits.
+
+The extension decides what gets read, not which rules apply. A source file is reduced to its comment lines first, because `guard` and `canonical` are ordinary identifiers and a file-wide search buries the hits. Anything else is read as prose, with hard-wrapped lines joined so a phrase split across a line break still matches. Source files also get the three code-comments stems, jargon, dead-code, and plan-label, which are held back from prose because "Step 1" is a heading there rather than a dead plan label.
 
 Two checks need a read instead:
 
 - Inconsistent capitalization or spelling of recurring technical terms.
 - Whether each citation key and named attribution was checked against a source rather than recalled, including ones you wrote yourself. `--only citation` finds the keys but not where they came from. It stays opt-in because eighty citations in a paper would drown every other check.
 
-Report every hit, false positives included, except the four tagged `JUDGE`. Side commentary, empty contrastive tails, and the concrete-thing vocabulary fire often enough on correct prose that reporting them raw buries the real findings, since "axes" and "stack" are ordinary words in a paper about models. Judge all three the same way: delete the clause and reread. If no fact, number, constraint, or claim is lost, the deletion stands. Keep a contrast only when the alternative was actually tried, a reader would plausibly assume it, or the argument depends on ruling it out. Feeling-words are tagged for a different reason. One per piece is fine when the reaction is itself information, and the script cannot count across a document.
+Report every `FIX` and `REWRITE` hit, false positives included. Apply the printed test to a `TEST` hit before reporting it. Side commentary, empty contrastive tails, the concrete-thing vocabulary, and nominalization leads fire often enough on correct prose that reporting them raw buries the real findings, since "axes" and "stack" are ordinary words in a paper about models and "Precision improved to 0.8" is not a zombie noun. Feeling-words are tagged for a different reason. One per piece is fine when the reaction is itself information, and the script cannot count across a document.
 
 Reporting the rest matters most during iterative editing, where corrections in one round reintroduce patterns cleaned up in the previous one.
 
