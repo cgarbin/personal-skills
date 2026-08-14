@@ -45,7 +45,7 @@ PROSE_CHECKS = [
     ("layout-announce", r"(?i)the rest of this section|the sections below|"
                         r"what the table cannot|each item gets|as (?:described|shown) below", False),
     ("concrete-thing", r"(?i)\b(?:lands?|landed|carr(?:y|ies|ied)|stack|arm|frontier|"
-                       r"axes|lever|downstream)\b", True),
+                       r"axes|lever|downstream|load[- ]bearing)\b", True),
     ("vague-quantifier", r"(?i)\b(?:elevated|tighten)\b|various factors|had issues", False),
     # Opt-in. A paper with 80 citations would otherwise drown every other check.
     ("citation", r"\[@", False),
@@ -62,7 +62,7 @@ PROSE_CHECKS = [
 OPT_IN = {"citation"}
 
 COMMENT_CHECKS = [
-    ("jargon", r"(?i)\b(?:guard|invariant|idempotent|canonical|load-bearing|downstream)\b", False),
+    ("jargon", r"(?i)\b(?:guard|invariant|idempotent|canonical|load[- ]bearing|downstream)\b", False),
     ("dead-code-ref", r"(?i)used to|no longer|after decoupling|the old\b|the deleted\b", False),
     ("plan-label", r"(?i)\bcluster\s*[A-Z]?\d|\bstep\s*\d|this task|^\W*[A-Z]\d\s*:", False),
 ]

@@ -72,7 +72,7 @@ Stop only when *all* of the following are true: zero commits from Step 1, zero p
 
 ### Step 4: Write the summary
 
-Write a summary as a bullet list in Christian's voice. Do not load the `christian-writing-style` skill: a recap of this length does not need the full register guide, and the rules below are the load-bearing subset.
+Write a summary as a bullet list in Christian's voice. Do not load the `christian-writing-style` skill: a recap of this length does not need the full register guide, and the rules below cover what it does need.
 
 Voice rules for the summary:
 
