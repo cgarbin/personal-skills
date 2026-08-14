@@ -4,9 +4,14 @@
 The file extension picks what to read. A source file is reduced to its comment
 lines first, because every code-comments stem is also ordinary code vocabulary
 and a file-wide search buries the hits in identifiers and literals. Anything
-else is read as prose. Rules do not split the same way: the voice checks run on
-both, and only the comment-specific checks are held back from prose, where "Step
-1" is a heading rather than a dead plan label.
+else is read as prose. WHOLE_FILE names the exception, a check that reads every
+line of a source file so it can reach an error string.
+
+Rules do not split the same way. The voice checks run on everything, and each
+side holds back the checks that only mean something there: COMMENT_CHECKS stay
+out of prose, where "Step 1" is a heading rather than a dead plan label, and
+PROSE_ONLY_CHECKS stay out of comments, where the same words are already an
+absolute violation rather than a judgment call.
 
 Hits are candidates, not verdicts. Each check declares the action it needs, and
 the report groups by that action so a find-and-replace does not sit in the same
@@ -89,6 +94,10 @@ PROSE_CHECKS = [
     Check("vague-quantifier", r"(?i)\b(?:elevated|tighten)\b|various factors|had issues",
           "REWRITE",
           "give the number, or name what went wrong", CONCRETE),
+    Check("soft-verb", r"(?i)\b(?:surfac(?:e|es|ed|ing)|leverag(?:e|es|ed|ing)|"
+                       r"unlock(?:s|ed|ing)?)\b", "TEST",
+          "a verb standing in for a plainer one? \"surfaces those\" is \"shows "
+          "those\". A noun (API surface) or a status label is fine", AVOID),
     # Opt-in. A paper with 80 citations would otherwise drown every other check.
     Check("citation", r"\[@", "TEST",
           "was this key checked against a source, or recalled? The script finds "
@@ -110,14 +119,26 @@ PROSE_CHECKS = [
 
 OPT_IN = {"citation"}
 
+# Held back from source files, where the same words are covered by the absolute
+# form of the rule in COMMENT_CHECKS.
+PROSE_ONLY_CHECKS = [
+    Check("specialist-term", r"(?i)\b(?:guard|invariant|idempotent|canonical)\b", "TEST",
+          "standard for this audience, or does a plain word of the same length "
+          "exist? \"canonical order\" is \"fixed order\"",
+          "christian-writing-style, Fight the curse of knowledge"),
+]
+
 COMMENT_CHECKS = [
     Check("jargon", r"(?i)\b(?:guard|invariant|idempotent|canonical|load[- ]bearing|downstream)\b",
           "REWRITE",
           "name the thing in this code: \"the check above\", \"the file the "
           "script reads\"", "code-comments rule 1"),
+    # "no longer" and "the old" describe runtime state as often as dead code
+    # ("the target no longer exists"), so this one asks rather than asserts.
     Check("dead-code-ref", r"(?i)used to|no longer|after decoupling|the old\b|the deleted\b",
-          "REWRITE",
-          "cut it, unless comparing old and new behavior is the subject",
+          "TEST",
+          "about code that stopped running, or about runtime state like a "
+          "missing file? Only the first is a violation",
           "code-comments rule 8"),
     Check("plan-label", r"(?i)\bcluster\s*[A-Z]?\d|\bstep\s*\d|this task|^\W*[A-Z]\d\s*:",
           "REWRITE",
@@ -154,6 +175,13 @@ COMMENT_SYNTAX = {
 UNIT_START = re.compile(r"^\s*(?:#{1,6}\s|[-*+]\s|\d+\.\s|>\s|\||```|~~~)")
 
 SENTENCE_END = re.compile(r"(?<=[.!?])\s")
+
+# Checks that read every line of a source file rather than the comments alone,
+# so they reach an error string or a log message. Only em-dash qualifies:
+# nothing in code needs one, so the sole false positive is a linter declaring
+# the character, while British spelling would match every word inside this
+# script's own pattern list.
+WHOLE_FILE = {"em-dash"}
 
 
 def prose_units(path):
@@ -233,22 +261,42 @@ def sentence_around(text, start, end, cap=320):
     return text[max(left, start - pad):min(right, end + pad)].strip()
 
 
+def all_lines(path):
+    for n, line in enumerate(path.read_text(errors="replace").splitlines(), 1):
+        yield n, line
+
+
 def is_source(path):
     return path.suffix.lower() in COMMENT_SYNTAX
 
 
+def checks_for(path, wanted=None):
+    """Return every voice check, plus the ones that only mean something here."""
+    checks = PROSE_CHECKS + (COMMENT_CHECKS if is_source(path) else PROSE_ONLY_CHECKS)
+    if wanted:
+        return [c for c in checks if c.name in wanted]
+    return [c for c in checks if c.name not in OPT_IN]
+
+
 def scan(path, checks):
-    source = comment_lines(path) if is_source(path) else prose_units(path)
+    if is_source(path):
+        passes = [(comment_lines(path), checks),
+                  (all_lines(path), [c for c in checks if c.name in WHOLE_FILE])]
+    else:
+        passes = [(prose_units(path), checks)]
     seen, hits = set(), []
-    for n, text in source:
-        for check in checks:
-            for m in re.finditer(check.pattern, text):
-                key = (check.name, n, m.group(0).lower())
-                if key in seen:
-                    continue
-                seen.add(key)
-                hits.append(Hit(check, path, n,
-                                m.group(0), sentence_around(text, m.start(), m.end())))
+    for source, active in passes:
+        if not active:
+            continue
+        for n, text in source:
+            for check in active:
+                for m in re.finditer(check.pattern, text):
+                    key = (check.name, n, m.group(0).lower())
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    hits.append(Hit(check, path, n,
+                                    m.group(0), sentence_around(text, m.start(), m.end())))
     return hits
 
 
@@ -279,7 +327,7 @@ def main():
     ap.add_argument("--summary", action="store_true", help="counts per check, no hit lines")
     args = ap.parse_args()
 
-    all_checks = PROSE_CHECKS + COMMENT_CHECKS
+    all_checks = PROSE_CHECKS + PROSE_ONLY_CHECKS + COMMENT_CHECKS
     wanted = None
     if args.only:
         wanted = {n.strip() for n in args.only.split(",")}
@@ -294,14 +342,7 @@ def main():
         if not path.is_file():
             print(f"skip {path} (not a file)", file=sys.stderr)
             continue
-        # Comment-specific checks would fire on ordinary prose, where "Step 1" is
-        # a heading rather than a dead plan label.
-        checks = all_checks if is_source(path) else PROSE_CHECKS
-        if wanted:
-            checks = [c for c in checks if c.name in wanted]
-        else:
-            checks = [c for c in checks if c.name not in OPT_IN]
-        found = scan(path, checks)
+        found = scan(path, checks_for(path, wanted))
         hits.extend(found)
         totals.update(h.check.name for h in found)
 

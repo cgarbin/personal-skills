@@ -93,16 +93,20 @@ scripts/scan.py --summary draft.md          # counts per check
 scripts/scan.py --only citation paper.md    # named checks, and the only way to run citation
 ```
 
-The voice checks cover em-dashes, semicolons, British spelling, nominalization and filler openers, side commentary, empty contrastive tails, feeling-words, layout announcements, vocabulary that stands in for the concrete thing, and vague quantifiers. They run on everything, since a rule about his voice holds wherever the text sits.
+The voice checks cover em-dashes, semicolons, British spelling, nominalization and filler openers, side commentary, empty contrastive tails, feeling-words, layout announcements, soft verbs used as jargon, vocabulary that stands in for the concrete thing, and vague quantifiers. They run on everything, since a rule about his voice holds wherever the text sits.
 
-The extension decides what gets read, not which rules apply. A source file is reduced to its comment lines first, because `guard` and `canonical` are ordinary identifiers and a file-wide search buries the hits. Anything else is read as prose, with hard-wrapped lines joined so a phrase split across a line break still matches. Source files also get the three code-comments stems, jargon, dead-code, and plan-label, which are held back from prose because "Step 1" is a heading there rather than a dead plan label.
+The extension decides what gets read, not which rules apply. A source file is reduced to its comment lines first, because `guard` and `canonical` are ordinary identifiers and a file-wide search buries the hits. Anything else is read as prose, with hard-wrapped lines joined so a phrase split across a line break still matches.
+
+Source files get the three code-comments stems, jargon, dead-code, and plan-label, held back from prose because "Step 1" is a heading there rather than a dead plan label. Prose gets `specialist-term`, which asks the curse-of-knowledge question about the same words the jargon stem bans outright in a comment.
+
+The em-dash check reads every line of a source file, because nothing in code needs one and the comment pass cannot see an error string or a log message. British spelling is not read that way, since it would match every word inside this script's own pattern list.
 
 Two checks need a read instead:
 
 - Inconsistent capitalization or spelling of recurring technical terms.
 - Whether each citation key and named attribution was checked against a source rather than recalled, including ones you wrote yourself. `--only citation` finds the keys but not where they came from. It stays opt-in because eighty citations in a paper would drown every other check.
 
-Report every `FIX` and `REWRITE` hit, false positives included. Apply the printed test to a `TEST` hit before reporting it. Side commentary, empty contrastive tails, the concrete-thing vocabulary, and nominalization leads fire often enough on correct prose that reporting them raw buries the real findings, since "axes" and "stack" are ordinary words in a paper about models and "Precision improved to 0.8" is not a zombie noun. Feeling-words are tagged for a different reason. One per piece is fine when the reaction is itself information, and the script cannot count across a document.
+Report every `FIX` and `REWRITE` hit, false positives included. Apply the printed test to a `TEST` hit before reporting it. Side commentary, empty contrastive tails, the concrete-thing vocabulary, nominalization leads, soft verbs, and specialist terms fire often enough on correct prose that reporting them raw buries the real findings, since "axes" and "stack" are ordinary words in a paper about models, "Precision improved to 0.8" is not a zombie noun, and "API surface" is a noun. `dead-code-ref` is tagged for the same reason: "the target no longer exists" describes a missing file, not code that stopped running. Feeling-words are tagged for a different reason. One per piece is fine when the reaction is itself information, and the script cannot count across a document.
 
 Reporting the rest matters most during iterative editing, where corrections in one round reintroduce patterns cleaned up in the previous one.
 

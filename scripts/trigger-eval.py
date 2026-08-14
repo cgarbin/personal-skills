@@ -6,7 +6,7 @@
 The eval set is a JSON array of {"query": str, "should_trigger": bool}.
 
 skill-creator ships scripts/run_eval.py for this, but it registers the skill
-under test by writing .claude/commands/<name>.md. Claude Code surfaces those
+under test by writing .claude/commands/<name>.md. Claude Code shows those
 as user-invocable slash commands, which the model only calls when the user
 types the name, so a bare task prompt never triggers one and every
 description scores 0.0. This runs the query against the globally installed
