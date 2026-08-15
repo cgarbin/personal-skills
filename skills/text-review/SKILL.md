@@ -106,9 +106,11 @@ Two checks need a read instead:
 - Inconsistent capitalization or spelling of recurring technical terms.
 - Whether each citation key and named attribution was checked against a source rather than recalled, including ones you wrote yourself. `--only citation` finds the keys but not where they came from. It stays opt-in because eighty citations in a paper would drown every other check.
 
-Report every `FIX` and `REWRITE` hit, false positives included. Apply the printed test to a `TEST` hit before reporting it. Side commentary, empty contrastive tails, the concrete-thing vocabulary, nominalization leads, soft verbs, and specialist terms fire often enough on correct prose that reporting them raw buries the real findings, since "axes" and "stack" are ordinary words in a paper about models, "Precision improved to 0.8" is not a zombie noun, and "API surface" is a noun. `dead-code-ref` is tagged for the same reason: "the target no longer exists" describes a missing file, not code that stopped running. Feeling-words are tagged for a different reason. One per piece is fine when the reaction is itself information, and the script cannot count across a document.
+Report every `FIX` and `REWRITE` hit, false positives included. Reporting them matters most during iterative editing, where corrections in one round reintroduce patterns cleaned up in the previous one.
 
-Reporting the rest matters most during iterative editing, where corrections in one round reintroduce patterns cleaned up in the previous one.
+Side commentary, empty contrastive tails, the concrete-thing vocabulary, nominalization leads, soft verbs, and specialist terms fire often enough on correct prose that reporting them raw buries the real findings, since "axis" and "stack" are ordinary words in a paper about models, "Precision improved to 0.8" is not a zombie noun, and "API surface" is a noun. `dead-code-ref` is tagged for the same reason: "the target no longer exists" describes a missing file, not code that stopped running. Feeling-words are tagged for a different reason. One per piece is fine when the reaction is itself information, and the script cannot count across a document.
+
+Answer a `TEST` hit in writing whenever you decide to leave the text as it is. Quote the printed test and answer it in one line. Reasoning that never states the test drifts back to the wording the check flagged.
 
 ---
 

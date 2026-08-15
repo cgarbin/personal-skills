@@ -35,7 +35,7 @@ It covers the stems for all three, and it reads comment lines rather than the wh
 
 It also runs the **christian-writing-style** voice checks over those same comment lines. An em-dash, a semicolon joining two clauses, and British spelling are wrong in a comment for the same reason they are wrong in a paragraph. The em-dash check goes further and reads every line, since an error string or a log message is prose the comment pass never sees.
 
-Hits are candidates, not verdicts. They come grouped by the action each needs: `FIX` where the replacement is determined, `REWRITE` where the wording has to change, and `TEST` where the hit prints the test to apply first.
+Hits are candidates, not verdicts. They come grouped by the action each needs: `FIX` where the replacement is determined, `REWRITE` where the wording has to change, and `TEST` where the hit prints the test to apply first. Answer a `TEST` hit in writing whenever you decide to leave the comment as it is. Quote the printed test and answer it in one line.
 
 ## What a survivor looks like
 

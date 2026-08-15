@@ -182,7 +182,7 @@ Pass every file you touched in one call. The extension decides what gets read: a
 
 **text-review** owns the script and explains what each pattern is for. On a non-standard install it sits at `text-review/scripts/scan.py` in the skills directory.
 
-Work the groups in order. `FIX` and `REWRITE` hits are always violations. `TEST` hits print the test to apply, and every group prints a `see` line pointing at the rule behind the check.
+Work the groups in order. `FIX` and `REWRITE` hits are always violations. Every group prints a `see` line pointing at the rule behind the check. `TEST` hits also print the test to apply. Whenever you decide to keep your wording, quote that test and answer it in one line. Reasoning that never states the test drifts back to what you already wrote.
 
 A clean scan is not a clean draft.
 
