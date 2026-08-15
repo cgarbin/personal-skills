@@ -87,8 +87,9 @@ PROSE_CHECKS = [
           "REWRITE",
           "a table followed by per-item sections is self-evident, so cut the sentence",
           "christian-writing-style, Show, don't tell"),
-    Check("concrete-thing", r"(?i)\b(?:lands?|landed|carr(?:y|ies|ied)|stack|arm|frontier|"
-                            r"axes|lever|downstream|load[- ]bearing)\b", "TEST",
+    Check("concrete-thing", r"(?i)\b(?:land(?:s|ed|ings?)?|carr(?:y|ies|ied|ying)|stacks?|"
+                            r"arms?|frontiers?|ax[ei]s|levers?|downstream|"
+                            r"load[- ]bearing)\b", "TEST",
           "framing vocabulary, or the literal thing? Name the specific thing if "
           "it is framing", CONCRETE),
     Check("vague-quantifier", r"(?i)\b(?:elevated|tighten)\b|various factors|had issues",
