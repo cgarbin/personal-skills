@@ -48,11 +48,15 @@ For each group, draft:
 - Subject line: aim 50 chars, hard limit 72, focused on "what". No Conventional Commit prefixes (`feat:`, `fix:`, `chore:`, etc.). Examples: "Compress commit skill", "Add hook-reformat recovery", "Drop unused config flag".
 - Body: only when the subject does not already state the "why". Default: no body. When you do write one, separate with a blank line and wrap at 72.
 
-Append:
+End with the trailers the harness gives you, `Co-Authored-By` and `Claude-Session`, as their own paragraph. Do not copy them from an older commit. The author name moves with the model, and the session link is per session. Trailers register only from the last paragraph, so one with no blank line above it is body text.
 
+Write each group's message to its own file, then check it:
+
+```bash
+scripts/commit_group.py --check <message-file>
 ```
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
+
+`error:` lines block the commit, `warning:` lines do not. Fix the errors before Step 5 so the plan you present is the plan that commits.
 
 ## Step 5: Review
 
@@ -76,8 +80,19 @@ One block per group. Auto mode does not override the gate. Invocation triggers t
 
 ## Step 7: Commit
 
-For each group, stage files by name (never `git add -A` or `git add .`) and commit.
+One call per group:
 
-If a format hook rewrites files and aborts the commit (common with ruff-format), re-stage the formatter's changes and re-run the same `git commit`. Do not amend, since no commit was created.
+```bash
+scripts/commit_group.py <message-file> <file> [<file> ...]
+```
+
+It re-runs the Step 4 checks, stages the paths you name and nothing else, and commits. When a format hook rewrites one of those paths and aborts the commit (common with ruff-format), the script stages the rewrite and runs the same commit again, once.
+
+Exit 0 means the commit was created. Exit 2 is a usage error. Exit 1 means nothing was committed, for one of four reasons the output names:
+
+- A message error.
+- A path that is neither on disk nor tracked.
+- An index already holding a path outside the group.
+- A hook that failed for a reason a second run will not fix. Read the hook output and fix the cause. Do not re-run the script to get past it.
 
 Do not push.
