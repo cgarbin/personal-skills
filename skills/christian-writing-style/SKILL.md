@@ -60,6 +60,11 @@ Active voice even in academic writing. Passive only when the agent is unknown or
 - Heavy in middle: "The model, which was trained on 10,000 images from three hospitals using a ResNet-50 architecture with data augmentation, achieved 94% accuracy."
 - Heavy at end: "The model achieved 94% accuracy after training on 10,000 images from three hospitals, using a ResNet-50 architecture with data augmentation."
 
+**One sentence, one job.** Past about forty words, check whether the sentence is two sentences nobody separated, or one chaining a clause it should have handed to the next. Lists and enumerations are the common case at that length and they earn it, because the reader takes one item at a time instead of one growing structure.
+
+- Chained: "The oracle selection cuts a median 62% of the input tokens, and recall moves by less than 0.01 in every stratum, which says the generator already had the content and left it unused, so the ceiling is not a retrieval problem."
+- Split: "The oracle selection cuts a median 62% of the input tokens. Recall moves by less than 0.01 in every stratum, so the generator already had the content and left it unused. The ceiling is not a retrieval problem."
+
 **One hedge per claim.** "The results suggest..." not "It would seem to appear that the results might possibly suggest..." Pick the right hedge ("suggest," "may indicate," "one possible explanation") and use it once.
 
 ### Name the concrete thing
@@ -71,7 +76,7 @@ An abstraction standing in for a specific thing makes the reader do the decoding
 - **"Load-bearing"** for the part something depends on. "The comment is load-bearing" → "the comment is the only place the constraint is written down." Say what depends on it and what breaks without it.
 - **"Land"** as a verb for where files, data, or values end up ("files land at X," "binaries land in $DIR"). Use "go into," "end up at," "is written to," "sits in," or rephrase. Watch for adjacent overuse: "lands cleanly," "the changes landed in the same window."
 - **"Carry"** as a verb for what text, code, or a table conveys ("the comment carries the constraint," "the reason carries the content," "what the table cannot carry"). Use "state," "describe," "hold," or name what the text actually does.
-- **Vague quantifiers where a number exists.** "Latency was elevated" → give the value. "Various factors" → name them. "The system had issues" → name what went wrong. "Tighten grading" → say which metric moved and by how much.
+- **Vague quantifiers where a number exists.** "Latency was elevated" → give the value. "Various factors" → name them. "The system had issues" → name what went wrong. "Tighten grading" → say which metric moved and by how much. "Recovers a small fraction of those concepts" → give the fraction.
 
 ### Show, don't tell
 
@@ -129,6 +134,7 @@ Items ending in a section name are explained above.
 - Hedging pileups. One hedge per claim, placed precisely. (Craft principles)
 - Passive voice when the agent matters and active voice would be clearer. (Craft principles)
 - Long left-branching phrases that separate subject from verb. (Craft principles)
+- Sentences past about forty words that are not a list or an enumeration. (Craft principles)
 - Vague hand-waving instead of concrete evidence. "Various factors" → name them. (Name the concrete thing)
 - Framing-deck vocabulary ("stack," "arm," "frontier," "axes," "lever"), "downstream" for "later," "land" as a verb for where things end up, "carry" for what text conveys. (Name the concrete thing)
 - Editorial close-outs, announcing a choice as deliberate, narrating a disclosure instead of disclosing. (Side commentary)
@@ -172,7 +178,7 @@ A fix confined to a sentence or two goes in directly. Anything larger is a revie
 
 ## Before you finish
 
-Run the mechanical scan on every file you wrote or edited, and fix what it finds. It catches what survives a careful draft: em-dashes, semicolons joining clauses, British spelling, filler openers, and the vocabulary under Name the concrete thing.
+Run the mechanical scan on every file you wrote or edited, and fix what it finds. It catches what survives a careful draft: em-dashes, semicolons joining clauses, British spelling, filler openers, sentences past forty words, and the vocabulary under Name the concrete thing.
 
 ```bash
 ~/.claude/skills/text-review/scripts/scan.py draft.md README.md loader.py
