@@ -10,8 +10,8 @@ line of a source file so it can reach an error string.
 Rules do not split the same way. The voice checks run on everything, and each
 side holds back the checks that only mean something there: COMMENT_CHECKS stay
 out of prose, where "Step 1" is a heading rather than a dead plan label, and
-PROSE_ONLY_CHECKS stay out of comments, where the same words are already an
-absolute violation rather than a judgment call.
+PROSE_ONLY_CHECKS stay out of comments, for the two reasons given where that
+list is defined.
 
 Hits are candidates, not verdicts. Each check declares the action it needs, and
 the report groups by that action so a find-and-replace does not sit in the same
@@ -43,6 +43,104 @@ Hit = namedtuple("Hit", "check path line match context")
 AVOID = "christian-writing-style, What to avoid"
 CONCRETE = "christian-writing-style, Name the concrete thing"
 COMMENTARY = "christian-writing-style, Side commentary"
+
+SENTENCE_LIMIT = 40
+
+SENTENCE_SPLIT = re.compile(r"[.!?]+[\"')\]]*\s+")
+
+# Periods that do not end a sentence. A decimal needs no entry here, since the
+# digit after the point is not whitespace and never starts a candidate split.
+ABBREVIATIONS = {"al", "approx", "cf", "ch", "dr", "e.g", "eq", "fig", "figs",
+                 "i.e", "inc", "mr", "ms", "no", "p", "pp", "prof", "ref",
+                 "refs", "sec", "st", "tab", "vs"}
+
+# The period, percent, and colon keep "0.405", "62%", and "[@sec:coverage]" to
+# one word each. Splitting them inflates the count on the results paragraphs,
+# which are the ones a reader can least judge by eye.
+WORD = re.compile(r"[A-Za-z0-9][\w'.%:-]*")
+
+# Units that hold no sentence. A table row and a shell command inside an HTML
+# comment both pass the word limit without being prose. The length check reads
+# this. A quantity written out in a table cell is still vague, so the quantity
+# check does not.
+NOT_PROSE = re.compile(r"^\s*(?:\||```|~~~|\$\$?|#{1,6}\s|!\[|<!--)")
+
+UNQUANTIFIED = re.compile(r"(?i)\ba (?:few|handful|small fraction|little)\b")
+
+DIGIT = re.compile(r"\d")
+
+
+class Span:
+    """One hit from a check that counts instead of matching a pattern.
+
+    Holds the same three attributes as a regex match, so the reporting path
+    reads both the same way.
+    """
+
+    def __init__(self, label, start, end):
+        self.label, self.begin, self.finish = label, start, end
+
+    def group(self, index=0):
+        if index:
+            raise IndexError("no such group")
+        return self.label
+
+    def start(self):
+        return self.begin
+
+    def end(self):
+        return self.finish
+
+
+def sentences(text):
+    """Yield (start, end, sentence) over one prose unit.
+
+    A boundary needs a capital, a digit, or an opening bracket after the period.
+    A lowercase word after one keeps the sentence whole, which covers the
+    abbreviations the list above misses.
+    """
+    left = 0
+    for m in SENTENCE_SPLIT.finditer(text):
+        head = text[left:m.start()]
+        last = re.split(r"[\s(\[]", head)[-1].lower().rstrip(".") if head else ""
+        if last in ABBREVIATIONS or (len(last) == 1 and last.isalpha()):
+            continue
+        after = text[m.end():m.end() + 1]
+        if after and not (after.isupper() or after.isdigit() or after in "[\"'($*`-"):
+            continue
+        yield left, m.start(), text[left:m.start()]
+        left = m.end()
+    if left < len(text):
+        yield left, len(text), text[left:]
+
+
+def long_sentences(text):
+    """Find sentences past SENTENCE_LIMIT words, skipping units that hold none.
+
+    The match states the count and the opening words. The count alone would
+    collide in the dedup key when one unit holds two long sentences.
+    """
+    if NOT_PROSE.match(text):
+        return
+    for start, end, sentence in sentences(text):
+        count = len(WORD.findall(sentence))
+        if count > SENTENCE_LIMIT:
+            yield Span(f"{count} words: {' '.join(sentence.split()[:6])}", start, end)
+
+
+def unquantified(text):
+    """Find a vague quantity in a sentence that states no number.
+
+    The rule is "vague where a number exists" and no script can tell whether one
+    exists. A digit in the same sentence is the closest available stand-in, and
+    it is what keeps "a few hundredths, from 0.020 to 0.030" quiet.
+    """
+    for start, _, sentence in sentences(text):
+        if DIGIT.search(sentence):
+            continue
+        for m in UNQUANTIFIED.finditer(sentence):
+            yield Span(m.group(0), start + m.start(), start + m.end())
+
 
 PROSE_CHECKS = [
     Check("em-dash", r"—", "FIX",
@@ -95,6 +193,11 @@ PROSE_CHECKS = [
     Check("vague-quantifier", r"(?i)\b(?:elevated|tighten)\b|various factors|had issues",
           "REWRITE",
           "give the number, or name what went wrong", CONCRETE),
+    # Separate from vague-quantifier because these words are right often enough
+    # that a REWRITE, which prints false positives and all, would be wrong.
+    Check("unquantified", unquantified, "TEST",
+          "give the fraction, or say why it is not available. A label rather "
+          "than a measurement is fine", CONCRETE),
     Check("soft-verb", r"(?i)\b(?:surfac(?:e|es|ed|ing)|leverag(?:e|es|ed|ing)|"
                        r"unlock(?:s|ed|ing)?)\b", "TEST",
           "a verb standing in for a plainer one? \"surfaces those\" is \"shows "
@@ -120,13 +223,19 @@ PROSE_CHECKS = [
 
 OPT_IN = {"citation"}
 
-# Held back from source files, where the same words are covered by the absolute
-# form of the rule in COMMENT_CHECKS.
+# Held back from source files, for two different reasons. specialist-term
+# because the same words are covered by the absolute form of the rule in
+# COMMENT_CHECKS. long-sentence because comment_lines yields one physical line
+# at a time, so a wrapped sentence never reaches the limit in a single unit.
 PROSE_ONLY_CHECKS = [
     Check("specialist-term", r"(?i)\b(?:guard|invariant|idempotent|canonical)\b", "TEST",
           "standard for this audience, or does a plain word of the same length "
           "exist? \"canonical order\" is \"fixed order\"",
           "christian-writing-style, Fight the curse of knowledge"),
+    Check("long-sentence", long_sentences, "TEST",
+          "lists and enumerations are legitimately long. Split only when the "
+          "sentence chains modifiers or hides its subject",
+          "christian-writing-style, One sentence, one job"),
 ]
 
 COMMENT_CHECKS = [
@@ -186,18 +295,19 @@ WHOLE_FILE = {"em-dash"}
 
 
 def prose_units(path):
-    """Yield (lineno, text) with hard-wrapped lines joined into one unit.
+    """Yield (lineno, text, fenced) with hard-wrapped lines joined into one unit.
 
     Phrase patterns like "the rest of this section" straddle a newline in wrapped
     markdown and match nothing when each physical line is tested on its own. The
-    line number reported is where the unit starts.
+    line number reported is where the unit starts. fenced says the unit came
+    from a code block, which the checks that measure a sentence cannot read.
     """
     unit, start, in_fence = [], None, False
     for n, line in enumerate(path.read_text(errors="replace").splitlines(), 1):
         fence = line.lstrip().startswith(("```", "~~~"))
         if not line.strip() or (UNIT_START.match(line) and not in_fence) or fence:
             if unit:
-                yield start, " ".join(unit)
+                yield start, " ".join(unit), False
                 unit, start = [], None
         if fence:
             in_fence = not in_fence
@@ -208,10 +318,10 @@ def prose_units(path):
         if in_fence or fence:
             # Code blocks stay one line per unit so the reported context is readable.
             if unit:
-                yield start, " ".join(unit)
+                yield start, " ".join(unit), True
                 unit, start = [], None
     if unit:
-        yield start, " ".join(unit)
+        yield start, " ".join(unit), False
 
 
 def comment_lines(path):
@@ -271,6 +381,13 @@ def is_source(path):
     return path.suffix.lower() in COMMENT_SYNTAX
 
 
+def matches(pattern, text):
+    """Run one check over one unit. A check that counts is a function."""
+    if isinstance(pattern, str):
+        return re.finditer(pattern, text)
+    return pattern(text)
+
+
 def checks_for(path, wanted=None):
     """Return every voice check, plus the ones that only mean something here."""
     checks = PROSE_CHECKS + (COMMENT_CHECKS if is_source(path) else PROSE_ONLY_CHECKS)
@@ -279,19 +396,31 @@ def checks_for(path, wanted=None):
     return [c for c in checks if c.name not in OPT_IN]
 
 
+def unfenced(source):
+    """Add the third element prose_units yields. A comment pass reads no fences."""
+    for n, text in source:
+        yield n, text, False
+
+
 def scan(path, checks):
     if is_source(path):
-        passes = [(comment_lines(path), checks),
-                  (all_lines(path), [c for c in checks if c.name in WHOLE_FILE])]
+        passes = [(unfenced(comment_lines(path)), checks),
+                  (unfenced(all_lines(path)),
+                   [c for c in checks if c.name in WHOLE_FILE])]
     else:
         passes = [(prose_units(path), checks)]
     seen, hits = set(), []
     for source, active in passes:
         if not active:
             continue
-        for n, text in source:
+        for n, text, fenced in source:
             for check in active:
-                for m in re.finditer(check.pattern, text):
+                # The pattern checks still read a code block, where a semicolon
+                # in a shell command is a judgment call. The counting checks
+                # cannot, because a code line is not a sentence.
+                if fenced and not isinstance(check.pattern, str):
+                    continue
+                for m in matches(check.pattern, text):
                     key = (check.name, n, m.group(0).lower())
                     if key in seen:
                         continue

@@ -82,7 +82,7 @@ Consult christian-writing-style for the full specification. Common issues:
 
 ### 5. Mechanical scan
 
-Backstop for patterns judgment alone misses. `scripts/scan.py` holds the patterns and the reasoning behind each one. It exits 0 clean, 1 with hits, 2 on a usage error.
+Backstop for patterns judgment alone misses. `scripts/scan.py` holds the patterns and the reasoning behind each one. It exits 0 clean, 1 with hits, 2 on a usage error. `scripts/test_scan.py` pins the behavior a regex cannot state, from where a sentence boundary falls to which units hold no sentence at all.
 
 Hits come grouped by the action they need, `FIX` before `REWRITE` before `TEST`, so a find-and-replace does not sit in the same list as a call that needs judgment. Each group prints the fix or the test once, then the hits under it with the sentence around each one.
 
@@ -93,11 +93,18 @@ scripts/scan.py --summary draft.md          # counts per check
 scripts/scan.py --only citation paper.md    # named checks, and the only way to run citation
 ```
 
-The voice checks cover em-dashes, semicolons, British spelling, nominalization and filler openers, side commentary, empty contrastive tails, feeling-words, layout announcements, soft verbs used as jargon, vocabulary that stands in for the concrete thing, and vague quantifiers. They run on everything, since a rule about his voice holds wherever the text sits.
+The voice checks run on everything, since a rule about his voice holds wherever the text sits. They cover:
+
+- em-dashes, semicolons, and British spelling
+- filler openers and nominalization leads
+- side commentary and empty contrastive tails
+- feeling-words and layout announcements
+- soft verbs used as jargon, and vocabulary that stands in for the concrete thing
+- vague quantifiers, and quantities written out in words where a number belongs
 
 The extension decides what gets read, not which rules apply. A source file is reduced to its comment lines first, because `guard` and `canonical` are ordinary identifiers and a file-wide search buries the hits. Anything else is read as prose, with hard-wrapped lines joined so a phrase split across a line break still matches.
 
-Source files get the three code-comments stems, jargon, dead-code, and plan-label, held back from prose because "Step 1" is a heading there rather than a dead plan label. Prose gets `specialist-term`, which asks the curse-of-knowledge question about the same words the jargon stem bans outright in a comment.
+Source files get the three code-comments stems, jargon, dead-code, and plan-label, held back from prose because "Step 1" is a heading there rather than a dead plan label. Prose gets two of its own. `specialist-term` asks the curse-of-knowledge question about the same words the jargon stem bans outright in a comment. `long-sentence` counts the words between two sentence boundaries and stays out of source files, where the comment pass reads one physical line at a time and a wrapped sentence never reaches the limit in one unit.
 
 The em-dash check reads every line of a source file, because nothing in code needs one and the comment pass cannot see an error string or a log message. British spelling is not read that way, since it would match every word inside this script's own pattern list.
 
@@ -108,7 +115,7 @@ Two checks need a read instead:
 
 Report every `FIX` and `REWRITE` hit, false positives included. Reporting them matters most during iterative editing, where corrections in one round reintroduce patterns cleaned up in the previous one.
 
-Side commentary, empty contrastive tails, the concrete-thing vocabulary, nominalization leads, soft verbs, and specialist terms fire often enough on correct prose that reporting them raw buries the real findings, since "axis" and "stack" are ordinary words in a paper about models, "Precision improved to 0.8" is not a zombie noun, and "API surface" is a noun. `dead-code-ref` is tagged for the same reason: "the target no longer exists" describes a missing file, not code that stopped running. Feeling-words are tagged for a different reason. One per piece is fine when the reaction is itself information, and the script cannot count across a document.
+Side commentary, empty contrastive tails, the concrete-thing vocabulary, nominalization leads, soft verbs, and specialist terms fire often enough on correct prose that reporting them raw buries the real findings, since "axis" and "stack" are ordinary words in a paper about models, "Precision improved to 0.8" is not a zombie noun, and "API surface" is a noun. `dead-code-ref` is tagged for the same reason: "the target no longer exists" describes a missing file, not code that stopped running. So are `long-sentence` and `unquantified`. A sentence that runs long because it enumerates is doing its job, and "a few paragraphs" as a bold lead-in labels a case rather than measuring one. Feeling-words are tagged for a different reason. One per piece is fine when the reaction is itself information, and the script cannot count across a document.
 
 Answer a `TEST` hit in writing whenever you decide to leave the text as it is. Quote the printed test and answer it in one line. Reasoning that never states the test drifts back to the wording the check flagged.
 
