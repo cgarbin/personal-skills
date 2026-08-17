@@ -50,7 +50,11 @@ For each group, draft:
 
 End with the trailers the harness gives you, `Co-Authored-By` and `Claude-Session`, as their own paragraph. Do not copy them from an older commit. The author name moves with the model, and the session link is per session. Trailers register only from the last paragraph, so one with no blank line above it is body text.
 
-Write each group's message to its own file, then check it:
+Write each group's message to its own file outside the repository so it doesn't show up as untracked in `git status`.
+
+When a group's message has a body, load `christian-writing-style` and write the body under it. A subject line does not need the register guide.
+
+Check every message:
 
 ```bash
 scripts/commit_group.py --check <message-file>
@@ -67,6 +71,7 @@ Plan:
 - Files: <list>
 - Subject: <text>
 - Body: <short summary or "none">
+- Message check: <"clean", or what --check reported and what you changed>
 - Doc check: <findings, "n/a" if Step 2 conditions not met, or "skipped">
 ```
 
