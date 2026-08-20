@@ -12,7 +12,7 @@ Write about the subject, not about the writing. The example sentences and layout
 
 ## Choose the register first
 
-**Short snippets.** Single-line comments, one-line docstrings, commit subject lines, PR titles, log messages, error strings, short field or type descriptions. Anything with room for at most two or three sentences. The common foundation plus the Short snippets section below is the entire skill. No reference file.
+**Short snippets.** Single-line comments, one-line docstrings, commit subject lines and bodies, PR titles, log messages, error strings, short field or type descriptions. Anything with room for at most two or three sentences. The common foundation plus the Short snippets section below is the entire skill. No reference file.
 
 **Blog and informal.** Blog post, tutorial, explanation, README, ADR, project documentation, email, social media. Audience is practitioners, developers, or the general public. Prompts like "write a post about..." or "explain...". Read `references/blog.md`.
 
@@ -157,9 +157,9 @@ The common foundation is the entire skill here. There is no opening hook, no roa
 - No filler ("note that...", "it is worth mentioning that..."). Just state it.
 - No marketing words ("simply", "easily", "blazing fast").
 
-**A snippet earns its place by stating a fact its context cannot.** The context is the code for a comment, the diff for a commit subject, the stack trace for an error string. That fact is usually the constraint that shaped the work or the hazard it avoids. In a commit body or PR description it can also be the reason the obvious alternative fails. In a comment the rejected alternative goes, whatever the reasoning (**code-comments**, road not taken). The test while drafting: what would a reader who skipped it get wrong? If nothing, delete it. If one clause answers it, that clause is the whole snippet. A constraint that shaped the code and appears nowhere on the page is a missing comment, not a clean one.
+**A snippet earns its place by stating a fact its context cannot.** The context is the code for a comment, the diff for a commit message, the stack trace for an error string. That fact is usually the constraint that shaped the work or the hazard it avoids. In a commit body or PR description it can also be the reason the obvious alternative fails. In a comment the rejected alternative goes, whatever the reasoning (**code-comments**, road not taken). The test while drafting: what would a reader who skipped it get wrong? If nothing, delete it. If one clause answers it, that clause is the whole snippet. A constraint that shaped the code and appears nowhere on the page is a missing comment, not a clean one.
 
-When a snippet still runs past two or three sentences after every sentence has earned its place (a multi-paragraph docstring, a long PR description, a commit body that argues for a decision), switch to the blog register.
+When a snippet still runs past two or three sentences after every sentence has earned its place (a multi-paragraph docstring, a long PR description), switch to the blog register. A commit body is the exception. Its reader has the diff, so the body needs only what the diff does not show, and that fits in two or three sentences. A longer one is padded, or the commit bundles too much. **commit** holds the rule and the examples, and its check runs this scan on the body for you.
 
 ---
 
@@ -193,5 +193,5 @@ Work the groups in order. `FIX` and `REWRITE` hits are always violations. Every 
 A clean scan is not a clean draft.
 
 - **The rules with no stems.** Announcing the arrangement instead of stating it (Show, don't tell) has no mechanical form, and neither do the paragraph-tail and paragraph-opening tests in **text-review**. The wording is new every time. Read your own draft for them the way you would read someone else's.
-- **Text that never becomes a file**, such as a commit message or an answer in the conversation. Reread it against What to avoid instead.
+- **Text that never becomes a file**, such as an answer in the conversation. Reread it against What to avoid instead.
 - **Files that quote the banned vocabulary as examples**, these skill files included. Every example fires, so read those rather than scanning them.

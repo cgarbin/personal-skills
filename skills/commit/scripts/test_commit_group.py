@@ -95,6 +95,151 @@ class Body(Checked):
         self.assertEqual(self.rules(message("Subject", line)), ["body-wrap"])
 
 
+def body_of(text):
+    """Split a message the way check_message does, then return its body."""
+    rest = text.rstrip("\n").split("\n")[1:]
+    return commit_group.body_text(rest, commit_group.trailers(text))
+
+
+class BodyProse(Checked):
+    """The checks that read the body as prose.
+
+    A hit the pattern decides on its own blocks. One that needs the sentence
+    read warns.
+    """
+
+    def warned(self, body):
+        problems = commit_group.check_message(message("Subject line", body))
+        self.assertEqual([p for p in problems if p.level == "error"], [])
+        return sorted({p.rule for p in problems if p.level == "warning"})
+
+    def errored(self, body):
+        return sorted({p.rule for p in
+                       commit_group.check_message(message("Subject line", body))
+                       if p.level == "error"})
+
+    def test_a_determined_fix_in_the_body_blocks(self):
+        # scan.py calls a semicolon a FIX hit, and christian-writing-style
+        # counts those as violations whatever the context.
+        self.assertEqual(self.errored("The model converged; the loss plateaued."),
+                         ["prose/semicolon"])
+        self.assertEqual(self.errored("The colour of the output is unchanged."),
+                         ["prose/british"])
+
+    def test_a_judgment_call_in_the_body_does_not_block(self):
+        self.assertEqual(self.errored(
+            "The retry path guards the loader against a stale index entry."), [])
+
+    def test_a_rewrite_hit_does_not_block(self):
+        # scan.py calls "tighten" a REWRITE hit, and the sentence around it
+        # decides. This one gives both numbers.
+        body = ("The limit moved from 80 to 72 to tighten the body against\n"
+                "git log, which indents every line by four.")
+        self.assertEqual(self.errored(body), [])
+        self.assertIn("prose/vague-quantifier", self.warned(body))
+
+    def test_an_inventory_phrase_split_by_the_wrap_is_found(self):
+        # A body is wrapped at 72, so a phrase across a line break is the
+        # normal case.
+        self.assertIn("body-inventory", self.warned(
+            "The paragraph and the diagram moved, all from this review\n"
+            "round."))
+
+    def test_a_reported_phrase_stays_on_one_line(self):
+        # The skill has the reader sort the output by its level prefix, and
+        # a phrase holding the line break puts half a problem on a line of
+        # its own.
+        problems = commit_group.check_message(message(
+            "Subject line",
+            "The caption cited the July run through the draft. Three\n"
+            "edits put the August numbers back."))
+        self.assertEqual([p.rule for p in problems], ["body-inventory"])
+        self.assertIn('"Three edits"', problems[0].text)
+
+    def test_every_inventory_phrase_is_reported(self):
+        problems = commit_group.check_message(message(
+            "Subject line",
+            "The paragraph and the diagram moved in one commit, all from\n"
+            "this review round."))
+        self.assertEqual([p.rule for p in problems],
+                         ["body-inventory", "body-inventory"])
+
+    def test_a_body_that_counts_the_changes_warns(self):
+        self.assertIn("body-inventory", self.warned("Three edits to the loader."))
+
+    def test_a_count_opening_a_later_sentence_warns(self):
+        self.assertIn("body-inventory", self.warned(
+            "The tokenizer rejects a batch over 8192 tokens. Three fixes\n"
+            "got the batch size under it."))
+
+    def test_a_count_that_only_opens_a_wrapped_line_is_clean(self):
+        # 72-char wrapping puts ordinary words at the start of a line, and the
+        # sentence here is about the tokenizer rather than about the commit.
+        self.assertEqual(self.warned(
+            "The tokenizer rejects a batch over 8192 tokens, and the loader\n"
+            "needed three fixes before the batch size stopped passing it."), [])
+
+    def test_a_body_naming_the_round_the_work_came_from_warns(self):
+        self.assertIn("body-inventory",
+                      self.warned("The wrap limit moved, from this review round."))
+
+    def test_a_body_naming_the_commit_itself_warns(self):
+        self.assertIn("body-inventory",
+                      self.warned("The loader and the index moved in one commit."))
+
+    def test_a_body_stating_a_fact_the_diff_does_not_show_is_clean(self):
+        self.assertEqual(self.warned(
+            "git wraps a subject over 72 chars in git log --oneline."), [])
+
+    def test_a_body_sentence_past_the_length_limit_warns(self):
+        # The prose scan owns the limit. This asserts the body reaches it.
+        body = "\n".join([
+            "The loader reads the manifest before the index because the index",
+            "names files the manifest may have dropped, and reading them in the",
+            "other order left the loader holding a path that had been deleted,",
+            "which the retry then reported as a missing file instead of a stale",
+            "index entry, so the report named the wrong cause.",
+        ])
+        self.assertIn("prose/long-sentence", self.warned(body))
+
+    def test_the_trailers_are_not_part_of_the_body(self):
+        # They are the harness's text, so a warning on them names nothing the
+        # author can fix.
+        self.assertEqual(body_of(message("Subject line", "Body text")), "Body text")
+
+    def test_a_message_with_no_body_has_an_empty_body(self):
+        self.assertEqual(body_of(message("Subject line")), "")
+
+    def test_an_empty_body_never_reaches_the_scanner(self):
+        self.addCleanup(setattr, commit_group, "SCAN", commit_group.SCAN)
+        commit_group.SCAN = Path("/nonexistent/scan.py")
+        self.assertEqual(commit_group.check_message(message("Subject line")), [])
+
+    def test_a_missing_prose_scanner_warns_instead_of_blocking(self):
+        self.addCleanup(setattr, commit_group, "SCAN", commit_group.SCAN)
+        commit_group.SCAN = Path("/nonexistent/scan.py")
+        problems = commit_group.check_message(message("Subject line", "A body."))
+        self.assertEqual([p.level for p in problems], ["warning"])
+        self.assertEqual([p.rule for p in problems], ["prose-scan"])
+
+    def test_a_scanner_that_will_not_load_is_not_reported_as_missing(self):
+        # The file is at the path the message names, so "no prose scanner
+        # there" sends the reader looking for a file that is sitting there.
+        # One path serves both loads, so the two reasons differ in their
+        # wording rather than in the path they interpolate.
+        self.addCleanup(setattr, commit_group, "SCAN", commit_group.SCAN)
+        with tempfile.TemporaryDirectory() as folder:
+            commit_group.SCAN = Path(folder) / "scan.py"
+            commit_group.SCAN.write_text("import a_module_that_is_not_installed\n")
+            module, broke = commit_group.load_scan()
+            commit_group.SCAN.unlink()
+            absent_module, absent = commit_group.load_scan()
+        self.assertIsNone(module)
+        self.assertIsNone(absent_module)
+        self.assertIn("did not load", broke)
+        self.assertNotEqual(broke, absent)
+
+
 class Trailers(Checked):
     def test_the_harness_trailer_passes(self):
         text = (f"Subject line\n\n{TRAILER}\n"
@@ -205,6 +350,28 @@ class Staging(Repo):
         self.assertEqual(done.returncode, 0, done.stderr)
         self.assertEqual(self.git("show", "--name-status", "--format=", "HEAD").split(),
                          ["D", "seed.txt"])
+
+    def test_it_commits_a_deletion_that_is_already_staged(self):
+        # git rm takes the path out of the index and the working tree has it
+        # gone too, so neither an existence check nor ls-files finds it.
+        self.git("rm", "-q", "seed.txt")
+        done = self.attempt("MSG", "seed.txt")
+        self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+        self.assertEqual(self.git("show", "--name-status", "--format=", "HEAD").split(),
+                         ["D", "seed.txt"])
+
+    def test_it_commits_a_staged_deletion_below_the_root(self):
+        # ls-tree lists one level unless it is given the path to resolve.
+        nested = self.root / "src"
+        nested.mkdir()
+        self.write("src/loader.py", "x = 1\n")
+        self.git("add", "src/loader.py")
+        self.git("commit", "-m", "Add the loader")
+        self.git("rm", "-q", "src/loader.py")
+        done = self.attempt("MSG", "src/loader.py")
+        self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+        self.assertEqual(self.git("show", "--name-status", "--format=", "HEAD").split(),
+                         ["D", "src/loader.py"])
 
     def test_it_stops_when_the_index_holds_a_path_it_was_not_given(self):
         # Committing here would fold another group's file into this commit.

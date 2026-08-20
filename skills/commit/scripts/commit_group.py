@@ -7,6 +7,13 @@ Co-Authored-By trailer in the last paragraph, where git will read it. --check
 reports on a draft without committing. Committing runs the same checks and
 stops on an error, so a message that skipped --check is still checked.
 
+The body gets a second reading, as prose. Two warnings come from this script,
+a count of what changed and the round the work came from, both of which the
+diff already shows. The rest come from the scanner the writing skills run on
+a draft, so the prose rules stay in one place. A semicolon or an em-dash there
+is a violation whatever the context and blocks. A long sentence or a
+restatement is a judgment call and warns.
+
 Staging takes the paths given as arguments and nothing else, so one group's
 commit cannot pick up another group's file.
 
@@ -26,9 +33,11 @@ Exit status: 0 committed or checked clean, 1 nothing committed, 2 usage error.
 """
 
 import argparse
+import importlib.util
 import re
 import subprocess
 import sys
+import tempfile
 from collections import namedtuple
 from pathlib import Path
 
@@ -48,6 +57,26 @@ CONVENTIONAL = re.compile(
     r"(\([^)]*\))?!?:\s", re.IGNORECASE)
 
 ADDRESS = re.compile(r"<[^@<>\s]+@[^@<>\s]+>")
+
+# A body describing the commit instead of stating a fact. The count has to
+# open a sentence.
+COUNT = re.compile(
+    r"(?i)(?:\A|(?<=[.!?])\s)\s*"
+    r"(?:one|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+"
+    r"(?:changes|edits|tweaks|refinements|fixes)\b")
+PROVENANCE = re.compile(
+    r"(?i)\bin\s+(?:one|this|a\s+single)\s+commit\b|"
+    r"\bthis\s+(?:review\s+)?round\b|\bthis\s+session\b|"
+    r"\bthis\s+(?:pr|pull\s+request)\b")
+
+# The scanner the writing skills run on a draft. A check added there applies
+# to a body with no change here.
+SCAN = Path(__file__).resolve().parents[2] / "text-review" / "scripts" / "scan.py"
+
+# A FIX hit is decided by the pattern alone, an em-dash or a British spelling,
+# so it blocks. Every other action needs the sentence around it read, which is
+# what a warning asks for.
+BLOCKING = {"FIX"}
 
 # Pathspecs that would stage more than the group. argparse rejects an unknown
 # option on its own, so no flag reaches this.
@@ -85,6 +114,74 @@ def wrappable(line):
     A URL is one token with no break point, so reporting it would name no fix.
     """
     return all(len(word) <= BODY_LIMIT for word in line.split())
+
+
+def body_text(rest, parsed):
+    """Return the body: everything after the subject, without the trailers.
+
+    git reads trailers from the last paragraph. They are the harness's text,
+    so a warning on them names nothing the author can fix.
+    """
+    exempt = last_paragraph(rest, 0) if parsed else set()
+    return "\n".join(line for number, line in enumerate(rest)
+                     if number not in exempt).strip()
+
+
+def check_body(body):
+    """Report a body that describes the commit instead of stating a fact.
+
+    git show prints the diff under the message. A count of what changed, or
+    the round the work came from, says again what the diff shows.
+    """
+    problems, seen = [], set()
+    for pattern, why in (
+            (COUNT, "counts what changed, and git show already lists it"),
+            (PROVENANCE, "names where the work came from. The body has room "
+                         "only for a fact the diff does not show")):
+        for match in pattern.finditer(body):
+            phrase = " ".join(match.group(0).split())
+            if phrase.lower() in seen:
+                continue
+            seen.add(phrase.lower())
+            problems.append(Problem("warning", "body-inventory",
+                                    f'"{phrase}" {why}'))
+    return problems
+
+
+def load_scan():
+    """Return (module, None), or (None, reason) when the scanner cannot be used.
+
+    The two skills install separately, so the file may not be there at all,
+    and scan.py sits outside any import path.
+    """
+    if not SCAN.is_file():
+        return None, f"no prose scanner at {SCAN}, so the body was not read"
+    spec = importlib.util.spec_from_file_location("prose_scan", SCAN)
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+    except Exception as failure:
+        return None, (f"the prose scanner at {SCAN} did not load, so the body "
+                      f"was not read: {failure}")
+    return module, None
+
+
+def scan_body(body):
+    """Return the prose scan's hits in the body, as errors and warnings."""
+    if not body:
+        return []
+    module, failure = load_scan()
+    if failure:
+        return [Problem("warning", "prose-scan", failure)]
+    with tempfile.TemporaryDirectory() as folder:
+        # scan.py picks its reading from the suffix, and .md gets the prose
+        # checks.
+        draft = Path(folder) / "body.md"
+        draft.write_text(body + "\n")
+        hits = module.scan(draft, module.checks_for(draft))
+    return [Problem("error" if hit.check.action in BLOCKING else "warning",
+                    f"prose/{hit.check.name}",
+                    f'"{hit.match}". {hit.check.note}') for hit in hits]
 
 
 def check_message(text):
@@ -136,6 +233,10 @@ def check_message(text):
             "error", "trailer-malformed",
             "the Co-Authored-By trailer needs a Name <address> value"))
 
+    body = body_text(rest, parsed)
+    problems.extend(check_body(body))
+    problems.extend(scan_body(body))
+
     return problems
 
 
@@ -169,8 +270,32 @@ def resolve(given, root):
     return resolved
 
 
-def tracked(root, path):
+def in_index(root, path):
     return git(root, "ls-files", "--error-unmatch", "--", path).returncode == 0
+
+
+def tracked(root, path):
+    """Whether git knows the path, so a name with a typo still fails the check.
+
+    A deletion that is already staged is gone from both the index and the
+    working tree, so HEAD holds the last copy of the name.
+    """
+    return (in_index(root, path)
+            or bool(git(root, "ls-tree", "--name-only", "HEAD", "--", path).stdout))
+
+
+def stage(root, files):
+    """Stage the paths git add can match, and return the failure or None.
+
+    git add stops on a pathspec it cannot match, and a staged deletion matches
+    nothing. The index already holds it, so leaving it out loses nothing.
+    """
+    matchable = [path for path in files
+                 if (root / path).exists() or in_index(root, path)]
+    if not matchable:
+        return None
+    done = git(root, "add", "--", *matchable)
+    return done if done.returncode != 0 else None
 
 
 def commit(root, message, files):
@@ -184,9 +309,9 @@ def commit(root, message, files):
               file=sys.stderr)
         return 1
 
-    add = git(root, "add", "--", *files)
-    if add.returncode != 0:
-        relay(add)
+    failed = stage(root, files)
+    if failed:
+        relay(failed)
         return 1
 
     first = git(root, "commit", "-F", str(message))
@@ -202,7 +327,7 @@ def commit(root, message, files):
         return 1
 
     print("a hook rewrote " + ", ".join(rewritten) + ", re-staging and retrying")
-    git(root, "add", "--", *files)
+    stage(root, files)
     second = git(root, "commit", "-F", str(message))
     relay(second)
     if second.returncode != 0:

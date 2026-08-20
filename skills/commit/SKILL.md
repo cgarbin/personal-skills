@@ -46,13 +46,42 @@ Do not use `git add -p` or patch extraction. If a file's changes belong to two g
 For each group, draft:
 - Files to stage.
 - Subject line: aim 50 chars, hard limit 72, focused on "what". No Conventional Commit prefixes (`feat:`, `fix:`, `chore:`, etc.). Examples: "Compress commit skill", "Add hook-reformat recovery", "Drop unused config flag".
-- Body: only when the subject does not already state the "why". Default: no body. When you do write one, separate with a blank line and wrap at 72.
+- Body: default is no body. Read **Bodies** below before writing one. Separate with a blank line and wrap at 72.
 
 End with the trailers the harness gives you, `Co-Authored-By` and `Claude-Session`, as their own paragraph. Do not copy them from an older commit. The author name moves with the model, and the session link is per session. Trailers register only from the last paragraph, so one with no blank line above it is body text.
 
-Write each group's message to its own file outside the repository so it doesn't show up as untracked in `git status`.
+### Bodies
 
-When a group's message has a body, load `christian-writing-style` and write the body under it. A subject line does not need the register guide.
+The diff is in the commit. A body that lists what changed, counts the changes, or names the review round says again what `git show` prints right under it.
+
+A body states a fact the diff does not show:
+
+- The constraint that forced this shape.
+- The reason the obvious alternative fails.
+- A consequence a reader would not predict from the change.
+
+Before writing one, answer this: what would a reader of the diff get wrong without it? No answer, no body. If one clause answers it, that clause is the whole body.
+
+Describing the commit:
+
+```
+Five changes in one commit, all § 2.4 refinements from this review
+round: the hard-limit paragraph, the diagram move, "attends to" to
+"depends on", the overhead definition, and the opening rewrite.
+```
+
+Stating what the diff does not show:
+
+```
+The § 2.4 numbers come from the August run. The caption cited the July
+run, which had the tokenizer bug.
+```
+
+Load `christian-writing-style` for the wording. A subject line does not need the register guide.
+
+### Checking the message
+
+Write each group's message to its own file outside the repository so it doesn't show up as untracked in `git status`.
 
 Check every message:
 
@@ -62,6 +91,13 @@ scripts/commit_group.py --check <message-file>
 
 `error:` lines block the commit, `warning:` lines do not. Fix the errors before Step 5 so the plan you present is the plan that commits.
 
+The four the body produces ask for different things:
+
+- `error: prose/...`: an em-dash, a semicolon joining clauses, British spelling. The pattern decides these on its own, so fix the wording.
+- `warning: prose/...`: the line names a test to apply or a rewrite to make. Do it, or answer in one line under `Message check` why the wording stays. Keeping it without answering drifts back to the draft.
+- `warning: body-inventory`: the line quotes the phrase and says why it adds nothing. Rewrite, or say why the phrase stays.
+- `warning: prose-scan`: the body was never read. Read it against **Bodies** yourself.
+
 ## Step 5: Review
 
 If an approval-skip argument was passed, skip to Step 6. Otherwise, present the plan in this format and wait for approval:
@@ -70,7 +106,8 @@ If an approval-skip argument was passed, skip to Step 6. Otherwise, present the 
 Plan:
 - Files: <list>
 - Subject: <text>
-- Body: <short summary or "none">
+- Body: <the body text, or "none">
+- Without it: <what a reader of the diff would get wrong, or "n/a">
 - Message check: <"clean", or what --check reported and what you changed>
 - Doc check: <findings, "n/a" if Step 2 conditions not met, or "skipped">
 ```
