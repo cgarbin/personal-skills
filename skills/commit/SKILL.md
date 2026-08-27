@@ -48,7 +48,11 @@ For each group, draft:
 - Subject line: aim 50 chars, hard limit 72, focused on "what". No Conventional Commit prefixes (`feat:`, `fix:`, `chore:`, etc.). Examples: "Compress commit skill", "Add hook-reformat recovery", "Drop unused config flag".
 - Body: default is no body. Read **Bodies** below before writing one. Separate with a blank line and wrap at 72.
 
-End with the trailers the harness gives you, `Co-Authored-By` and `Claude-Session`, as their own paragraph. Do not copy them from an older commit. The author name moves with the model, and the session link is per session. Trailers register only from the last paragraph, so one with no blank line above it is body text.
+End with the `Co-Authored-By` trailer the harness gives you, as its own paragraph. It is the only trailer to add. Never reconstruct it from an older commit, because the author name moves with the model.
+
+Do not record a session link or any other per-session identifier. The commit is permanent and the link is not. It resolves for one account and nobody else. Rebase and cherry-pick copy it onto commits it does not describe. Older commits in these repos carry a `Claude-Session` trailer, which is not a reason to match them, and `--check` reports `trailer-session` if you do.
+
+Trailers register only from the last paragraph, so one with no blank line above it is body text.
 
 ### Bodies
 

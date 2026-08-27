@@ -58,6 +58,13 @@ CONVENTIONAL = re.compile(
 
 ADDRESS = re.compile(r"<[^@<>\s]+@[^@<>\s]+>")
 
+# A per-session identifier, which the skill keeps out of a permanent record. It
+# is checked rather than left to review because git history is the pressure
+# behind it: earlier commits here carry the trailer, so the line looks correct.
+# Other unexpected trailers pass. Blocking them all would also block the
+# Signed-off-by a DCO repo requires.
+SESSION = re.compile(r"session|conversation|claude\.ai/code", re.IGNORECASE)
+
 # A body describing the commit instead of stating a fact. The count has to
 # open a sentence.
 COUNT = re.compile(
@@ -212,8 +219,8 @@ def check_message(text):
             "put a blank line between the subject and the body"))
 
     parsed = trailers(text)
-    # The trailer block is not prose, and a session link passes the limit on
-    # its own, so the wrap rule stops where the trailers start.
+    # The trailer block is not prose, and wrapping a trailer is what breaks it,
+    # so the wrap rule stops where the trailers start.
     exempt = last_paragraph(rest, 2) if parsed else set()
     for number, line in enumerate(rest, start=2):
         if number not in exempt and len(line) > BODY_LIMIT and wrappable(line):
@@ -232,6 +239,15 @@ def check_message(text):
         problems.append(Problem(
             "error", "trailer-malformed",
             "the Co-Authored-By trailer needs a Name <address> value"))
+
+    for key, value in parsed:
+        if SESSION.search(key) or SESSION.search(value):
+            problems.append(Problem(
+                "error", "trailer-session",
+                f"drop the {key.strip()} trailer, because a session link "
+                "outlives what it points at and rebase copies it onto commits "
+                "it does not describe"))
+            break
 
     body = body_text(rest, parsed)
     problems.extend(check_body(body))

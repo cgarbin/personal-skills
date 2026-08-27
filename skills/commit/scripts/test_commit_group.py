@@ -242,18 +242,38 @@ class BodyProse(Checked):
 
 class Trailers(Checked):
     def test_the_harness_trailer_passes(self):
-        text = (f"Subject line\n\n{TRAILER}\n"
-                "Claude-Session: https://claude.ai/code/session_01C4BXdgYEoEWTb\n")
-        self.assertEqual(self.errors(text), [])
+        self.assertEqual(self.errors(f"Subject line\n\n{TRAILER}\n"), [])
 
     def test_a_trailer_longer_than_the_wrap_limit_passes(self):
-        session = "Claude-Session: https://claude.ai/code/session_" + "x" * 40
-        text = f"Subject line\n\n{TRAILER}\n{session}\n"
-        self.assertGreater(len(session), 72)
+        # Every word here is short enough to move, so the line is wrappable and
+        # only the trailer exemption keeps it from reporting.
+        pair = "Co-Authored-By: Someone With A Rather Long Name <a.long.name@example.com>"
+        text = f"Subject line\n\n{TRAILER}\n{pair}\n"
+        self.assertGreater(len(pair), 72)
+        self.assertTrue(commit_group.wrappable(pair))
         self.assertEqual(self.errors(text), [])
 
     def test_a_missing_co_authored_by_fails(self):
         self.assertEqual(self.rules("Subject line\n"), ["trailer-missing"])
+
+    def test_a_session_trailer_fails(self):
+        # git history is the pressure behind this one. Every commit in this repo
+        # before c5fd39c carries the trailer, so the line reads as correct in
+        # review and only the check catches it.
+        text = (f"Subject line\n\n{TRAILER}\n"
+                "Claude-Session: https://claude.ai/code/session_01C4BXdgYEoEWTb\n")
+        self.assertEqual(self.rules(text), ["trailer-session"])
+
+    def test_a_session_link_under_another_key_fails(self):
+        text = f"Subject line\n\n{TRAILER}\nRefs: https://claude.ai/code/abc\n"
+        self.assertEqual(self.rules(text), ["trailer-session"])
+
+    def test_an_unrelated_trailer_passes(self):
+        # Only the session rule is enforced. A DCO repo needs Signed-off-by, and
+        # an invented trailer has no camouflage in review the way a session link
+        # copied from git log does.
+        text = f"Subject line\n\n{TRAILER}\nSigned-off-by: C G <cg@example.com>\n"
+        self.assertEqual(self.errors(text), [])
 
     def test_a_trailer_glued_to_the_body_fails(self):
         # git reads trailers from the last paragraph only, so a trailer with no
