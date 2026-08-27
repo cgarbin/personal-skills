@@ -7,21 +7,25 @@ description: Summarize a day's work in a project's daily note and optionally set
 
 Generate a narrative summary of a day's work, insert it at the top of the daily note, and create the next day's note when one doesn't already exist.
 
-This skill works for any project that keeps daily notes in the structured format: a `_daily-notes/` directory, notes named `YYYY-MM-DD Ddd.md`, and `# Pomodoros`, `# Next tasks`, and `# Notes` sections inside each note. It resolves the project from the current session rather than any hardcoded path. If the current location has no such daily notes, it stops (Step 1), which keeps it from firing on free-form journals or non-daily-note projects.
+This skill works for any project that keeps daily notes in the structured format: a `_daily-notes/` directory, notes named `YYYY-MM-DD Ddd.md`, and `# Pomodoros`, `# Next tasks`, and `# Notes` sections inside each note. It resolves the project from the current session rather than any hardcoded path, and works whether or not the project is a git repository. If the current location has no such daily notes, it stops (Step 1), which keeps it from firing on free-form journals or non-daily-note projects.
 
 Do not commit any changes. Leave everything for the user to review.
 
-## Fixed section order
+## What the scripts own
 
-Daily notes follow this top-level section order, and the skill produces output that conforms to it:
+The scripts in `scripts/` do all the deterministic work: date arithmetic, locating the note, collecting commits, counting the day's signals, rewriting sections. Read their output and act on it. Do not re-derive their results by parsing the note yourself, and do not build the next day's note by hand.
 
-1. `# Generated daily summary` (added by Step 5, missing until then)
-2. `# Pomodoros`
-3. `# Next tasks`
-4. `# Notes`
-5. Free-form sections (any other top-level headings, in the order they appear)
+Section handling in the next day's note is entirely `next-note.sh`'s job. It emits a fixed order regardless of the order the source used:
 
-Step 5 inserts the summary at the top of the source note so it is the first thing the user sees. Step 6 builds the next day's note: it emits sections 2-4 in a fixed order whatever order the source used, carries section 3 (Next tasks) and any free-form sections from (5) verbatim, and skips the Notes section's *content*, which is day-specific. The `# Notes` heading itself carries over as an empty stub so the new note's structure is complete from the start.
+1. `# Pomodoros` — rebuilt from the template, carrying the source's `<!-- Categories: -->` comment
+2. the day's plan section — heading only, if the source had one
+3. `# Next tasks` — carried verbatim
+4. `# Notes` — heading only
+5. Free-form sections — carried verbatim, in source order
+
+The plan section is any top-level heading starting with "Today", which covers the `# Today`, `# TODAY`, and `# Today's goals` spellings in these notes. Its heading carries over as the user wrote it.
+
+The plan section and `# Notes` keep their heading and lose their content, which belongs to the day that is closing. A free-form section opts into the same reset by putting `<!-- day-specific -->` directly under its heading. Mention that marker if the user asks why a section carried over.
 
 ## Part 1: Generate the daily summary
 
@@ -29,7 +33,7 @@ Step 5 inserts the summary at the top of the source note so it is the first thin
 
 Resolve the user's intent first. No argument or "yesterday" means the day before today. "today" means today. A specific date ("March 15", "2026-03-15") passes through as `YYYY-MM-DD`. If the request is ambiguous ("last Friday" with two plausible Fridays), confirm before proceeding.
 
-One call then resolves the project, the dates, the source note, and the day's commits:
+One call resolves the project, the dates, the source note, the day's commits, and the day's signal counts:
 
 ```bash
 scripts/context.sh [yesterday|today|YYYY-MM-DD] [project-root]
@@ -37,38 +41,39 @@ scripts/context.sh [yesterday|today|YYYY-MM-DD] [project-root]
 
 The script lives in the skill directory but finds the project by walking up from the working directory. Run it with the project as the working directory, or pass the project root as the second argument when the session sits somewhere else.
 
-It prints `PROJECT_ROOT`, `DAILY_NOTES_DIR`, `today`, `target`, `now`, `next_day`, `next_dow`, `source_note`, `repo_count`, and one `=== path ===` block per repo that had commits. Substitute these values into later calls as literals, since each Bash invocation is a fresh shell.
+Every `key=value` line prints first, then any `=== label ===` blocks. The keys are `PROJECT_ROOT`, `DAILY_NOTES_DIR`, `today`, `target`, `now`, `next_day`, `next_dow`, `source_note`, `has_summary`, `pomodoros`, `done_tasks`, `open_tasks`, `notes_lines`, `repo_map`, `map_headings`, `map_repos`, `repo_count`. The blocks are one `=== path ===` per repo that had commits, then `=== map unresolved ===`, then `=== done tasks ===` listing the checked-off lines. Substitute the values into later calls as literals, since each Bash invocation is a fresh shell.
 
-Three stops:
+Two stops:
 
 - **Exit 1.** No `_daily-notes` directory at or above the working directory, a date the script could not read, a date that does not exist (February 30), or a date in the future. Report what it said. For the missing directory, ask the user to `cd` into the project or name it.
-- **Exit 2.** The repository map lists fewer than two repos that exist on disk, so the map or the paths are wrong.
 - **Empty `source_note`.** No note exists for that date.
 
-A `MISSING:` line on stderr names a repo listed in the map that is not a git repo on disk. Warn the user about each one and continue with the rest.
+`repo_count=0` is normal for a notes-only project with no repository map. The summary then rests on the note alone.
 
-Commits come from `git log --branches`, so work on an unmerged feature branch is not silently dropped. De-duplicate any commit that appears on more than one branch.
+When a `Repository map.md` is present, judge its resolution rather than trusting a count. A map carries prose sections as well as repo names, so an unresolved `## ` heading is often not a repo at all, and the script reports the names instead of guessing:
 
-### Step 2: Read the daily note
+- `map_headings > 0` and `map_repos == 0`: the map resolved to nothing. Tell the user which names failed and confirm before continuing, since commits would otherwise be silently absent.
+- Some resolved, some not: mention only the unresolved names that look like repo names. Ignore prose headings.
 
-Read the full note at `source_note`. Verify it has both a `# Notes` section and a `# Next tasks` section. If `# Notes` is missing, tell the user and stop (a missing Notes section signals this is not a structured project daily note). If `# Next tasks` is missing, tell the user and stop (Step 6 reads from this section, and a missing heading would silently produce an empty carryover). Heading matches are case-insensitive but must be top-level (`# `, not `## `), with optional trailing whitespace allowed.
+### Step 2: Decide whether to continue
 
-If the file already contains a top-level `# Generated daily summary` section, a summary was already written for this date. Warn the user and ask whether to replace it or skip.
+Stop only when *all* of commits, `pomodoros`, `done_tasks`, and `notes_lines` are zero. If any one has content, continue. Checking this before reading the note keeps an empty day cheap.
 
-From the file you just read, extract four signals directly. These feed the Step 3 stop condition and scaffold the Step 4 summary. No shell call: parse the text you already have.
+`open_tasks` is not part of the condition. A note holding only queued work is not a worked day.
 
-- **Pomodoros**: count of lines under `# Pomodoros` that match the pomodoro template *and have content in the task field*. The template form is `- [ ] 🍅 [task:: ...] [category:: ...] [start:: ...]`. A line counts only when `[task:: ...]` contains at least one non-space, non-`]` character (the empty stub `[task:: ]` does not count). Both checked (`[x]`) and unchecked (`[ ]`) pomodoros count.
-- **Done tasks**: lines under `# Next tasks` that are checked off. Match either bullet style: `- [x]` *or* numbered like `1. [x]`, `2. [x]`, with optional leading whitespace for nesting. Capture the full line text.
-- **Open tasks**: same as above but `[ ]` instead of `[x]`. Used for scaffolding only, not for the stop condition.
-- **Notes lines**: count of non-empty lines under `# Notes` (excluding the heading itself).
+### Step 3: Read the daily note
 
-Section boundaries are top-level headings (`# `, not `## `) with optional trailing whitespace. Match heading names case-insensitively.
+If `has_summary=yes`, a summary was already written for this date. Ask the user whether to replace it or keep it. Keeping it skips Steps 4 and 5 and goes straight to Part 2, which is the useful case when the note was closed but the next day's note was never created. On replace, run this first, before the Read:
 
-The full Notes content for the Step 4 summary comes straight from the Read output.
+```bash
+scripts/strip-summary.sh "<source_note>"
+```
 
-### Step 3: Decide whether to continue
+It exits 0 whether or not the note had a summary, and only touches that section. A non-zero exit means the note was left unchanged: stop and report it.
 
-Stop only when *all* of the following are true: zero commits from Step 1, zero pomodoros, zero done tasks, and zero notes lines. If any one has content, proceed to Step 4.
+Then read the full note at `source_note`. The `# Notes` section is the main source for Step 4, and a `# Today` section (or equivalent plan section) shows what the day set out to do, which is how you tell finished work from work that slipped.
+
+Verify the note has both a `# Notes` and a `# Next tasks` top-level heading. If either is missing, tell the user and stop: a missing `# Notes` signals this is not a structured project daily note, and a missing `# Next tasks` would make Step 6 fail after the summary was already written.
 
 ### Step 4: Write the summary
 
@@ -90,24 +95,24 @@ The summary should answer:
 
 - What the main focus was.
 - What was completed.
-- What was started but left unfinished within the day's work (a checked subtask under a still-open parent, a commit that landed part of a larger change, a Notes entry that records partial progress).
+- What was started but left unfinished within the day's work (a checked subtask under a still-open parent, a commit that landed part of a larger change, a Notes entry that records partial progress, a plan item the day never reached).
 
-Do not restate the open task list. The Next tasks section is carried over verbatim into the next day's note in Step 6, so listing queued work in prose duplicates the same information. "In progress" here means partial completion visible in the source, not "everything still on the to-do list."
+Do not restate the open task list. Step 6 carries `# Next tasks` verbatim into the next day's note, so listing queued work in prose duplicates it. "In progress" here means partial completion visible in the source, not "everything still on the to-do list."
 
 Use whatever signal is present. Pomodoros, commits, checked tasks, and the Notes section each contribute when available, and the summary gets thinner when fewer of them have content. Resist filling in detail the source does not provide.
 
 When extra signal is present, also note:
 
 - **Pomodoros**: what defined the day's narrative arc, especially tasks with multiple pomodoros (sustained focus).
-- **Commits**: what kind of work they represent (new code, refactoring, documentation, infrastructure). When several repos saw activity, note which did what.
+- **Commits**: what kind of work they represent (new code, refactoring, documentation, infrastructure). When several repos saw activity, note which did what. Commits come from `git log --branches`, so work on an unmerged feature branch is not silently dropped. De-duplicate any commit that appears on more than one branch.
 
 Let the day's content set the length. If the day has two stories, write two bullets. If it has five, write five. Stop when you've covered the day honestly. No headers within the summary.
 
 ### Step 5: Insert the summary at the top of the daily note
 
-Insert the summary as a top-level `# Generated daily summary` section, placed after the YAML frontmatter and before `# Pomodoros`. The summary is the first thing the user sees when opening the note.
+Insert the summary as a top-level `# Generated daily summary` section, placed after the YAML frontmatter and before `# Pomodoros`, so it is the first thing the user sees when opening the note.
 
-Use Edit with `# Pomodoros` as the anchor. Replace `# Pomodoros` with the new summary block followed by `# Pomodoros`:
+Use Edit with `# Pomodoros` as the anchor, replacing it with:
 
 ```
 # Generated daily summary
@@ -117,13 +122,13 @@ Use Edit with `# Pomodoros` as the anchor. Replace `# Pomodoros` with the new su
 # Pomodoros
 ```
 
-If a `# Generated daily summary` section already exists (Step 2 detected it and the user chose to replace), remove the old section first with a separate Edit that deletes from `# Generated daily summary` through the blank line before `# Pomodoros`. Do not modify any other section of the note.
+Because Step 3 already stripped any earlier summary, this is the same single Edit on a first run and on a re-run. Do not modify any other section of the note.
 
 Use plain markdown. Wikilinks to existing documents in the same vault are fine if relevant.
 
 ## Part 2: Create the next day's note
 
-Runs after Part 1 produces a summary. If Step 3's stop condition halted the run (an empty day with no commits, pomodoros, done tasks, or notes), Part 2 does not run. This supports cascading catch-up across days that have real content: run the skill once per day in sequence and each successful run creates the next day's note. Empty intermediate days trip the stop condition and are skipped, which is correct behavior.
+Runs once Part 1 has left a summary in place, whether this run wrote it or the user chose to keep an existing one. If Step 2's stop condition halted the run, Part 2 does not run. This supports cascading catch-up: run the skill once per day in sequence and each successful run creates the next day's note. Empty intermediate days trip the stop condition and are skipped, which is correct.
 
 ### Step 6: Create the next day's note
 
@@ -131,7 +136,7 @@ Runs after Part 1 produces a summary. If Step 3's stop condition halted the run 
 scripts/next-note.sh "<source_note>" "<DAILY_NOTES_DIR>/<next_day> <next_dow>.md" "<now>"
 ```
 
-Build the destination filename from `next_day` and `next_dow` (both from Step 1), giving `YYYY-MM-DD Ddd.md`. The new note always goes at the top level of `DAILY_NOTES_DIR` even when the source note lived in a `YYYY-MM/` or `YYYY/` archive subdirectory.
+Build the destination filename from `next_day` and `next_dow` (both from Step 1), giving `YYYY-MM-DD Ddd.md`. The new note always goes at the top level of `DAILY_NOTES_DIR` even when the source note lived in an archive subdirectory.
 
 The script exits 1 without writing when the destination already exists, when the source has no `# Next tasks` heading, or when the write itself fails. Only a `wrote <path>` line on stdout means a note was created. On the already-exists case, tell the user and skip the rest of Part 2. Skipping forgoes task carryover. The user can merge manually if needed.
 
@@ -139,4 +144,4 @@ The task list is a living document. Tasks that were checked off in the source no
 
 ## Final report
 
-At the end of the run, tell the user where the summary was written. Do not echo the summary content in the conversation: the user will review it directly in the file. If Part 2 created a new note, add its path and mention that the task list was carried over.
+Tell the user where the summary was written. Do not echo the summary content in the conversation: the user will review it directly in the file. If Part 2 created a new note, add its path and mention that the task list was carried over. Note anything that limited the summary, such as `repo_count=0` meaning no commit signal was available.
