@@ -54,6 +54,7 @@ Two related checks:
 - **Structure serves the argument.** Sections in logical sequence, each building on what came before. If you have to re-read a section because it depends on something introduced later, the order is wrong.
 - **Gaps.** Places where the reader would ask "but what about...?" or "why?" and the text doesn't answer.
 - **Unnecessary material.** Sections, paragraphs, sentences that don't contribute. Tangents. Background the audience already knows.
+- **Two copies of a fact need a mechanism.** Say which copy goes, or what check fails when they diverge. A comment asking a human to keep them in step is not a mechanism. In one paper repository, figure scripts held captions copied from the paper, and two tables shared a column with an HTML comment asking an editor to keep them synchronized. Both had drifted by the time anyone checked.
 - **Transitions.** Each section connects to the next. Reader can follow opening to conclusion without getting lost.
 - **Tables, figures, lists.** Look for places where prose does work that structure would do better: comparisons across multiple items, step-by-step processes, chronological progressions, dense numerical results. Christian's tables are a signature strength. If a paragraph is "X does A, Y does B, Z does C," suggest a table. If a process would be clearer as a diagram, say so. Parallel alternatives (options explored, candidate approaches, variants, rejected designs) often read better as a bulleted list than as prose.
 - **Overloaded existing tables.** If a table tries to capture too many dimensions, suggest splitting into focused tables that each make one clear point.
@@ -189,11 +190,25 @@ For each change:
 
 No batching. One change at a time, at his pace.
 
+### Check what a pass deleted
+
+Before an anchored find-and-replace, confirm the anchor begins a paragraph and matches exactly once. An anchor that matches nothing replaces nothing and still reports success.
+
+After the pass, read every line it deleted. `-U0` drops the unchanged lines that would otherwise hide them:
+
+```bash
+git diff -U0 <commit the pass started from> -- draft.md
+```
+
+An anchor that starts mid-paragraph removes more than the edit names, and the removal reads as an ordinary deletion in the diff. One such replacement dropped a sentence defining three symbols along with the display math that built them, leaving an orphan clause pointing at a section that no longer explained it. It survived three commits, and a reader found it rather than a review.
+
+The baseline is the commit the pass started from, never HEAD. On a pass already committed, HEAD returns nothing, and the check reports clean on exactly the edits it exists to catch.
+
 ### Check consumers, not just usages
 
 Before marking any change done, list what was only correct because of the fact you just changed. Grep finds the old wording. It does not find a passage that reads fine on its own and is now wrong in context, which is the failure that survives review. Three kinds. Find them by reading in full rather than grepping, and look beyond the file you edited:
 
-- **Restatements.** Another passage states the same fact. Adding detail in one place makes the other a duplicate. Removing detail makes it the only copy.
+- **Restatements.** Another passage states the same fact. Adding detail in one place makes the other a duplicate. Removing detail makes it the only copy. A duplicate that predates the edit is a layer 2 finding, not a consumer break.
 - **Derivations.** Another passage ranks, counts, or orders by the fact. A priority list built from a table, a total that has to sum, a count repeated in a second document.
 - **Negations.** Another passage says what the fact is not, departs from it, or reconciles it with something else. Delete the fact and the negation is left denying nothing.
 
