@@ -77,6 +77,7 @@ An abstraction standing in for a specific thing makes the reader do the decoding
 - **"Land"** as a verb for where files, data, or values end up ("files land at X," "binaries land in $DIR"). Use "go into," "end up at," "is written to," "sits in," or rephrase. Watch for adjacent overuse: "lands cleanly," "the changes landed in the same window."
 - **"Carry"** as a verb for what text, code, or a table conveys ("the comment carries the constraint," "the reason carries the content," "what the table cannot carry"). Use "state," "describe," "hold," or name what the text actually does.
 - **Vague quantifiers where a number exists.** "Latency was elevated" → give the value. "Various factors" → name them. "The system had issues" → name what went wrong. "Tighten grading" → say which metric moved and by how much. "Recovers a small fraction of those concepts" → give the fraction.
+- **Coining a phrase when the document already supplies one.** When a passage reads badly, take the wording from its own tables, captions, bullets, and defined terms before inventing anything. One sentence went through five rewrites, each inventing a new abstraction ("sits in the numerator but not its denominator"), while the table row three lines above already read "Not in the source documents, in the generated summary."
 
 ### Show, don't tell
 
@@ -192,6 +193,6 @@ Work the groups in order. `FIX` and `REWRITE` hits are always violations. Every 
 
 A clean scan is not a clean draft.
 
-- **The rules with no stems.** Announcing the arrangement instead of stating it (Show, don't tell) has no mechanical form, and neither do the paragraph-tail and paragraph-opening tests in **text-review**. The wording is new every time. Read your own draft for them the way you would read someone else's.
+- **The rules with no stems.** Announcing the arrangement instead of stating it (Show, don't tell) has no mechanical form. Neither does coining a phrase the document already supplies (Name the concrete thing), nor do the paragraph-tail and paragraph-opening tests in **text-review**. The wording is new every time. Read your own draft for them the way you would read someone else's.
 - **Text that never becomes a file**, such as an answer in the conversation. Reread it against What to avoid instead.
 - **Files that quote the banned vocabulary as examples**, these skill files included. Every example fires, so read those rather than scanning them.
