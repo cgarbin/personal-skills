@@ -107,7 +107,7 @@ if ! awk -v now="$NOW" '
     print "# Pomodoros"
     print ""
     if (cats != "") print cats
-    print "- [ ] 🍅 [task:: ] [category:: ] [start:: ]"
+    print "- 🍅 [task:: ] [category:: ] [start:: ]"
     print ""
     if (today_heading != "") {
       print today_heading
