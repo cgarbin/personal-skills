@@ -15,7 +15,7 @@ More formal register, same core qualities of clarity, honesty, practical groundi
 
 ## Sentence patterns
 
-Longer than blog but still clear. Break complex ideas across multiple sentences rather than packing them into one.
+Longer than blog but still clear. Break complex ideas across multiple sentences.
 
 - Clear topic sentences: "In this section, we review the methods and tools that have been proposed to address these challenges."
 - Specific numbers: "Of the 48 papers, 42 (87.5%) used structured data from electronic health records."
@@ -31,7 +31,7 @@ Longer than blog but still clear. Break complex ideas across multiple sentences 
 3. Methods: setup, datasets, models, training, evaluation.
 4. Results: numbers, tables, figures.
 5. Discussion: interpretation, comparison, implications.
-6. Limitations: thorough and honest, not perfunctory.
+6. Limitations: thorough and honest.
 7. Conclusion and future work.
 
 **Systematic reviews and surveys:**
@@ -57,7 +57,7 @@ The common foundation states the rule: prose next to a table says what the numbe
 
 **Name the mechanism with the precise term.** "This number is confounded with the task" beats "it holds two different problems," which needs two more sentences to decode. When a defined technical term exists, a vague framing is not humility, it is work pushed onto the reader.
 
-**One signpost clause, not two.** "This section separates the two and characterizes the second" is enough. Adding "and then tests whether it is real" pads it, and a third clause is usually where an inaccuracy creeps in, because it describes something the section does not quite do.
+**One signpost clause.** "This section separates the two and characterizes the second" is enough. Adding "and then tests whether it is real" pads it. A third clause is usually where an inaccuracy creeps in, because it describes something the section does not quite do.
 
 ### Before and after
 
@@ -69,15 +69,15 @@ The same opening paragraph for a results section. Christian's version is second.
 
 > Concept recall is low in all three models, as shown in Table [ref]. However, this number cannot be interpreted as "the models have failed" because it is confounded with the task. Most of the concepts that the models miss were never in their input, which is a property of the task. Of the concepts that were there, the models produce about a third, which is a property of the models. This section separates the two and characterizes the second.
 
-Five differences, and **these five are the transferable content, not the wording.** A results paragraph with no two-way confound to separate should look nothing like this one.
+Five differences, and **the transferable content is these five. The wording is disposable.** A results paragraph with no two-way confound to separate should look nothing like this one.
 
-1. **Points at the table instead of quoting a number from it.** The table holds the per-model figures. A pooled figure in the prose makes the reader reconcile two presentations of one fact, and it reads as a discrepancy.
+1. **Points at the table instead of quoting a number from it.** The table holds the per-model figures. A pooled figure in the prose makes the reader reconcile two presentations of one fact. It reads as a discrepancy.
 2. **Names the confound.** One clause with a defined term replaces three sentences of framing.
 3. **Quotes the wrong reading and rejects it** ("cannot be interpreted as 'the models have failed'") instead of half-asserting it and then retracting.
 4. **Keeps the plural.** The first version opens on "all three models" and slips to "the model's input."
-5. **Stops one clause earlier**, and the dropped clause was also inaccurate: the section tests alternative explanations, not the gap itself.
+5. **Stops one clause earlier.** The dropped clause was also inaccurate: the section tests alternative explanations for the gap.
 
-The second paragraph is gone entirely. Per-model trend qualifiers belong in the table caption or in the section that owns the trend, not under the opening claim where they bury it.
+The second paragraph is gone entirely. Per-model trend qualifiers belong in the table caption or in the section that owns the trend. Under the opening claim they bury it.
 
 ## Tables and figures
 
@@ -100,13 +100,13 @@ Even in formal work, connect findings to practice:
 - Explicit "implications for practitioners" or "lessons learned" sections.
 - Discussion sections that go beyond restating results.
 - Identifying gaps between research and practice.
-- Concrete recommendations, not just "future work should explore..."
+- Concrete recommendations. "Future work should explore..." names none.
 
 ## Citations
 
 - Dense throughout. Nearly every substantive paragraph cites a source.
-- Synthesize across sources rather than listing them. Describe what multiple papers agree on, where they diverge, and what the overall picture suggests.
-- Cite primary sources, not secondary summaries.
+- Synthesize across sources. Describe what multiple papers agree on, where they diverge, and what the overall picture suggests.
+- Cite primary sources.
 - References formatted per the target journal's style.
 - In Obsidian markdown drafts, use Pandoc citation syntax: `[@smith2023temporal]`, `[@smith2023temporal, p. 42]`, `[@smith2023temporal; @jones2022ehr]`, `[-@key]` to suppress the author. Pandoc resolves these at compile time. Never write formatted references inline.
 
@@ -116,5 +116,5 @@ A hallmark of his academic writing.
 
 - Limitations of both the work itself and the methods used.
 - In systematic reviews, limitations of the reviewed studies separately from limitations of the review process.
-- Practical impact of each limitation, not just its existence.
+- Practical impact of each limitation.
 - Direct: "Our study has some limitations that should be acknowledged..."

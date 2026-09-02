@@ -136,7 +136,7 @@ skills/<skill-name>-workspace/
 
 ### Does the skill trigger?
 
-`trigger-eval.json` is a list of realistic queries a user would type, each labeled with whether the skill should trigger. Aim for ten of each label, and write negatives that share vocabulary with the skill and should not trigger it, rather than obviously unrelated requests.
+`trigger-eval.json` is a list of realistic queries a user would type, each labeled with whether the skill should trigger. Aim for ten of each label, and write negatives that share vocabulary with the skill and should not trigger it. An obviously unrelated request tests nothing.
 
 ```bash
 ./scripts/trigger-eval.py <skill-name> skills/<skill-name>-workspace/trigger-eval.json 5
@@ -154,11 +154,11 @@ Keep the skill description concise. It is loaded into the coding agent's context
 
 ### Does the skill behave correctly?
 
-`evals/evals.json` holds task prompts with assertions, and `evals/fixtures/` holds the files those prompts work on. Run each prompt as a subagent, then check the assertions against what it produced.
+`evals/evals.json` holds task prompts with assertions. `evals/fixtures/` holds the files those prompts work on. Run each prompt as a subagent, then check the assertions against what it produced.
 
-- **Write assertions a single run either satisfies or does not.** Grade mechanically where you can, comparing tokenized source rather than eyeballing a diff.
+- **Write assertions a single run either satisfies or does not.** Grade mechanically where you can, by comparing tokenized source.
 - **Plant something in the input file that has to survive.** An agent that deletes everything passes every "removes X" assertion. Without one, the eval scores that run as a success.
-- **Keep the input file otherwise correct.** Bugs unrelated to what you are testing pull the agent toward them, and every future round rediscovers the same ones.
+- **Keep the input file otherwise correct.** Bugs unrelated to what you are testing pull the agent toward them. Every future round rediscovers the same ones.
 
 ### When to stop iterating
 
@@ -169,7 +169,7 @@ Two signs the description is not the problem:
 - Two differently worded descriptions fail the same queries.
 - Trigger rates sit at 0 or 1 with nothing in between. A rate in the middle means wording still has room to move it.
 
-A line in `claude-md/CLAUDE.md` naming the skill looks like a way around this, since that file is in context for every session. Tested on one skill, it changed nothing. The queries that scored zero still scored zero with the line in place, and the work produced with it was no better and had about twice the commentary. Treat the queries you cannot reach as out of reach.
+A line in `claude-md/CLAUDE.md` naming the skill looks like a way around this, since that file is in context for every session. Tested on one skill, it changed nothing. The queries that scored zero still scored zero with the line in place. The work produced with it was no better and had about twice the commentary. Treat the queries you cannot reach as out of reach.
 
 ## Add an external skill
 

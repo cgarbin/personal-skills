@@ -13,15 +13,15 @@ Comment-specific rules on top of **christian-writing-style**, Short snippets. Th
 ## Rules
 
 1. **Plain language over jargon.** No "guard", "invariant", "idempotent", "canonical layout", "downstream", "load-bearing". Say "the check above", "so we don't re-download every run", "the file the script reads". Jargon names the category and leaves the reader to map it back to this code.
-2. **Comment the unit's own contract, not things outside it.** No other-module rules, no naming the consumer, no "why current callers work", no who-sets-this-field. Let types and tests speak.
-3. **Docstrings lead with the plain action**, not a noun-pile. No metaphor: counts don't "land", rows don't "drift apart", spans aren't "coordinate systems". Someone scanning for what the function does should have it from the first few words.
+2. **Comment the unit's own contract.** No other-module rules, no naming the consumer, no "why current callers work", no who-sets-this-field. Let types and tests speak.
+3. **Docstrings lead with the plain action.** No metaphor: counts don't "land", rows don't "drift apart", spans aren't "coordinate systems". Someone scanning for what the function does should have it from the first few words.
 4. **Cut redundancy and drift.** Delete anything the signature, summary line, or a referenced definition already says. No field lists another constant owns. Every clause true of the exact thing it sits on, using in-scope names. Reach for delete before rephrase, because a rephrased duplicate drifts from its source on the next edit and a deleted one cannot.
 5. **Four over-explanation patterns, cut on sight:** naming the caller's use for each return value, explaining another function's internals, re-arguing a decision a review or a benchmark already settled, and narrating what the code does *not* do.
 6. **Road not taken.** Every sentence about a rejected alternative goes, however good the reasoning. The rejected design drags its vocabulary in with it. That knowledge belongs in a test or in the plan.
 7. **"A future edit could violate this" is not enough.** The constraint must also be invisible in the code it sits on. Survivors answer a question the reader cannot resolve by looking.
 8. **No comments about code that no longer runs.** Watch for `used to`, `no longer`, `after decoupling`, `the old`, `the deleted`. Exception: when comparing old vs new behavior *is* the subject.
 9. **No labels from the plan that produced the code.** "Cluster A1", "F1:", "E1", "Step 3", "this task". The plan is not in the repo, so the label points nowhere. Runtime log phase numbers are fine. A numbering scheme used consistently across files is a decision, so raise it once and leave it.
-10. **SQL is the exception where a repo mandates it.** Where AGENTS.md requires decision-point comments in plain English, contrastive explanations and written-out alternative implementations are required, not redundancy. Check before cutting inside a SQL string.
+10. **SQL is the exception where a repo mandates it.** Where AGENTS.md requires decision-point comments in plain English, contrastive explanations and written-out alternative implementations are required there, whatever they look like. Check before cutting inside a SQL string.
 
 ## Scan
 
@@ -31,11 +31,11 @@ Rules 1, 8, and 9 are the mechanical ones. Run **text-review**'s scanner on the 
 ~/.claude/skills/text-review/scripts/scan.py loader.py chunker.go
 ```
 
-It covers the stems for all three, and it reads comment lines rather than the whole file. Every stem is also ordinary code vocabulary, so a file-wide search buries the hits in identifiers and string literals.
+It covers the stems for all three. It reads the comment lines only. Every stem is also ordinary code vocabulary, so a file-wide search buries the hits in identifiers and string literals.
 
 It also runs the **christian-writing-style** voice checks over those same comment lines. An em-dash, a semicolon joining two clauses, and British spelling are wrong in a comment for the same reason they are wrong in a paragraph. The em-dash check goes further and reads every line, since an error string or a log message is prose the comment pass never sees.
 
-Hits are candidates, not verdicts. They come grouped by the action each needs: `FIX` where the replacement is determined, `REWRITE` where the wording has to change, and `TEST` where the hit prints the test to apply first. Answer a `TEST` hit in writing whenever you decide to leave the comment as it is. Quote the printed test and answer it in one line.
+Hits are candidates for you to judge. They come grouped by the action each needs: `FIX` where the replacement is determined, `REWRITE` where the wording has to change, and `TEST` where the hit prints the test to apply first. Answer a `TEST` hit in writing whenever you decide to leave the comment as it is. Quote the printed test and answer it in one line.
 
 ## What a survivor looks like
 
@@ -67,9 +67,9 @@ Rule 3 decides how a survivor opens. State what the thing returns or does, then 
 # lose the column names, and retrieval then returns bare numbers.
 ```
 
-Weak: "A markdown table only makes sense with its header row." True, and it is an argument rather than a description, so the reader still does not know what the function returns.
+Weak: "A markdown table only makes sense with its header row." True. It argues where it should describe, so the reader still does not know what the function returns.
 
-Five lines is the upper bound, not the norm. It is what a genuinely non-obvious constraint costs. Most comments state one fact and run one line.
+Five lines is the upper bound. It is what a genuinely non-obvious constraint costs. Most comments state one fact and run one line.
 
 ## Where this fits
 
