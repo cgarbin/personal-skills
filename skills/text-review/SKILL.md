@@ -1,7 +1,7 @@
 ---
 name: text-review
 description: >-
-  Review Christian's writing for accuracy, organization, and clarity: prose, the writing inside code (comments, docstrings, commit messages, PR descriptions), and sets of edits rather than whole documents (a diff, an edit pass, another round after changes). Use whenever he asks to review, critique, proofread, or give feedback on anything already written, down to a single comment or a single edit, including casual asks like "check this" or "does this read well". Always use with the christian-writing-style skill.
+  Review Christian's writing for accuracy, organization, and clarity: prose, the writing inside code (comments, docstrings, commit messages, PR descriptions), and sets of edits on their own, short of a whole document (a diff, an edit pass, another round after changes). Use whenever he asks to review, critique, proofread, or give feedback on anything already written, down to a single comment or a single edit, including casual asks like "check this" or "does this read well". Always use with the christian-writing-style skill.
 ---
 
 # Text Review
@@ -20,7 +20,7 @@ Three things shape what feedback is useful. Settle them first.
 - **Draft stage.** Ask if unclear. Early drafts: feedback on structure, argument, missing pieces. Late drafts: sentence-level editing and polish. Reviewing an early draft for comma placement wastes time. Reviewing a final draft without checking the argument is worse.
 - **Scope.** A whole document, or a single comment, commit subject, or paragraph. A snippet needs the mechanical scan and, for comments, the code-comment test. Layers 1, 2, and 4 and the two-phase gate assume a document.
 
-**Reviewing an edit pass is not reviewing a draft.** When the subject is a set of changes rather than a document, read each changed passage together with the passages that depend on it, in full and in order, whether or not they changed. "Check consumers, not just usages" under Applying changes names the three kinds of dependent passage to look for. A diff shows the side that changed and hides the side that depended on it, so coupling breakage is invisible from the diff by construction.
+**Reviewing an edit pass is not reviewing a draft.** When the subject is a set of changes, read each changed passage together with the passages that depend on it, in full and in order, whether or not they changed. "Check what depended on the fact" under Applying changes names the three kinds of dependent passage to look for. A diff shows the side that changed and hides the side that depended on it, so coupling breakage is invisible from the diff by construction.
 
 ---
 
@@ -36,17 +36,17 @@ The most important layer. Elegant prose built on wrong claims is worse than clun
 - **Technical terminology.** Used correctly and consistently? Watch for terms that are close but not quite right, or that shift meaning between paragraphs.
 - **Citations and attributions.** Do cited sources actually say what the text claims? Are ideas attributed correctly? Claims that need a citation but lack one? Three failure modes to watch:
   - Crediting a popularizer instead of the originator.
-  - Naming a real source that argues something adjacent, not the claim being made.
+  - Naming a real source that argues something adjacent to the claim being made.
   - Verbs that overstate how settled the evidence is ("X established that" when X argued it, or when it stays contested).
 - **Logic and reasoning.** Argument holds together? Watch for unstated assumptions, logical jumps, conclusions that don't follow from evidence, correlation-causation conflation, overgeneralization.
 - **Numbers and data.** Add up? Percentages consistent with raw counts? Fair comparisons (same baseline, same conditions)?
 
-**Memory-sourced citations are unverified by default.** A citation written from recall is not a checked citation, even when it looks precise and turns out to be right. Author lists, years, journal names, page numbers, book titles, and "X coined this" claims feel certain and are often wrong by one name or one year. Flag every one as Must fix, including citations *you* wrote. If checking isn't possible now, suggest marking it unverified in the text rather than leaving it looking settled.
+**Memory-sourced citations are unverified by default.** A citation written from recall is not a checked citation, even when it looks precise and turns out to be right. Author lists, years, journal names, page numbers, book titles, and "X coined this" claims feel certain and are often wrong by one name or one year. Flag every one as Must fix, including citations *you* wrote. If checking isn't possible now, suggest marking it unverified in the text, which leaving it alone does not.
 
 Two related checks:
 
 - **"Needs a source" versus "has a source nobody checked."** Different problems, different fixes, and the second one hides better.
-- **Primary versus secondary sourcing.** If claims about a work come from summaries, reviews, or interviews rather than the work, suggest the piece say so. A short "sources and confidence" note at the end tells a future reader which claims are safe to cite onward.
+- **Primary versus secondary sourcing.** If claims about a work come from summaries, reviews, or interviews, suggest the piece say so. A short "sources and confidence" note at the end tells a future reader which claims are safe to cite onward.
 
 ### 2. Argument and organization
 
@@ -63,12 +63,12 @@ Two related checks:
 ### 3. Clarity and readability
 
 - **Ambiguous sentences.** Two readings possible. Pronouns with unclear antecedents. Modifiers that could attach to different parts.
-- **Jargon and assumed knowledge.** Terms used without explanation that the target audience might not know. Blog audience is broader than academic.
+- **Jargon and assumed knowledge.** Terms used without explanation that the target audience might not know. Blog audience is broader than academic. In an example, ask whether the reader must understand it or only see its shape. Only the first needs vocabulary the audience already has.
 - **Sentence complexity.** Sentences that try to do too much. christian-writing-style covers heavy left-branching, subject-verb separation, nominalizations.
 - **Paragraph focus.** One main idea per paragraph. Split if it covers two or three. Merge if consecutive paragraphs make the same point.
 - **Conciseness.** Filler ("it is worth noting that"), redundancy ("each and every"), throat-clearing ("as mentioned previously").
-- **Paragraph-tail test.** Read the last sentence of each paragraph on its own and ask what it adds beyond the paragraph. Editorial close-outs are almost always final sentences, and they are invisible while reading forward because they feel like the landing. Run this as a separate pass, not while following the argument. Restatements go, conclusions stay (christian-writing-style, side commentary).
-- **Paragraph-opening test.** Read the first clause of each paragraph on its own. Flag runs of consecutive paragraphs that open on a reaction to the material rather than on the material. One such opening is voice and belongs in the blog register. Three in a row means every paragraph tells the reader how to feel before saying what the thing is, and the fact arrives late each time. Run it in the same pass as the tail test (christian-writing-style, `references/blog.md`).
+- **Paragraph-tail test.** Read the last sentence of each paragraph on its own and ask what it adds beyond the paragraph. Editorial close-outs are almost always final sentences. They are invisible while reading forward because they feel like the landing. Run this as a separate pass. Following the argument hides these. Restatements go, conclusions stay (christian-writing-style, side commentary).
+- **Paragraph-opening test.** Read the first clause of each paragraph on its own. Flag runs of consecutive paragraphs that open on a reaction to the material. One such opening is voice and belongs in the blog register. Three in a row means every paragraph tells the reader how to feel before saying what the thing is. The fact arrives late each time. Run it in the same pass as the tail test (christian-writing-style, `references/blog.md`).
 - **Code-comment test.** Read each comment against the code it sits on and ask what a reader who skipped it would get wrong. Flag the ones where the answer is nothing. A one-line comment restates the code as easily as a four-line one. When the review covers comments or docstrings, read **code-comments** and run its scan first.
 
 ### 4. Style alignment
@@ -92,31 +92,37 @@ scripts/scan.py draft.md                    # prose
 scripts/scan.py draft.md src/chunker.py     # any mix, routed by extension
 scripts/scan.py --summary draft.md          # counts per check
 scripts/scan.py --only citation paper.md    # named checks, and the only way to run citation
+scripts/scan.py --skip-html-comments paper.md   # published prose, no <!-- --> notes
 ```
 
 The voice checks run on everything, since a rule about his voice holds wherever the text sits. They cover:
 
 - em-dashes, semicolons, and British spelling
 - filler openers and nominalization leads
-- side commentary and empty contrastive tails
+- side commentary and the this-not-that construction
+- two independent clauses joined by a semicolon or by a comma and "and"
 - feeling-words and layout announcements
 - soft verbs used as jargon, and vocabulary that stands in for the concrete thing
 - vague quantifiers, and quantities written out in words where a number belongs
 
-The extension decides what gets read, not which rules apply. A source file is reduced to its comment lines first, because `guard` and `canonical` are ordinary identifiers and a file-wide search buries the hits. Anything else is read as prose, with hard-wrapped lines joined so a phrase split across a line break still matches.
+The extension decides what gets read. The rules that apply are the same either way. A source file is reduced to its comment lines first, because `guard` and `canonical` are ordinary identifiers and a file-wide search buries the hits. Anything else is read as prose, with hard-wrapped lines joined so a phrase split across a line break still matches.
 
-Source files get the three code-comments stems, jargon, dead-code, and plan-label, held back from prose because "Step 1" is a heading there rather than a dead plan label. Prose gets two of its own. `specialist-term` asks the curse-of-knowledge question about the same words the jargon stem bans outright in a comment. `long-sentence` counts the words between two sentence boundaries and stays out of source files, where the comment pass reads one physical line at a time and a wrapped sentence never reaches the limit in one unit.
+Source files get the three code-comments stems, jargon, dead-code, and plan-label, held back from prose because "Step 1" is a heading there. Prose gets two of its own. `specialist-term` asks the curse-of-knowledge question about the same words the jargon stem bans outright in a comment. `long-sentence` counts the words between two sentence boundaries and stays out of source files, where the comment pass reads one physical line at a time and a wrapped sentence never reaches the limit in one unit.
 
 The em-dash check reads every line of a source file, because nothing in code needs one and the comment pass cannot see an error string or a log message. British spelling is not read that way, since it would match every word inside this script's own pattern list.
 
 Two checks need a read instead:
 
 - Inconsistent capitalization or spelling of recurring technical terms.
-- Whether each citation key and named attribution was checked against a source rather than recalled, including ones you wrote yourself. `--only citation` finds the keys but not where they came from. It stays opt-in because eighty citations in a paper would drown every other check.
+- Whether each citation key and named attribution was checked against a source, including ones you wrote yourself. A recalled one counts as unchecked. `--only citation` finds the keys but not where they came from. It stays opt-in because eighty citations in a paper would drown every other check.
 
 Report every `FIX` and `REWRITE` hit, false positives included. Reporting them matters most during iterative editing, where corrections in one round reintroduce patterns cleaned up in the previous one.
 
-Side commentary, empty contrastive tails, the concrete-thing vocabulary, nominalization leads, soft verbs, and specialist terms fire often enough on correct prose that reporting them raw buries the real findings, since "axis" and "stack" are ordinary words in a paper about models, "Precision improved to 0.8" is not a zombie noun, and "API surface" is a noun. `dead-code-ref` is tagged for the same reason: "the target no longer exists" describes a missing file, not code that stopped running. So are `long-sentence` and `unquantified`. A sentence that runs long because it enumerates is doing its job, and "a few paragraphs" as a bold lead-in labels a case rather than measuring one. Feeling-words are tagged for a different reason. One per piece is fine when the reaction is itself information, and the script cannot count across a document.
+Side commentary, the concrete-thing vocabulary, nominalization leads, soft verbs, and specialist terms fire often enough on correct prose that reporting them raw buries the real findings, since "axis" and "stack" are ordinary words in a paper about models, "Precision improved to 0.8" is not a zombie noun, and "API surface" is a noun. `dead-code-ref` is tagged for the same reason: "the target no longer exists" usually describes a missing file. So are `long-sentence` and `unquantified`. A sentence that runs long because it enumerates is doing its job, and "a few paragraphs" as a bold lead-in labels a case. Feeling-words are tagged for a different reason. One per piece is fine when the reaction is itself information, and the script cannot count across a document.
+
+`contrastive-voice` and `comma-join` are `REWRITE`, so no test applies. The first replaced a `TEST` that asked whether a contrast was informative, which is the wrong property: on a manuscript arguing by elimination every instance passed that test and 91 still had to be restated. The judgment half of the old check lives on in `side-commentary`, whose stems reach the tails this pattern misses. The second holds to about 85% precision on a full manuscript, 22 of 26. Its false positives are a two-item list after a colon, a coordinated pair of `that` clauses, a coordinated noun phrase, and a gapped coordination. It reads `and` alone, since every other coordinator states a relationship a period would drop.
+
+Markdown files get `--skip-html-comments`, which reads the published prose and skips `<!-- -->` notes. Use it on a drafting file. Half of one dissertation manuscript is storyline and provenance comments, and scanning them alongside the prose buried the real hits three to two.
 
 Answer a `TEST` hit in writing whenever you decide to leave the text as it is. Quote the printed test and answer it in one line. Reasoning that never states the test drifts back to the wording the check flagged.
 
@@ -124,7 +130,7 @@ Answer a `TEST` hit in writing whenever you decide to leave the text as it is. Q
 
 ## Presenting the review
 
-Organize by severity, not by layer. Within each severity level, give feedback in document order.
+Organize by severity. Within each severity level, give feedback in document order.
 
 ```
 Review:
@@ -177,9 +183,9 @@ Present the complete review using the severity structure above. This gives Chris
 
 ### Phase 2: Walk through changes one at a time
 
-When Christian is ready, work through findings as a task list. Order them logically, not by severity. Structural reorganization comes before polishing prose that will move. Factual fixes come before refining the sentences they appear in. If applying one change makes another irrelevant or requires re-doing it, put the upstream change first.
+When Christian is ready, work through findings as a task list. Order them logically. Severity does not set the order. Structural reorganization comes before polishing prose that will move. Factual fixes come before refining the sentences they appear in. If applying one change makes another irrelevant or requires re-doing it, put the upstream change first.
 
-**The unit of a change is the argument, not the sentence.** While ordering, merge findings that are two symptoms of one argument spread across passages. They are one change: rewrite those passages together and read them back before moving on. Applied separately, each fix satisfies its own finding and breaks the pair, and the breakage shows up as a new must-fix in the next round.
+**The unit of a change is the argument.** While ordering, merge findings that are two symptoms of one argument spread across passages. They are one change: rewrite those passages together and read them back before moving on. Applied separately, each fix satisfies its own finding and breaks the pair, and the breakage shows up as a new must-fix in the next round.
 
 For each change:
 
@@ -200,15 +206,15 @@ After the pass, read every line it deleted. `-U0` drops the unchanged lines that
 git diff -U0 <commit the pass started from> -- draft.md
 ```
 
-An anchor that starts mid-paragraph removes more than the edit names, and the removal reads as an ordinary deletion in the diff. One such replacement dropped a sentence defining three symbols along with the display math that built them, leaving an orphan clause pointing at a section that no longer explained it. It survived three commits, and a reader found it rather than a review.
+An anchor that starts mid-paragraph removes more than the edit names. The removal reads as an ordinary deletion in the diff. One such replacement dropped a sentence defining three symbols along with the display math that built them, leaving an orphan clause pointing at a section that no longer explained it. It survived three commits. A reader found it before any review did.
 
 The baseline is the commit the pass started from, never HEAD. On a pass already committed, HEAD returns nothing, and the check reports clean on exactly the edits it exists to catch.
 
-### Check consumers, not just usages
+### Check what depended on the fact
 
-Before marking any change done, list what was only correct because of the fact you just changed. Grep finds the old wording. It does not find a passage that reads fine on its own and is now wrong in context, which is the failure that survives review. Three kinds. Find them by reading in full rather than grepping, and look beyond the file you edited:
+Before marking any change done, list what was only correct because of the fact you just changed. Grep finds the old wording. It does not find a passage that reads fine on its own and is now wrong in context, which is the failure that survives review. Three kinds. Find them by reading in full, and look beyond the file you edited:
 
-- **Restatements.** Another passage states the same fact. Adding detail in one place makes the other a duplicate. Removing detail makes it the only copy. A duplicate that predates the edit is a layer 2 finding, not a consumer break.
+- **Restatements.** Another passage states the same fact. Adding detail in one place makes the other a duplicate. Removing detail makes it the only copy. A duplicate that predates the edit is a layer 2 finding.
 - **Derivations.** Another passage ranks, counts, or orders by the fact. A priority list built from a table, a total that has to sum, a count repeated in a second document.
 - **Negations.** Another passage says what the fact is not, departs from it, or reconciles it with something else. Delete the fact and the negation is left denying nothing.
 
@@ -223,7 +229,7 @@ When Christian asks for a different approach, don't treat it as a literal instru
 - If a better alternative exists, present both and explain the tradeoff.
 - If his suggestion creates a new issue, say so directly and propose what you'd do instead.
 
-Goal: collaborative back-and-forth between peers, not order-taking.
+Goal: collaborative back-and-forth between peers.
 
 ---
 
@@ -231,11 +237,11 @@ Goal: collaborative back-and-forth between peers, not order-taking.
 
 A review that follows an earlier round of edits needs a stopping rule, because the loop can sustain itself indefinitely on its own output.
 
-**Read what a round's findings are about, not how many there are.** If they are confined to text introduced in the previous round, the review is chasing its own churn rather than the work. Consolidate in one pass, verify mechanically, and stop. Say so plainly rather than running another round: a fourth pass that finds one defect you created in the third is not evidence the work is unsound.
+**Read what a round's findings are about. The count says nothing.** If they are confined to text introduced in the previous round, the review is chasing its own churn. Consolidate in one pass, verify mechanically, and stop. Say so plainly instead of running another round: a fourth pass that finds one defect you created in the third is not evidence the work is unsound.
 
 **Prefer a script to another read for anything countable.** Cross-document totals, references that have to resolve, a table that recomputes from its source, a term that should have exactly one phrasing. Write the check, keep it, and re-run it instead of re-reading. It costs nothing per run and does not depend on judgment, which is what fails on the fifth pass over the same paragraph.
 
-Recompute derived numbers from the current file every time. Never adjust them by arithmetic on what you believe changed, and never reconcile two scripts by hand. Two counting methods produce two answers, and the difference between them looks exactly like a real change.
+Recompute derived numbers from the current file every time. Never adjust them by arithmetic on what you believe changed, and never reconcile two scripts by hand. Two counting methods produce two answers. The difference between them looks exactly like a real change.
 
 ---
 

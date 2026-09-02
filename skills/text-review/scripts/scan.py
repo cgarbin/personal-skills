@@ -9,11 +9,11 @@ line of a source file so it can reach an error string.
 
 Rules do not split the same way. The voice checks run on everything, and each
 side holds back the checks that only mean something there: COMMENT_CHECKS stay
-out of prose, where "Step 1" is a heading rather than a dead plan label, and
+out of prose, where "Step 1" is a heading and no kind of plan label, and
 PROSE_ONLY_CHECKS stay out of comments, for the two reasons given where that
 list is defined.
 
-Hits are candidates, not verdicts. Each check declares the action it needs, and
+Hits are candidates to judge. Each check declares the action it needs, and
 the report groups by that action so a find-and-replace does not sit in the same
 list as a call that needs judgment:
 
@@ -26,6 +26,7 @@ Exit status: 0 clean, 1 hits found, 2 usage error.
     scripts/scan.py draft.md
     scripts/scan.py draft.md src/chunker.py src/loader.go
     scripts/scan.py --only citation,british paper.md
+    scripts/scan.py --skip-html-comments paper.md
 """
 
 import argparse
@@ -142,6 +143,82 @@ def unquantified(text):
             yield Span(m.group(0), start + m.start(), start + m.end())
 
 
+# A quoted line is a record of what was sent or said. The voice rules govern
+# what he writes, so editing quoted material would misreport the source.
+QUOTED = re.compile(r"^\s*>")
+
+CONTRAST = re.compile(r",\s+not\s+|\s+rather\s+than\s+")
+
+
+def label(match, text, after, words=3):
+    """Tag a hit with what follows it, so two in one unit survive the dedup key.
+
+    The key is (check, line, match), so a constant label collapses every
+    repeat inside one paragraph and undercounts the summary.
+    """
+    tail = " ".join(text[after:].split()[:words])
+    return f"{match} {tail}".strip()
+
+
+def contrastive_voice(text):
+    """Find "X rather than Y" and "X, not Y" outside quoted material.
+
+    Headings and table cells fire. Two section titles in one dissertation
+    used the construction, so skipping them would have missed both.
+    """
+    if QUOTED.match(text):
+        return
+    for m in CONTRAST.finditer(text):
+        yield Span(label(m.group(0).strip(), text, m.end()), m.start(), m.end())
+
+
+# A clause after the conjunction needs a subject of its own. Bare nouns stay
+# out: in "notes, laboratory results, and medication orders" the list item
+# "orders" reads as a verb and every serial list would fire. The capitalized
+# alternative is the reason this pattern is not compiled with IGNORECASE, which
+# would let it match any word at all.
+SUBJECT = (r"(?i:it|they|we|this|that|there|these|those|he|she|one|its|their|our|his|her|"
+           r"the|an?|no|every|each|both|most|some|all|another|either|neither|two|three|"
+           r"four|five)\b|\[@[^\]]+\]|`[^`]+`|[A-Z][\w-]*")
+
+# -ss, -ous, -ness and -less end nouns and adjectives, which is what the
+# lookbehind excludes. The -s and -ed endings reach most finite verbs. The
+# irregular pasts are listed because "the loss held" and "the ceiling rose" are
+# ordinary in his results prose and match neither ending. Several of them
+# double as nouns, at a cost of three false positives across 477 files.
+FINITE = (r"(?i:is|are|was|were|has|have|had|does|do|did|will|would|can|could|may|might|"
+          r"must|should|shall|holds?|reads?|gives?|makes?|takes?|needs?|stays?|runs?|"
+          r"held|grew|fell|rose|wrote|took|gave|went|came|kept|meant|sent|told|saw|"
+          r"found|brought|drew|built|made)\b"
+          r"|(?i:\w*(?<![su])s)\b|(?i:\w+ed)\b")
+
+COMMA_JOIN = re.compile(rf",\s+and\s+(?:{SUBJECT})"
+                        rf"(?:\s+[\w'@:.%\[\]`$-]+){{0,3}}\s+(?:{FINITE})")
+
+
+def comma_join(text):
+    """Find two independent clauses joined by a comma and "and".
+
+    A subject followed by a finite verb separates a second clause from a
+    compound predicate ("reads the artifact, and writes the scores") or a
+    trailing participle ("every interval spanning zero"). Neither survives a
+    period. A heading and a table row are skipped for the same reason.
+    """
+    if QUOTED.match(text) or NOT_PROSE.match(text):
+        return
+    for start, _, sentence in sentences(text):
+        for m in COMMA_JOIN.finditer(sentence):
+            # A serial list ends "..., and the process that produced them are
+            # in Appendix", which is a subject and a verb by every test this
+            # check can apply. An earlier comma in the same sentence is the one
+            # signal that separates the two, at the cost of the genuine joins
+            # that share a sentence with a list.
+            if ", " in sentence[:m.start()]:
+                continue
+            end = m.start() + m.group(0).index("and") + 3
+            yield Span(label(", and", sentence, end), start + m.start(), start + end)
+
+
 PROSE_CHECKS = [
     Check("em-dash", r"—", "FIX",
           "use a period or parentheses", AVOID),
@@ -170,7 +247,7 @@ PROSE_CHECKS = [
           "open with the point", AVOID),
     # "sion" is here for the section-label form ("Discussion.", "Conclusion.").
     # It also fires on concrete nouns that open a sentence ("Precision improved
-    # to 0.8"), which is why this check needs the test rather than a rewrite.
+    # to 0.8"), which is why this check asks for a test.
     Check("nominalization-lead", r"^\W*[A-Z]\w+(?:tion|sion|ment|ance|ence)\b", "TEST",
           "is the noun a verb in disguise? \"Configuration of the parser\" is a "
           "lead, \"Precision improved to 0.8\" is not",
@@ -214,11 +291,17 @@ PROSE_CHECKS = [
                              r"which is worth|that is the", "TEST",
           "delete the clause and reread. If no fact, number, constraint, or "
           "claim is lost, the deletion stands", COMMENTARY),
-    # Bold lead-in labels ("Restatements go, conclusions stay") are a house
-    # pattern, not hits.
-    Check("contrastive-tail", r",\s+not\s+|\s+rather\s+than\s+", "TEST",
-          "keep the contrast only when the alternative was tried, a reader "
-          "would assume it, or the argument depends on ruling it out", COMMENTARY),
+    # The judgment half of the old contrastive-tail check lives on in
+    # side-commentary above, whose stems reach the tails this pattern misses
+    # ("not just", "the other way around").
+    Check("contrastive-voice", contrastive_voice, "REWRITE",
+          "restate as a positive claim about what is true, or cut the clause "
+          "and let the next sentence show it",
+          "christian-writing-style, No this-not-that"),
+    Check("comma-join", comma_join, "REWRITE",
+          "two clauses, so use a period. It reads \"and\", \"but\" and \"or\". "
+          "\", so\" and \", for\" mark a relationship a period would drop",
+          "christian-writing-style, What to avoid"),
 ]
 
 OPT_IN = {"citation"}
@@ -230,7 +313,8 @@ OPT_IN = {"citation"}
 PROSE_ONLY_CHECKS = [
     Check("specialist-term", r"(?i)\b(?:guard|invariant|idempotent|canonical)\b", "TEST",
           "standard for this audience, or does a plain word of the same length "
-          "exist? \"canonical order\" is \"fixed order\"",
+          "exist? \"canonical order\" is \"fixed order\". A term in an example "
+          "that only shows sentence shape is fine",
           "christian-writing-style, Fight the curse of knowledge"),
     Check("long-sentence", long_sentences, "TEST",
           "lists and enumerations are legitimately long. Split only when the "
@@ -244,7 +328,7 @@ COMMENT_CHECKS = [
           "name the thing in this code: \"the check above\", \"the file the "
           "script reads\"", "code-comments rule 1"),
     # "no longer" and "the old" describe runtime state as often as dead code
-    # ("the target no longer exists"), so this one asks rather than asserts.
+    # ("the target no longer exists"), so this one asks.
     Check("dead-code-ref", r"(?i)used to|no longer|after decoupling|the old\b|the deleted\b",
           "TEST",
           "about code that stopped running, or about runtime state like a "
@@ -281,12 +365,12 @@ COMMENT_SYNTAX = {
     ".sql": ("--", C_BLOCK), ".lua": ("--", NO_BLOCK),
 }
 
-# A new prose unit starts here rather than continuing the one above.
+# A new prose unit starts at any of these, and does not continue the one above.
 UNIT_START = re.compile(r"^\s*(?:#{1,6}\s|[-*+]\s|\d+\.\s|>\s|\||```|~~~)")
 
 SENTENCE_END = re.compile(r"(?<=[.!?])\s")
 
-# Checks that read every line of a source file rather than the comments alone,
+# Checks that read every line of a source file, past the comments,
 # so they reach an error string or a log message. Only em-dash qualifies:
 # nothing in code needs one, so the sole false positive is a linter declaring
 # the character, while British spelling would match every word inside this
@@ -294,7 +378,42 @@ SENTENCE_END = re.compile(r"(?<=[.!?])\s")
 WHOLE_FILE = {"em-dash"}
 
 
-def prose_units(path):
+def strip_html_comments(lines):
+    """Blank the `<!-- -->` spans and keep the rest of each line.
+
+    Keeping the rest of the line lets a note sit tight against its paragraph
+    without taking the paragraph with it.
+    A fence is tracked, because "<!--" inside a code block opens nothing.
+    """
+    inside, in_fence, out = False, False, []
+    for line in lines:
+        if line.lstrip().startswith(("```", "~~~")):
+            in_fence = not in_fence
+            out.append(line)
+            continue
+        if in_fence:
+            out.append(line)
+            continue
+        kept, rest = [], line
+        while rest:
+            if inside:
+                end = rest.find("-->")
+                if end < 0:
+                    rest = ""
+                    break
+                rest, inside = rest[end + 3:], False
+                continue
+            start = rest.find("<!--")
+            if start < 0:
+                kept.append(rest)
+                break
+            kept.append(rest[:start])
+            rest, inside = rest[start + 4:], True
+        out.append("".join(kept))
+    return out
+
+
+def prose_units(path, drop_comments=False):
     """Yield (lineno, text, fenced) with hard-wrapped lines joined into one unit.
 
     Phrase patterns like "the rest of this section" straddle a newline in wrapped
@@ -302,8 +421,11 @@ def prose_units(path):
     line number reported is where the unit starts. fenced says the unit came
     from a code block, which the checks that measure a sentence cannot read.
     """
+    lines = path.read_text(errors="replace").splitlines()
+    if drop_comments:
+        lines = strip_html_comments(lines)
     unit, start, in_fence = [], None, False
-    for n, line in enumerate(path.read_text(errors="replace").splitlines(), 1):
+    for n, line in enumerate(lines, 1):
         fence = line.lstrip().startswith(("```", "~~~"))
         if not line.strip() or (UNIT_START.match(line) and not in_fence) or fence:
             if unit:
@@ -402,13 +524,13 @@ def unfenced(source):
         yield n, text, False
 
 
-def scan(path, checks):
+def scan(path, checks, skip_html_comments=False):
     if is_source(path):
         passes = [(unfenced(comment_lines(path)), checks),
                   (unfenced(all_lines(path)),
                    [c for c in checks if c.name in WHOLE_FILE])]
     else:
-        passes = [(prose_units(path), checks)]
+        passes = [(prose_units(path, skip_html_comments), checks)]
     seen, hits = set(), []
     for source, active in passes:
         if not active:
@@ -455,6 +577,8 @@ def main():
     ap.add_argument("--only", help="comma-separated check names, the only way to run "
                                    f"the opt-in checks ({', '.join(sorted(OPT_IN))})")
     ap.add_argument("--summary", action="store_true", help="counts per check, no hit lines")
+    ap.add_argument("--skip-html-comments", action="store_true",
+                    help="markdown only: read the published prose and skip <!-- --> notes")
     args = ap.parse_args()
 
     all_checks = PROSE_CHECKS + PROSE_ONLY_CHECKS + COMMENT_CHECKS
@@ -472,7 +596,7 @@ def main():
         if not path.is_file():
             print(f"skip {path} (not a file)", file=sys.stderr)
             continue
-        found = scan(path, checks_for(path, wanted))
+        found = scan(path, checks_for(path, wanted), args.skip_html_comments)
         hits.extend(found)
         totals.update(h.check.name for h in found)
 

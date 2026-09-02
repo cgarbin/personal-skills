@@ -173,11 +173,11 @@ class BodyProse(Checked):
             "got the batch size under it."))
 
     def test_a_count_that_only_opens_a_wrapped_line_is_clean(self):
-        # 72-char wrapping puts ordinary words at the start of a line, and the
-        # sentence here is about the tokenizer rather than about the commit.
+        # 72-char wrapping puts a count at the start of a line. This one sits
+        # mid-sentence, where it describes the tokenizer.
         self.assertEqual(self.warned(
-            "The tokenizer rejects a batch over 8192 tokens, and the loader\n"
-            "needed three fixes before the batch size stopped passing it."), [])
+            "The tokenizer rejects a batch over 8192 tokens, which took\n"
+            "three fixes to get under."), [])
 
     def test_a_body_naming_the_round_the_work_came_from_warns(self):
         self.assertIn("body-inventory",

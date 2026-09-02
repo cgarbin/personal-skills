@@ -8,7 +8,7 @@ description: >-
 
 Three registers share one voice and differ in formality. Route first, read the common foundation, then read the reference file for the register you picked. Loading the wrong reference wastes context and pulls in conventions that do not apply.
 
-Write about the subject, not about the writing. The example sentences and layout descriptions in these files are here to be applied, not copied.
+Write about the subject. The example sentences and layout descriptions in these files are there to be applied. Copying them is the failure mode.
 
 ## Choose the register first
 
@@ -28,8 +28,8 @@ Write about the subject, not about the writing. The example sentences and layout
 
 ### Intellectual character
 
-- **Be measured and precise.** Avoid hype. Undersell with accurate hedging rather than overclaiming. Blog: "under these specific circumstances, for this specific application, AI has performed well." Papers: "the results suggest" rather than "the results prove."
-- **Be honest about limitations.** Say what the work does not cover. In papers, treat the limitations section as a contribution rather than a formality.
+- **Be measured and precise.** Avoid hype. Undersell with accurate hedging. Blog: "under these specific circumstances, for this specific application, AI has performed well." Papers: "the results suggest."
+- **Be honest about limitations.** Say what the work does not cover. In papers, treat the limitations section as a contribution.
 - **Ground claims in evidence.** Cite academic papers in blog posts. Give comprehensive literature reviews in papers. Do not assert without evidence.
 - **Stay practical.** Connect theoretical work back to real-world implications. End systematic reviews with practitioner guidance. Include runnable code in blog experiments.
 - **Organize for scanning.** Descriptive section headers, comparison tables, progressive disclosure from simple to complex.
@@ -40,7 +40,7 @@ These shape *how* sentences are built, in every register.
 
 **Classic style.** Direct the reader's gaze to something in the world. Prose is a window onto the subject. Avoid metaconcepts. Don't write "This section discusses X" when you can state X. Don't write "It is important to note that X" when you can write X.
 
-**Fight the curse of knowledge.** Anchor abstract concepts in something concrete before going abstract. When evaluating a specialist term, ask: is it used once without definition? Does a plain-language equivalent of similar length exist? If yes to either, prefer plain. The specialist term stays only when it is standard for the audience or rewording would lose accuracy.
+**Fight the curse of knowledge.** Anchor abstract concepts in something concrete before going abstract. When evaluating a specialist term, ask: is it used once without definition? Does a plain-language equivalent of similar length exist? If yes to either, prefer plain. The specialist term stays only when it is standard for the audience or rewording would lose accuracy. A term inside an example is a separate case. If the lesson is the sentence's shape, any vocabulary works, which is why a model name can sit in an example about modifier placement. If the reader has to understand the example to see the point, it needs words the audience already has.
 
 **Avoid zombie nouns.** Prefer verbs to nominalizations.
 
@@ -95,22 +95,36 @@ Watch the table count as well. Many tables in one section means many measurement
 
 `references/academic.md` works through the results-section case.
 
+### No this-not-that
+
+He does not write "X rather than Y" or "X, not Y". Restate as a positive claim about what is true, or cut the clause and let the sentences around it show the contrast.
+
+- "Executing that agreement is procurement work rather than a checkbox" becomes "Executing that agreement takes work on both sides."
+- "What disqualifies a path is whose server holds the record, not whose weights run on it" becomes "Where the record goes is what rules a path out."
+- "does not answer this, and the reason is legal rather than technical" becomes "does not answer this."
+
+The rule governs the phrasing, so it holds where the contrast is informative. A dissertation whose argument is a chain of eliminations passes the empty-tail test below on nearly every instance, and a sweep of one manuscript still had to restate 91 of them. Fix every instance in the passage. The flagged one is a sample.
+
+A plain negation is a different thing and stays: "Low recall is not a retrieval problem" asserts something, where "X, not Y" only points away from Y.
+
+Two places keep the construction. Quoted material is a record of what was sent or said, so editing it misreports the source. A table cell where the column is a verdict takes the positive half alone ("Metric configuration"), which is the same fix in less space.
+
 ### Side commentary
 
 Three forms comment on the text instead of stating the fact. Each spends a sentence without telling the reader anything about the subject, so cut them.
 
 **Editorial close-outs** after factual sentences ("X does not do Y," "this solves it," "that is what the evaluation shows"). If the factual sentence stands on its own, let it stand. Especially tempting at the end of paragraphs. Two variants hide well.
 
-- **The empty contrastive tail** names what the fact is *not*, where no reader would have assumed otherwise ("the actual header forms, not just a number in a table").
+- **The empty contrastive tail** names what the fact is *not*, where no reader would have assumed otherwise ("the appendix gives the actual header forms, where a bare count would have said less").
 - **The paragraph-closing restatement** says again what the paragraph just showed ("...so what remains in the score is a difference in content. That is the whole purpose of the labels.").
 
-Keep a contrast only when the alternative was actually tried, or a reader would plausibly assume it, or the argument depends on ruling it out.
+A tail built on "X rather than Y" or "X, not Y" goes whatever this test says (No this-not-that). For a tail worded some other way, keep the contrast only when the alternative was actually tried, or a reader would plausibly assume it, or the argument depends on ruling it out.
 
-**Announcing a choice as deliberate** ("the choice was deliberate," "we take X deliberately," "on purpose," "by design"). The reason that follows is the content. Delete the announcement, keep the reason. Two exceptions. Keep it when the deliberateness is itself the fact, because a reader would otherwise read oversight or accident ("the same defect, arrived at deliberately rather than by accident"). Rewrite when the announcement heads an enumeration, where deleting it orphans the list: "We use a single-pass design, for three reasons. First..."
+**Announcing a choice as deliberate** ("the choice was deliberate," "we take X deliberately," "on purpose," "by design"). The reason that follows is the content. Delete the announcement, keep the reason. Two exceptions. Keep it when the deliberateness is itself the fact, because a reader would otherwise read oversight or accident ("the same defect, arrived at deliberately"). Rewrite when the announcement heads an enumeration, where deleting it orphans the list: "We use a single-pass design, for three reasons. First..."
 
 **Narrating a disclosure instead of disclosing** ("we do not claim otherwise," "we record that as a limitation," "and the write-up has to say so," "to state in the limitations rather than let a reviewer state it"). The sentence performs the act it describes. State the limitation and stop.
 
-**Restatements go, conclusions stay.** A restatement repeats a fact already on the page. A conclusion asserts an inference the facts support but do not state, and it stays: "Low recall is not a retrieval problem," after numbers showing the gap is ten times what retrieval moves. Cutting a conclusion leaves the reader holding evidence with no claim attached. In results and decision documents the verdict is the deliverable, so when the call is close, keep it.
+**Restatements go, conclusions stay.** A restatement repeats a fact already on the page. A conclusion asserts an inference the facts support but do not state. It stays: "Low recall is not a retrieval problem," after numbers showing the gap is ten times what retrieval moves. Cutting a conclusion leaves the reader holding evidence with no claim attached. In results and decision documents the verdict is the deliverable, so when the call is close, keep it.
 
 Side commentary is not the same as personal voice, which `references/blog.md` calibrates for the blog register.
 
@@ -129,7 +143,7 @@ Items ending in a section name are explained above.
 - Ignoring or minimizing limitations.
 - British spelling. Use US: *analyze*, *color*, *behavior*, *modeling*, *-ize*, *center*, *defense*.
 - Em-dashes in his own writing. Use periods or parentheses unless Christian uses one first in the conversation.
-- Semicolons as a clause-joining device. Use a period between independent clauses, even closely related ones ("The model converged. The loss plateaued at 0.3."). Semicolons in pseudo-code or table structure are fine.
+- Joining two independent clauses with a semicolon or with a comma and "and". Each clause takes its own sentence, even closely related ones ("The model converged. The loss plateaued at 0.3."). "So", "but" and "for" each state a relationship a period would drop, so they stay. A compound predicate is one clause and stays whole ("The script reads the artifact and writes the scores beside it"). Semicolons in pseudo-code or table structure are fine.
 - Nominalizations where a verb would do ("the implementation of" → "we implemented"). (Craft principles)
 - Metacommentary that delays content ("It is worth noting that...", "It is important to mention..."). (Craft principles)
 - Hedging pileups. One hedge per claim, placed precisely. (Craft principles)
@@ -138,6 +152,7 @@ Items ending in a section name are explained above.
 - Sentences past about forty words that are not a list or an enumeration. (Craft principles)
 - Vague hand-waving instead of concrete evidence. "Various factors" → name them. (Name the concrete thing)
 - Framing-deck vocabulary ("stack," "arm," "frontier," "axes," "lever"), "downstream" for "later," "land" as a verb for where things end up, "carry" for what text conveys. (Name the concrete thing)
+- "X rather than Y" and "X, not Y". (No this-not-that)
 - Editorial close-outs, announcing a choice as deliberate, narrating a disclosure instead of disclosing. (Side commentary)
 
 ---
@@ -154,13 +169,13 @@ The common foundation is the entire skill here. There is no opening hook, no roa
 - No em-dashes. Use periods or parentheses.
 - US spelling (*analyze*, *behavior*, *modeling*).
 - No zombie nouns. "Compute the average" beats "perform the computation of the average."
-- Concrete and specific. Name the thing, not "the value" or "the data."
+- Concrete and specific. Name the thing. "The value" and "the data" are placeholders.
 - No filler ("note that...", "it is worth mentioning that..."). Just state it.
 - No marketing words ("simply", "easily", "blazing fast").
 
-**A snippet earns its place by stating a fact its context cannot.** The context is the code for a comment, the diff for a commit message, the stack trace for an error string. That fact is usually the constraint that shaped the work or the hazard it avoids. In a commit body or PR description it can also be the reason the obvious alternative fails. In a comment the rejected alternative goes, whatever the reasoning (**code-comments**, road not taken). The test while drafting: what would a reader who skipped it get wrong? If nothing, delete it. If one clause answers it, that clause is the whole snippet. A constraint that shaped the code and appears nowhere on the page is a missing comment, not a clean one.
+**A snippet earns its place by stating a fact its context cannot.** The context is the code for a comment, the diff for a commit message, the stack trace for an error string. That fact is usually the constraint that shaped the work or the hazard it avoids. In a commit body or PR description it can also be the reason the obvious alternative fails. In a comment the rejected alternative goes, whatever the reasoning (**code-comments**, road not taken). The test while drafting: what would a reader who skipped it get wrong? If nothing, delete it. If one clause answers it, that clause is the whole snippet. A constraint that shaped the code and appears nowhere on the page is a missing comment.
 
-When a snippet still runs past two or three sentences after every sentence has earned its place (a multi-paragraph docstring, a long PR description), switch to the blog register. A commit body is the exception. Its reader has the diff, so the body needs only what the diff does not show, and that fits in two or three sentences. A longer one is padded, or the commit bundles too much. **commit** holds the rule and the examples, and its check runs this scan on the body for you.
+When a snippet still runs past two or three sentences after every sentence has earned its place (a multi-paragraph docstring, a long PR description), switch to the blog register. A commit body is the exception. Its reader has the diff, so the body needs only what the diff does not show, and that fits in two or three sentences. A longer one is padded, or the commit bundles too much. **commit** holds the rule and the examples. Its check runs this scan on the body for you.
 
 ---
 
@@ -169,8 +184,8 @@ When a snippet still runs past two or three sentences after every sentence has e
 The default is minimal intervention.
 
 - Fix what violates this skill. Leave what merely differs from how you would have written it.
-- Preserve his structure unless the structure is the problem. Reordering sections is a finding to raise, not an edit to make silently.
-- Preserve the voice already on the page, including asides and reactions he wrote himself. The rate limit in `references/blog.md` governs what you add, not what he already has.
+- Preserve his structure unless the structure is the problem. Raise a reordering of sections as a finding and leave the document alone.
+- Preserve the voice already on the page, including asides and reactions he wrote himself. The rate limit in `references/blog.md` governs what you add. What he already wrote stays.
 - After renaming a term or reframing a decision, scan the whole document for the old usage. Anything beyond a rename needs the consumer check in **text-review**, because an addition or a changed number breaks a passage elsewhere without leaving a stale string to find.
 
 A fix confined to a sentence or two goes in directly. Anything larger is a review, so switch to **text-review** and use its gate: present every finding grouped by severity, wait, then work through them one at a time. Do not describe a large rewrite and apply it in the same turn.
@@ -179,11 +194,14 @@ A fix confined to a sentence or two goes in directly. Anything larger is a revie
 
 ## Before you finish
 
-Run the mechanical scan on every file you wrote or edited, and fix what it finds. It catches what survives a careful draft: em-dashes, semicolons joining clauses, British spelling, filler openers, sentences past forty words, and the vocabulary under Name the concrete thing.
+Run the mechanical scan on every file you wrote or edited, and fix what it finds. It catches what survives a careful draft: em-dashes, clauses joined by a semicolon or by a comma and "and", British spelling, filler openers, the this-not-that construction, sentences past forty words, and the vocabulary under Name the concrete thing.
 
 ```bash
 ~/.claude/skills/text-review/scripts/scan.py draft.md README.md loader.py
+~/.claude/skills/text-review/scripts/scan.py --skip-html-comments draft.md
 ```
+
+The second form reads the published prose and skips `<!-- -->` notes. Use it on a drafting file, where the notes can outweigh the prose.
 
 Pass every file you touched in one call. The extension decides what gets read: a source file is reduced to its comments and docstrings, anything else is read as prose.
 
@@ -195,4 +213,4 @@ A clean scan is not a clean draft.
 
 - **The rules with no stems.** Announcing the arrangement instead of stating it (Show, don't tell) has no mechanical form. Neither does coining a phrase the document already supplies (Name the concrete thing), nor do the paragraph-tail and paragraph-opening tests in **text-review**. The wording is new every time. Read your own draft for them the way you would read someone else's.
 - **Text that never becomes a file**, such as an answer in the conversation. Reread it against What to avoid instead.
-- **Files that quote the banned vocabulary as examples**, these skill files included. Every example fires, so read those rather than scanning them.
+- **Files that quote the banned vocabulary as examples**, these skill files included. Every example fires, so read those files by eye.
