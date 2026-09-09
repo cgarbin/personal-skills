@@ -267,6 +267,14 @@ PROSE_CHECKS = [
                             r"load[- ]bearing)\b", "TEST",
           "framing vocabulary, or the literal thing? Name the specific thing if "
           "it is framing", CONCRETE),
+    # "held" is left out. His sweep of one manuscript rewrote 44 instances of
+    # the word and changed no "held", where the participle reads as the steady
+    # sense. The particles after the verb mark that sense too.
+    Check("possession-verb", r"(?i)\b(?:hold|holds|holding)\b"
+                        r"(?!\s+(?:to|together|up|back|at|where|wherever|"
+                        r"whenever|on|off|out|for|in|true|steady)\b)", "TEST",
+          "possession, or staying steady? \"the cohort holds 116\" is \"has\". "
+          "\"the rule holds where the contrast is informative\" stays", CONCRETE),
     Check("vague-quantifier", r"(?i)\b(?:elevated|tighten)\b|various factors|had issues",
           "REWRITE",
           "give the number, or name what went wrong", CONCRETE),

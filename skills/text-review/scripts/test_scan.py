@@ -297,6 +297,41 @@ class Conjunctions(Scanned):
                                    "comma-join"), [])
 
 
+class VagueHold(Scanned):
+    """"Hold" reads as possession or as staying steady, and only the first goes."""
+
+    def test_possession_fires(self):
+        self.assertEqual(len(self.hits("The cohort holds 116 admissions.",
+                                       "possession-verb")), 1)
+
+    def test_staying_steady_is_quiet(self):
+        self.assertEqual(self.hits(
+            "The rule holds where the contrast is informative.", "possession-verb"), [])
+
+    def test_the_particle_senses_are_quiet(self):
+        for line in ("The argument holds together.",
+                     "Recall holds to the longest admissions.",
+                     "The jargon check is held back from prose.",
+                     "Many tables give the reader more to hold at once."):
+            with self.subTest(line=line):
+                self.assertEqual(self.hits(line, "possession-verb"), [])
+
+    def test_the_participle_never_fires(self):
+        # His sweep of one manuscript rewrote 44 instances and left every
+        # "held", so the form costs more in noise than it finds.
+        self.assertEqual(self.hits("The file held 7.5B parameters.",
+                                   "possession-verb"), [])
+
+    def test_a_comment_is_read(self):
+        # The word reaches a comment the same way it reaches a paragraph.
+        self.assertEqual(len(self.hits("# The index holds the staged paths.\n",
+                                       "possession-verb", ".py")), 1)
+
+    def test_it_asks_rather_than_rewrites(self):
+        hits = self.hits("The row holds three statistics.", "possession-verb")
+        self.assertEqual(hits[0].check.action, "TEST")
+
+
 class Unchanged(Scanned):
     def test_vague_quantifier_still_rewrites(self):
         hits = self.hits("Latency was elevated.", "vague-quantifier")

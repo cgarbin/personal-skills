@@ -83,7 +83,7 @@ Consult christian-writing-style for the full specification. Common issues:
 
 ### 5. Mechanical scan
 
-Backstop for patterns judgment alone misses. `scripts/scan.py` holds the patterns and the reasoning behind each one. It exits 0 clean, 1 with hits, 2 on a usage error. `scripts/test_scan.py` pins the behavior a regex cannot state, from where a sentence boundary falls to which units hold no sentence at all.
+Backstop for patterns judgment alone misses. `scripts/scan.py` has the patterns and the reasoning behind each one. It exits 0 clean, 1 with hits, 2 on a usage error. `scripts/test_scan.py` pins the behavior a regex cannot state, from where a sentence boundary falls to which units have no sentence at all.
 
 Hits come grouped by the action they need, `FIX` before `REWRITE` before `TEST`, so a find-and-replace does not sit in the same list as a call that needs judgment. Each group prints the fix or the test once, then the hits under it with the sentence around each one.
 
@@ -118,7 +118,7 @@ Two checks need a read instead:
 
 Report every `FIX` and `REWRITE` hit, false positives included. Reporting them matters most during iterative editing, where corrections in one round reintroduce patterns cleaned up in the previous one.
 
-Side commentary, the concrete-thing vocabulary, nominalization leads, soft verbs, and specialist terms fire often enough on correct prose that reporting them raw buries the real findings, since "axis" and "stack" are ordinary words in a paper about models, "Precision improved to 0.8" is not a zombie noun, and "API surface" is a noun. `dead-code-ref` is tagged for the same reason: "the target no longer exists" usually describes a missing file. So are `long-sentence` and `unquantified`. A sentence that runs long because it enumerates is doing its job, and "a few paragraphs" as a bold lead-in labels a case. Feeling-words are tagged for a different reason. One per piece is fine when the reaction is itself information, and the script cannot count across a document.
+Side commentary, the concrete-thing vocabulary, nominalization leads, soft verbs, and specialist terms fire often enough on correct prose that reporting them raw buries the real findings, since "axis" and "stack" are ordinary words in a paper about models, "Precision improved to 0.8" is not a zombie noun, and "API surface" is a noun. `dead-code-ref` is tagged for the same reason: "the target no longer exists" usually describes a missing file. So are `long-sentence`, `unquantified`, and `possession-verb`. A sentence that runs long because it enumerates is doing its job, "a few paragraphs" as a bold lead-in labels a case, and a reader left holding evidence is the idiom. Feeling-words are tagged for a different reason. One per piece is fine when the reaction is itself information, and the script cannot count across a document.
 
 `contrastive-voice` and `comma-join` are `REWRITE`, so no test applies. The first replaced a `TEST` that asked whether a contrast was informative, which is the wrong property: on a manuscript arguing by elimination every instance passed that test and 91 still had to be restated. The judgment half of the old check lives on in `side-commentary`, whose stems reach the tails this pattern misses. The second holds to about 85% precision on a full manuscript, 22 of 26. Its false positives are a two-item list after a colon, a coordinated pair of `that` clauses, a coordinated noun phrase, and a gapped coordination. It reads `and` alone, since every other coordinator states a relationship a period would drop.
 

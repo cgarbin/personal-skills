@@ -75,7 +75,8 @@ An abstraction standing in for a specific thing makes the reader do the decoding
 - **"Downstream"** as shorthand for "later" or "the next stage." "Downstream analysis" → "Phase 2 analysis," "the audit step," "the next step."
 - **"Load-bearing"** for the part something depends on. "The comment is load-bearing" → "the comment is the only place the constraint is written down." Say what depends on it and what breaks without it.
 - **"Land"** as a verb for where files, data, or values end up ("files land at X," "binaries land in $DIR"). Use "go into," "end up at," "is written to," "sits in," or rephrase. Watch for adjacent overuse: "lands cleanly," "the changes landed in the same window."
-- **"Carry"** as a verb for what text, code, or a table conveys ("the comment carries the constraint," "the reason carries the content," "what the table cannot carry"). Use "state," "describe," "hold," or name what the text actually does.
+- **"Carry"** as a verb for what text, code, or a table conveys ("the comment carries the constraint," "the reason carries the content," "what the table cannot carry"). Use "state," "describe," or name what the text actually does.
+- **"Hold"** as a verb for what a file, a table, or a dataset contains ("the cohort holds 116 admissions," "the row holds three statistics"). Use "has," "contains," or name what is in it. "Hold" is right for staying steady ("recall holds to the longest admissions") and for keeping something back ("held back from the prose pass").
 - **Vague quantifiers where a number exists.** "Latency was elevated" → give the value. "Various factors" → name them. "The system had issues" → name what went wrong. "Tighten grading" → say which metric moved and by how much. "Recovers a small fraction of those concepts" → give the fraction.
 - **Coining a phrase when the document already supplies one.** When a passage reads badly, take the wording from its own tables, captions, bullets, and defined terms before inventing anything. One sentence went through five rewrites, each inventing a new abstraction ("sits in the numerator but not its denominator"), while the table row three lines above already read "Not in the source documents, in the generated summary."
 
@@ -83,7 +84,7 @@ An abstraction standing in for a specific thing makes the reader do the decoding
 
 Christian shows. An argument built on experiments is laid out as **hypothesis, what was done to test it, the result in a scannable form, then the conclusion**. The same content written as flowing paragraphs is wrong for him even when it is accurate and well written. His reaction to the prose version: "the text is long and prose heavy, hard to follow."
 
-Three or more parallel items are table-shaped or list-shaped, never a run of paragraphs. Candidate explanations, options considered, eliminations, variants tested. Lead with a summary table as the scan layer. After it, each item gets only what the table could not hold, usually the mechanism and the caveat.
+Three or more parallel items are table-shaped or list-shaped, never a run of paragraphs. Candidate explanations, options considered, eliminations, variants tested. Lead with a summary table as the scan layer. After it, each item gets only what the table could not state, usually the mechanism and the caveat.
 
 Do not announce that arrangement in the text. A table followed by per-item sections is self-evident.
 
@@ -173,9 +174,9 @@ The common foundation is the entire skill here. There is no opening hook, no roa
 - No filler ("note that...", "it is worth mentioning that..."). Just state it.
 - No marketing words ("simply", "easily", "blazing fast").
 
-**A snippet earns its place by stating a fact its context cannot.** The context is the code for a comment, the diff for a commit message, the stack trace for an error string. That fact is usually the constraint that shaped the work or the hazard it avoids. A commit body is narrower, and **commit** holds its rules. In a comment the rejected alternative goes, whatever the reasoning (**code-comments**, road not taken). The test while drafting: what would a reader who skipped it get wrong? If nothing, delete it. If one clause answers it, that clause is the whole snippet. A constraint that shaped the code and appears nowhere on the page is a missing comment.
+**A snippet earns its place by stating a fact its context cannot.** The context is the code for a comment, the diff for a commit message, the stack trace for an error string. That fact is usually the constraint that shaped the work or the hazard it avoids. A commit body is narrower, and **commit** sets its rules. In a comment the rejected alternative goes, whatever the reasoning (**code-comments**, road not taken). The test while drafting: what would a reader who skipped it get wrong? If nothing, delete it. If one clause answers it, that clause is the whole snippet. A constraint that shaped the code and appears nowhere on the page is a missing comment.
 
-When a snippet still runs past two or three sentences after every sentence has earned its place (a multi-paragraph docstring, a long PR description), switch to the blog register. A commit body is the exception. Its reader has the diff, so the body needs only what no comment can state. **commit** holds the ceiling and the examples. Its check runs this scan on the body for you.
+When a snippet still runs past two or three sentences after every sentence has earned its place (a multi-paragraph docstring, a long PR description), switch to the blog register. A commit body is the exception. Its reader has the diff, so the body needs only what no comment can state. **commit** has the ceiling and the examples. Its check runs this scan on the body for you.
 
 ---
 
