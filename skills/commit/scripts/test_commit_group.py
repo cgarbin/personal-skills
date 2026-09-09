@@ -30,6 +30,14 @@ def message(subject, body=None, trailer=TRAILER):
     return "\n\n".join(parts) + "\n"
 
 
+# 35 words, the ceiling itself. PAST_CEILING adds one word and nothing else,
+# so a test that moves cannot be read as the wording changing.
+AT_CEILING = ("The tokenizer rejects a batch over 8192 tokens, so the loader splits\n"
+              "at 8000 and leaves a margin for the prompt prefix that the caller\n"
+              "prepends before every request it sends to the language model.")
+PAST_CEILING = AT_CEILING.replace("every request", "every single request")
+
+
 class Checked(unittest.TestCase):
     def errors(self, text):
         return [p for p in commit_group.check_message(text) if p.level == "error"]
@@ -190,6 +198,44 @@ class BodyProse(Checked):
     def test_a_body_stating_a_fact_the_diff_does_not_show_is_clean(self):
         self.assertEqual(self.warned(
             "git wraps a subject over 72 chars in git log --oneline."), [])
+
+    def test_a_body_at_the_ceiling_is_clean(self):
+        self.assertEqual(self.warned(AT_CEILING), [])
+
+    def test_a_body_one_word_past_the_ceiling_warns(self):
+        self.assertIn("body-length", self.warned(PAST_CEILING))
+
+    def test_the_length_warning_gives_the_count_and_the_ceiling(self):
+        # A reader who is one word over and a reader who is forty over need
+        # different things, and "too long" tells them apart from nothing.
+        problems = commit_group.check_message(message("Subject", PAST_CEILING))
+        text = " ".join(p.text for p in problems if p.rule == "body-length")
+        self.assertIn("36 words", text)
+        self.assertIn("past 35", text)
+
+    def test_a_bulleted_body_is_counted(self):
+        # A bulleted inventory reads as organized and pads like anything
+        # else, so its length is what reports it.
+        self.assertIn("body-length", self.warned(
+            "- the loader splits every batch at 8000 tokens before the call\n"
+            "- the tokenizer rejects anything over 8192 in a single request\n"
+            "- the margin covers the prompt prefix the caller prepends\n"
+            "- the retry reports a stale index entry and not a missing file"))
+
+    def test_a_list_marker_is_not_a_word(self):
+        # Four markers on a body already near the ceiling would push it over
+        # on punctuation, and the writer has no word to cut.
+        self.assertEqual(commit_group.word_count("- one\n- two\n* three"), 3)
+
+    def test_the_ceiling_holds_without_the_prose_scanner(self):
+        # The two skills install separately. The count is a commit rule, so
+        # it survives the scanner being absent.
+        self.addCleanup(setattr, commit_group, "SCAN", commit_group.SCAN)
+        commit_group.SCAN = Path("/nonexistent/scan.py")
+        self.assertEqual(
+            sorted({p.rule for p in
+                    commit_group.check_message(message("Subject", PAST_CEILING))}),
+            ["body-length", "prose-scan"])
 
     def test_a_body_sentence_past_the_length_limit_warns(self):
         # The prose scan owns the limit. This asserts the body reaches it.

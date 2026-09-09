@@ -7,12 +7,14 @@ Co-Authored-By trailer in the last paragraph, where git will read it. --check
 reports on a draft without committing. Committing runs the same checks and
 stops on an error, so a message that skipped --check is still checked.
 
-The body gets a second reading, as prose. Two warnings come from this script,
-a count of what changed and the round the work came from, both of which the
-diff already shows. The rest come from the scanner the writing skills run on
-a draft, so the prose rules stay in one place. A semicolon or an em-dash there
-is a violation whatever the context and blocks. A long sentence or a
-restatement is a judgment call and warns.
+The body gets a second reading, as prose. Three warnings come from this
+script. Two of them, a count of what changed and the round the work came from,
+name what the diff already shows. The third fires on a body past 35 words,
+which is padding or one message written for two commits. The rest come from
+the scanner the writing skills run on a draft, so the prose rules stay in one
+place. A semicolon or an em-dash there is a violation whatever the
+context and blocks. A long sentence or a restatement is a judgment call and
+warns.
 
 Staging takes the paths given as arguments and nothing else, so one group's
 commit cannot pick up another group's file.
@@ -48,6 +50,14 @@ Problem = namedtuple("Problem", "level rule text")
 SUBJECT_AIM = 50
 SUBJECT_LIMIT = 72
 BODY_LIMIT = 72
+
+# A body stating one fact runs about 20 words. 35 leaves room for a second
+# sentence and stops short of a third.
+BODY_WORDS = 35
+
+# A bare list marker is not a word. Counting it puts a three-bullet body over
+# the ceiling with nothing in it the writer can cut.
+WORD = re.compile(r"[A-Za-z0-9]\S*")
 
 # The type list from the Conventional Commits spec, not every word before a
 # colon. "Note: ..." is a sentence and stays. "docs: ..." is the convention
@@ -155,6 +165,26 @@ def check_body(body):
     return problems
 
 
+def word_count(body):
+    """Count the body's words, each one opening on a letter or a digit."""
+    return len(WORD.findall(body))
+
+
+def check_length(body):
+    """Report a body past the ceiling.
+
+    A body gets long two ways. The wording is padded, or the message covers
+    two commits, so the warning names both and the writer picks.
+    """
+    count = word_count(body)
+    if count <= BODY_WORDS:
+        return []
+    return [Problem(
+        "warning", "body-length",
+        f"the body runs {count} words, past {BODY_WORDS}. The extra words are "
+        "padded, or the commit bundles work that belongs in two groups")]
+
+
 def load_scan():
     """Return (module, None), or (None, reason) when the scanner cannot be used.
 
@@ -251,6 +281,8 @@ def check_message(text):
 
     body = body_text(rest, parsed)
     problems.extend(check_body(body))
+    if body:
+        problems.extend(check_length(body))
     problems.extend(scan_body(body))
 
     return problems

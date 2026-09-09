@@ -8,7 +8,7 @@ description: >-
 
 Comment-specific rules on top of **christian-writing-style**, Short snippets. That section decides whether a snippet earns its place at all. These rules decide what a comment may say once it has.
 
-**Scope: comments and docstrings.** Commit messages, PR descriptions, log messages, and error strings follow Short snippets instead. The road-not-taken rule in particular does not reach them, because a commit body arguing against a rejected design is doing its job.
+**Scope: comments and docstrings.** Commit messages, PR descriptions, log messages, and error strings follow Short snippets instead. The road-not-taken rule does not reach them, and **commit** sets what a body may say.
 
 ## Rules
 

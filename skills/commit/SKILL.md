@@ -46,7 +46,7 @@ Do not use `git add -p` or patch extraction. If a file's changes belong to two g
 For each group, draft:
 - Files to stage.
 - Subject line: aim 50 chars, hard limit 72, focused on "what". No Conventional Commit prefixes (`feat:`, `fix:`, `chore:`, etc.). Examples: "Compress commit skill", "Add hook-reformat recovery", "Drop unused config flag".
-- Body: default is no body. Read **Bodies** below before writing one. Separate with a blank line and wrap at 72.
+- Body: default is no body. Read **Bodies** below first. Before drafting one, write the line `Not in the code: <the fact, and why no comment can state it>`. No line, no body. Separate with a blank line and wrap at 72.
 
 End with the `Co-Authored-By` trailer the harness gives you, as its own paragraph. It is the only trailer to add. Never reconstruct it from an older commit, because the author name moves with the model.
 
@@ -58,15 +58,27 @@ Trailers register only from the last paragraph, so one with no blank line above 
 
 The diff is in the commit. A body that lists what changed, counts the changes, or names the review round says again what `git show` prints right under it.
 
-A body states a fact the diff does not show:
+The reader of a body is someone running `git blame` on a line that looks wrong, about to delete it. Everyone else reads subject lines. The test is whether that reader is about to make a mistake.
 
-- The constraint that forced this shape.
-- The reason the obvious alternative fails.
-- A consequence a reader would not predict from the change.
+Two questions, in order.
 
-Before writing one, answer this: what would a reader of the diff get wrong without it? No answer, no body. If one clause answers it, that clause is the whole body.
+**Would a later reader find this code surprising?** Most changes hold nothing strange. No surprise, no body, and stop here.
 
-Describing the commit:
+**Can the code state it instead?** A comment sits next to the line and reaches everyone who opens the file. A body reaches someone who already went digging. When a comment can state the fact, write the comment and put it in this same commit. A comment is the answer most of the time. It puts the explanation where the surprise is. Read **code-comments** before writing it.
+
+A body is what is left over, the fact no comment can state:
+
+- Why something was removed. Deleted code has nowhere to put a comment.
+- Why the change has no observable effect, when the diff looks like it should have one.
+- A fact about the change as an event: the run the numbers came from, the report behind a revert.
+
+Nothing else earns a body.
+
+Most commits have none. When a plan has a body on more than one group, go back and cut the weaker one. One session rarely produces two facts no comment can state. It readily produces two justifications.
+
+Thirty-five words is the ceiling. Past that the body is padded, or the commit bundles work that belongs in two groups, so `--check` points you back to the grouping in Step 3. If one clause states the fact, that clause is the whole body.
+
+Rejected. It describes the commit. `git show` prints the diff right under it:
 
 ```
 Five changes in one commit, all § 2.4 refinements from this review
@@ -74,7 +86,7 @@ round: the hard-limit paragraph, the diagram move, "attends to" to
 "depends on", the overhead definition, and the opening rewrite.
 ```
 
-Stating what the diff does not show:
+Kept. A fact about the change as an event, which no file can hold:
 
 ```
 The § 2.4 numbers come from the August run. The caption cited the July
@@ -95,11 +107,12 @@ scripts/commit_group.py --check <message-file>
 
 `error:` lines block the commit, `warning:` lines do not. Fix the errors before Step 5 so the plan you present is the plan that commits.
 
-The four the body produces ask for different things:
+Five of them come from reading the body. They ask for different things:
 
 - `error: prose/...`: an em-dash, a semicolon joining clauses, British spelling. The pattern decides these on its own, so fix the wording.
 - `warning: prose/...`: the line names a test to apply or a rewrite to make. Do it, or answer in one line under `Message check` why the wording stays. Keeping it without answering drifts back to the draft.
 - `warning: body-inventory`: the line quotes the phrase and says why it adds nothing. Rewrite, or say why the phrase stays.
+- `warning: body-length`: the body runs past 35 words. Cut back to the fact, split the commit, or say in one line why the length stays.
 - `warning: prose-scan`: the body was never read. Read it against **Bodies** yourself.
 
 ## Step 5: Review
@@ -110,10 +123,18 @@ If an approval-skip argument was passed, skip to Step 6. Otherwise, present the 
 Plan:
 - Files: <list>
 - Subject: <text>
-- Body: <the body text, or "none">
-- Without it: <what a reader of the diff would get wrong, or "n/a">
+- Body: none
 - Message check: <"clean", or what --check reported and what you changed>
 - Doc check: <findings, "n/a" if Step 2 conditions not met, or "skipped">
+```
+
+`Body: none` is the whole line, with nothing under it to justify.
+
+A group with a body puts the Step 4 line above it:
+
+```
+- Not in the code: <the fact, and why no comment can state it>
+- Body: <the body text>
 ```
 
 One block per group. Auto mode does not override the gate. Invocation triggers the skill but is not approval.
