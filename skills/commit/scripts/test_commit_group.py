@@ -30,8 +30,7 @@ def message(subject, body=None, trailer=TRAILER):
     return "\n\n".join(parts) + "\n"
 
 
-# 35 words, the ceiling itself. PAST_CEILING adds one word and nothing else,
-# so a test that moves cannot be read as the wording changing.
+# 35 words, the ceiling itself.
 AT_CEILING = ("The tokenizer rejects a batch over 8192 tokens, so the loader splits\n"
               "at 8000 and leaves a margin for the prompt prefix that the caller\n"
               "prepends before every request it sends to the language model.")
@@ -206,8 +205,8 @@ class BodyProse(Checked):
         self.assertIn("body-length", self.warned(PAST_CEILING))
 
     def test_the_length_warning_gives_the_count_and_the_ceiling(self):
-        # A reader who is one word over and a reader who is forty over need
-        # different things, and "too long" tells them apart from nothing.
+        # A reader one word over and a reader forty over need different
+        # things, and "too long" serves neither.
         problems = commit_group.check_message(message("Subject", PAST_CEILING))
         text = " ".join(p.text for p in problems if p.rule == "body-length")
         self.assertIn("36 words", text)
@@ -223,13 +222,10 @@ class BodyProse(Checked):
             "- the retry reports a stale index entry and not a missing file"))
 
     def test_a_list_marker_is_not_a_word(self):
-        # Four markers on a body already near the ceiling would push it over
-        # on punctuation, and the writer has no word to cut.
         self.assertEqual(commit_group.word_count("- one\n- two\n* three"), 3)
 
     def test_the_ceiling_holds_without_the_prose_scanner(self):
-        # The two skills install separately. The count is a commit rule, so
-        # it survives the scanner being absent.
+        # The two skills install separately, so a missing scanner is reachable.
         self.addCleanup(setattr, commit_group, "SCAN", commit_group.SCAN)
         commit_group.SCAN = Path("/nonexistent/scan.py")
         self.assertEqual(

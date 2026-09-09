@@ -9,10 +9,10 @@ stops on an error, so a message that skipped --check is still checked.
 
 The body gets a second reading, as prose. Three warnings come from this
 script. Two of them, a count of what changed and the round the work came from,
-name what the diff already shows. The third fires on a body past 35 words,
-which is padding or one message written for two commits. The rest come from
-the scanner the writing skills run on a draft, so the prose rules stay in one
-place. A semicolon or an em-dash there is a violation whatever the
+name what the diff already shows. The third fires on a body past the word
+ceiling, which is padding or one message written for two commits. The rest
+come from the scanner the writing skills run on a draft, so the prose rules
+stay in one place. A semicolon or an em-dash there is a violation whatever the
 context and blocks. A long sentence or a restatement is a judgment call and
 warns.
 
@@ -55,8 +55,8 @@ BODY_LIMIT = 72
 # sentence and stops short of a third.
 BODY_WORDS = 35
 
-# A bare list marker is not a word. Counting it puts a three-bullet body over
-# the ceiling with nothing in it the writer can cut.
+# Counting a bare list marker as a word puts a three-bullet body over the
+# ceiling with nothing in it the writer can cut.
 WORD = re.compile(r"[A-Za-z0-9]\S*")
 
 # The type list from the Conventional Commits spec, not every word before a
@@ -166,16 +166,11 @@ def check_body(body):
 
 
 def word_count(body):
-    """Count the body's words, each one opening on a letter or a digit."""
     return len(WORD.findall(body))
 
 
 def check_length(body):
-    """Report a body past the ceiling.
-
-    A body gets long two ways. The wording is padded, or the message covers
-    two commits, so the warning names both and the writer picks.
-    """
+    """Report a body past the ceiling."""
     count = word_count(body)
     if count <= BODY_WORDS:
         return []
