@@ -59,7 +59,7 @@ When a `Repository map.md` is present, judge its resolution rather than trusting
 
 Stop only when *all* of commits, `pomodoros`, `done_tasks`, and `notes_lines` are zero. If any one has content, continue. Checking this before reading the note keeps an empty day cheap.
 
-`open_tasks` is not part of the condition. A note holding only queued work is not a worked day.
+`open_tasks` is not part of the condition. A note with only queued work is not a worked day.
 
 ### Step 3: Read the daily note
 

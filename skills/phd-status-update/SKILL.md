@@ -69,7 +69,7 @@ All prose written or edited by this skill (planning docs and snapshots) must fol
 
 Only create a snapshot when the request explicitly says so, in phrases like "update and snapshot" or "also create a snapshot", or an automated trigger whose prompt includes "snapshot". Absent that, skip this section.
 
-When it applies, read `references/snapshots.md`. It holds the required sections, the status-marker legend, the internal-consistency checklist, and the workflow.
+When it applies, read `references/snapshots.md`. It has the required sections, the status-marker legend, the internal-consistency checklist, and the workflow.
 
 ## What NOT to do
 

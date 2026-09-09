@@ -62,7 +62,7 @@ The reader of a body is someone running `git blame` on a line that looks wrong, 
 
 Two questions, in order.
 
-**Would a later reader find this code surprising?** Most changes hold nothing strange. No surprise, no body, and stop here.
+**Would a later reader find this code surprising?** Most changes have nothing strange in them. No surprise, no body, and stop here.
 
 **Can the code state it instead?** A comment sits next to the line and reaches everyone who opens the file. A body reaches someone who already went digging. When a comment can state the fact, write the comment and put it in this same commit. A comment is the answer most of the time. It puts the explanation where the surprise is. Read **code-comments** before writing it.
 
@@ -86,7 +86,7 @@ round: the hard-limit paragraph, the diagram move, "attends to" to
 "depends on", the overhead definition, and the opening rewrite.
 ```
 
-Kept. A fact about the change as an event, which no file can hold:
+Kept. A fact about the change as an event, which no file can state:
 
 ```
 The § 2.4 numbers come from the August run. The caption cited the July
@@ -159,7 +159,7 @@ Exit 0 means the commit was created. Exit 2 is a usage error. Exit 1 means nothi
 
 - A message error.
 - A path that is neither on disk nor tracked.
-- An index already holding a path outside the group.
+- An index that already has a path outside the group.
 - A hook that failed for a reason a second run will not fix. Read the hook output and fix the cause. Do not re-run the script to get past it.
 
 Do not push.

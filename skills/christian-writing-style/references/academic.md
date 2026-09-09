@@ -71,7 +71,7 @@ The same opening paragraph for a results section. Christian's version is second.
 
 Five differences, and **the transferable content is these five. The wording is disposable.** A results paragraph with no two-way confound to separate should look nothing like this one.
 
-1. **Points at the table instead of quoting a number from it.** The table holds the per-model figures. A pooled figure in the prose makes the reader reconcile two presentations of one fact. It reads as a discrepancy.
+1. **Points at the table instead of quoting a number from it.** The table has the per-model figures. A pooled figure in the prose makes the reader reconcile two presentations of one fact. It reads as a discrepancy.
 2. **Names the confound.** One clause with a defined term replaces three sentences of framing.
 3. **Quotes the wrong reading and rejects it** ("cannot be interpreted as 'the models have failed'") instead of half-asserting it and then retracting.
 4. **Keeps the plural.** The first version opens on "all three models" and slips to "the model's input."
