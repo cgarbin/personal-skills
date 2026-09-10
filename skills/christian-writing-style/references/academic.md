@@ -78,7 +78,7 @@ Five differences, and **the transferable content is these five. The wording is d
 1. **Points at the table instead of quoting a number from it.** The table has the per-model figures. A pooled figure in the prose makes the reader reconcile two presentations of one fact. It reads as a discrepancy.
 2. **Names the confound.** One clause with a defined term replaces three sentences of framing.
 3. **Quotes the wrong reading and rejects it** ("cannot be interpreted as 'the models have failed'") instead of half-asserting it and then retracting.
-4. **Keeps the plural.** The first version opens on "all three models" and slips to "the model's input."
+4. **Keeps the plural.** The before opens on "these models" and slips to "the model's input."
 5. **Stops one clause earlier.** The dropped clause was also inaccurate: the section tests alternative explanations for the gap.
 
 The second paragraph is gone entirely. Per-model trend qualifiers belong in the table caption or in the section that owns the trend. Under the opening claim they bury it.
