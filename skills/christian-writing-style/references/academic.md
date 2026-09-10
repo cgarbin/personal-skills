@@ -61,11 +61,15 @@ The common foundation states the rule: prose next to a table says what the numbe
 
 ### Before and after
 
-The same opening paragraph for a results section. Christian's version is second.
+The same opening for a results section.
+
+Before:
 
 > Concept recall pools to 0.159, and read on its own that number says these models fail at the task. It holds two different problems. Most of the concepts it counts as missed were never in the model's input, which is a property of the task. Of the concepts that were there, the models produce about a third, which is a property of the models. This section separates the two, characterizes the second, and then tests whether it is real.
 >
 > The level is low on all three models while the trend matches the other metrics in Section 5.1, rising with admission size on Gemma and Qwen and moving without a clear direction on Llama.
+
+After:
 
 > Concept recall is low in all three models, as shown in Table [ref]. However, this number cannot be interpreted as "the models have failed" because it is confounded with the task. Most of the concepts that the models miss were never in their input, which is a property of the task. Of the concepts that were there, the models produce about a third, which is a property of the models. This section separates the two and characterizes the second.
 
