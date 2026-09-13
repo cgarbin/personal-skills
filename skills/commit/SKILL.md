@@ -45,7 +45,7 @@ Do not use `git add -p` or patch extraction. If a file's changes belong to two g
 
 For each group, draft:
 - Files to stage.
-- Subject line: aim 50 chars, hard limit 72, focused on "what". No Conventional Commit prefixes (`feat:`, `fix:`, `chore:`, etc.). Examples: "Compress commit skill", "Add hook-reformat recovery", "Drop unused config flag".
+- Subject line: focused on "what", no Conventional Commit prefixes (`feat:`, `fix:`, `chore:`, etc.). Strive for 50 chars. Go past it if cutting to 50 chars would make the subject less useful for a human. In no case go over 72 chars. Examples: "Compress commit skill", "Add hook-reformat recovery", "Drop unused config flag".
 - Body: default is no body. Read **Bodies** below first. Before drafting one, write the line `Not in the code: <the fact, and why no comment can state it>`. No line, no body. Separate with a blank line and wrap at 72.
 
 End with the `Co-Authored-By` trailer the harness gives you, as its own paragraph. It is the only trailer to add. Never reconstruct it from an older commit, because the author name moves with the model.
