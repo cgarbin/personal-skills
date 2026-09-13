@@ -67,6 +67,7 @@ Two related checks:
 - **Sentence complexity.** Sentences that try to do too much. christian-writing-style covers heavy left-branching, subject-verb separation, nominalizations.
 - **Paragraph focus.** One main idea per paragraph. Split if it covers two or three. Merge if consecutive paragraphs make the same point.
 - **Conciseness.** Filler ("it is worth noting that"), redundancy ("each and every"), throat-clearing ("as mentioned previously").
+- **Decoding-step test.** Ask whether each precise word sits in the slot the thing itself belongs in (christian-writing-style, Name the concrete thing). Name the step the reader has to take, or it is not a finding. The sweep below runs this test over a manuscript.
 - **Paragraph-tail test.** Read the last sentence of each paragraph on its own and ask what it adds beyond the paragraph. Editorial close-outs are almost always final sentences. They are invisible while reading forward because they feel like the landing. Run this as a separate pass. Following the argument hides these. Restatements go, conclusions stay (christian-writing-style, side commentary).
 - **Paragraph-opening test.** Read the first clause of each paragraph on its own. Flag runs of consecutive paragraphs that open on a reaction to the material. One such opening is voice and belongs in the blog register. Three in a row means every paragraph tells the reader how to feel before saying what the thing is. The fact arrives late each time. Run it in the same pass as the tail test (christian-writing-style, `references/blog.md`).
 - **Code-comment test.** Read each comment against the code it sits on and ask what a reader who skipped it would get wrong. Flag the ones where the answer is nothing. A one-line comment restates the code as easily as a four-line one. When the review covers comments or docstrings, read **code-comments** and run its scan first.
@@ -125,6 +126,35 @@ Side commentary, the concrete-thing vocabulary, nominalization leads, soft verbs
 Markdown files get `--skip-html-comments`, which reads the published prose and skips `<!-- -->` notes. Use it on a drafting file. Half of one dissertation manuscript is storyline and provenance comments, and scanning them alongside the prose buried the real hits three to two.
 
 Answer a `TEST` hit in writing whenever you decide to leave the text as it is. Quote the printed test and answer it in one line. Reasoning that never states the test drifts back to the wording the check flagged.
+
+The sweep below reads for what no stem can state. On a manuscript, run it after this layer.
+
+---
+
+## The decoding-step sweep
+
+The companion to the scan. The scan catches inflated words. This catches precise words in the wrong slot, which no regex reaches.
+
+The three patterns are in christian-writing-style (Name the concrete thing).
+
+**The one test.** Name the step the reader currently has to take. Christian's own diagnosis, on "Llama's median is the fastest at every stratum through 64K":
+
+> "Llama's median" forces the reader to stop and think "median of what?". Then comes "fastest", and the reader thinks "perhaps time then?". Don't generate all this extraneous cognitive load. Simpler: "Llama's generation time".
+
+If you cannot name a concrete decoding step, it is not a finding.
+
+The six steps below are for a manuscript. On a section, a diff, or a blog post, the decoding-step test in layer 3 is the whole of it.
+
+**Procedure.** One chapter at a time, one agent per chapter, run in parallel.
+
+1. Extract the range to a scratchpad file. Scan it with `--skip-html-comments`. Expect the `FIX` hits to be false positives in a Pandoc manuscript: the multi-citation separator `[@a; @b]`, `&nbsp;` in table cells, and LaTeX spacing like `\;`. Thirty of thirty were. Triage them and answer the `TEST` groups before dispatching, so the agent does not spend findings on them.
+2. Dispatch a read-only agent with the test above, the three patterns, and accepted fixes from a chapter already done. The worked examples are what keep the report at ten usable findings instead of thirty padded ones.
+3. Give it four guards, or it returns a rewrite pass. Clear cases only, a word or a clause, never a paragraph restructure. Repetition is not a defect, so a restated figure never becomes a cross-reference. Precision beats brevity: units, intervals, version pins, and thresholds stay. The document's defined terms never get simplified away, so list them.
+4. Verify every factual claim in the report against the source table before presenting any of it. Three of one chapter's ten rested on table arithmetic. A review agent in the same session got the arithmetic backwards. The reviewer relayed it to Christian without checking.
+5. Present as a table: line, current, the step the reader takes, proposed. He strikes what he does not want.
+6. Apply in one pass with `assert t.count(old) == 1` per edit, then rescan only the changed lines and answer any surviving `TEST` hit in one line.
+
+**What the sweep is not for.** It finds no wrong claims and no missing arguments, because it never asks whether a passage should exist. Run it after the claim-level review.
 
 ---
 

@@ -77,6 +77,9 @@ An abstraction standing in for a specific thing makes the reader do the decoding
 - **"Land"** as a verb for where files, data, or values end up ("files land at X," "binaries land in $DIR"). Use "go into," "end up at," "is written to," "sits in," or rephrase. Watch for adjacent overuse: "lands cleanly," "the changes landed in the same window."
 - **"Carry"** as a verb for what text, code, or a table conveys ("the comment carries the constraint," "the reason carries the content," "what the table cannot carry"). Use "state," "describe," or name what the text actually does.
 - **"Hold"** as a verb for what a file, a table, or a dataset contains ("the cohort holds 116 admissions," "the row holds three statistics"). Use "has," "contains," or name what is in it. "Hold" is right for staying steady ("recall holds to the longest admissions") and for keeping something back ("held back from the prose pass").
+- **A statistic standing in for the quantity it measures.** "Llama's median is the fastest at every stratum" makes the reader ask "median of what?", then guess from "fastest" that it might be time. Write "Llama's generation time". Also "the median generation falls from 145 to 52 seconds" → "the median generation time", and "Prefill's share of the clock" → "Prefill's share of the generation time". The statistic is not the wrong word. It is in the slot the quantity belongs in.
+- **An artifact standing in for what it shows.** A table, row, column, line, curve, or cell cannot do what a quantity does. The test is whether the artifact can literally take the verb. A table can list the strata. A row cannot move recall. "so the lines cross" → "so the memory curves cross". "This table is the limit of the model" → "Input utilization is the limit of the model". "This row is an indication" → "This result is an indication". "The MEDCON row is the one figure" → "The MEDCON row produces the one figure".
+- **A bare ordinal or position.** "the least memory below the first crossing and the most above the second" sends the reader back to map two ordinals onto two numbers in the previous sentence. Write "the least memory up to about 14,000 tokens and the most above about 38,000". Same for "the first four cells of [@tbl:cells]" when the four have names. When no name exists, supply the noun the ordinal counts: "The third survives" → "The third failure mode survives".
 - **Vague quantifiers where a number exists.** "Latency was elevated" → give the value. "Various factors" → name them. "The system had issues" → name what went wrong. "Tighten grading" → say which metric moved and by how much. "Recovers a small fraction of those concepts" → give the fraction.
 - **Coining a phrase when the document already supplies one.** When a passage reads badly, take the wording from its own tables, captions, bullets, and defined terms before inventing anything. One sentence went through five rewrites, each inventing a new abstraction ("sits in the numerator but not its denominator"), while the table row three lines above already read "Not in the source documents, in the generated summary."
 
@@ -104,7 +107,7 @@ He does not write "X rather than Y" or "X, not Y". Restate as a positive claim a
 - "What disqualifies a path is whose server holds the record, not whose weights run on it" becomes "Where the record goes is what rules a path out."
 - "does not answer this, and the reason is legal rather than technical" becomes "does not answer this."
 
-The rule governs the phrasing, so it holds where the contrast is informative. A dissertation whose argument is a chain of eliminations passes the empty-tail test below on nearly every instance, and a sweep of one manuscript still had to restate 91 of them. Fix every instance in the passage. The flagged one is a sample.
+The rule governs the phrasing, so it holds where the contrast is informative. A dissertation whose argument is a chain of eliminations passes the empty-tail test below on nearly every instance. A sweep of one manuscript still had to restate 91 of them. Fix every instance in the passage. The flagged one is a sample.
 
 A plain negation is a different thing and stays: "Low recall is not a retrieval problem" asserts something, where "X, not Y" only points away from Y.
 
@@ -152,7 +155,8 @@ Items ending in a section name are explained above.
 - Long left-branching phrases that separate subject from verb. (Craft principles)
 - Sentences past about forty words that are not a list or an enumeration. (Craft principles)
 - Vague hand-waving instead of concrete evidence. "Various factors" → name them. (Name the concrete thing)
-- Framing-deck vocabulary ("stack," "arm," "frontier," "axes," "lever"), "downstream" for "later," "land" as a verb for where things end up, "carry" for what text conveys. (Name the concrete thing)
+- Framing-deck vocabulary ("stack," "arm," "frontier," "axes," "lever"), "downstream" for "later," "land" as a verb for where things end up, "carry" for what text conveys, "hold" for what a file or a table contains. (Name the concrete thing)
+- A statistic standing in for its quantity, an artifact standing in for what it shows, a bare ordinal or position. (Name the concrete thing)
 - "X rather than Y" and "X, not Y". (No this-not-that)
 - Editorial close-outs, announcing a choice as deliberate, narrating a disclosure instead of disclosing. (Side commentary)
 
@@ -212,6 +216,6 @@ Work the groups in order. `FIX` and `REWRITE` hits are always violations. Every 
 
 A clean scan is not a clean draft.
 
-- **The rules with no stems.** Announcing the arrangement instead of stating it (Show, don't tell) has no mechanical form. Neither does coining a phrase the document already supplies (Name the concrete thing), nor do the paragraph-tail and paragraph-opening tests in **text-review**. The wording is new every time. Read your own draft for them the way you would read someone else's.
+- **The rules with no stems.** Announcing the arrangement instead of stating it (Show, don't tell) has no mechanical form. Neither does coining a phrase the document already supplies, nor do the statistic, artifact, and ordinal patterns in the same section (Name the concrete thing). The paragraph-tail and paragraph-opening tests in **text-review** have none either. The wording is new every time. Read your own draft for them the way you would read someone else's.
 - **Text that never becomes a file**, such as an answer in the conversation. Reread it against What to avoid instead.
 - **Files that quote the banned vocabulary as examples**, these skill files included. Every example fires, so read those files by eye.
