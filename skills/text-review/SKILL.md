@@ -20,7 +20,7 @@ Three things shape what feedback is useful. Settle them first.
 - **Draft stage.** Ask if unclear. Early drafts: feedback on structure, argument, missing pieces. Late drafts: sentence-level editing and polish. Reviewing an early draft for comma placement wastes time. Reviewing a final draft without checking the argument is worse.
 - **Scope.** A whole document, or a single comment, commit subject, or paragraph. A snippet needs the mechanical scan and, for comments, the code-comment test. Layers 1, 2, and 4 and the two-phase gate assume a document.
 
-**Reviewing an edit pass is not reviewing a draft.** When the subject is a set of changes, read each changed passage together with the passages that depend on it, in full and in order, whether or not they changed. "Check what depended on the fact" under Applying changes names the three kinds of dependent passage to look for. A diff shows the side that changed and hides the side that depended on it, so coupling breakage is invisible from the diff by construction.
+**Reviewing an edit pass is not reviewing a draft.** When the subject is a set of changes, read each changed passage together with the passages that depend on it, in full and in order, whether or not they changed. Read each added passage against the rules that already govern it. "Check what a pass left inconsistent" under Applying changes names the kinds to look for. A diff shows the side that changed and hides the side that depended on it, so coupling breakage is invisible from the diff by construction.
 
 ---
 
@@ -240,15 +240,18 @@ An anchor that starts mid-paragraph removes more than the edit names. The remova
 
 The baseline is the commit the pass started from, never HEAD. On a pass already committed, HEAD returns nothing, and the check reports clean on exactly the edits it exists to catch.
 
-### Check what depended on the fact
+### Check what a pass left inconsistent
 
-Before marking any change done, list what was only correct because of the fact you just changed. Grep finds the old wording. It does not find a passage that reads fine on its own and is now wrong in context, which is the failure that survives review. Three kinds. Find them by reading in full, and look beyond the file you edited:
+Before marking any change done, list what the pass could have left wrong: passages that were only correct because of the fact you changed, and the sentences the pass added. Grep finds the old wording. It does not find a passage that reads fine on its own and is now wrong in context, which is the failure that survives review. Find the kinds below by reading in full, and look beyond the file you edited:
 
 - **Restatements.** Another passage states the same fact. Adding detail in one place makes the other a duplicate. Removing detail makes it the only copy. A duplicate that predates the edit is a layer 2 finding.
 - **Derivations.** Another passage ranks, counts, or orders by the fact. A priority list built from a table, a total that has to sum, a count repeated in a second document.
 - **Negations.** Another passage says what the fact is not, departs from it, or reconciles it with something else. Delete the fact and the negation is left denying nothing.
+- **Descriptions of the passage.** A comment, storyline note, or rule that says what the passage does or how it is built. Reword the passage and the description still describes the old one. It sits inches from the text it describes and reads as background, so it survives the read that catches the others.
 
-Renames are the case a scan catches, because the old term is still sitting somewhere as a string, however hard it is to spot from inside the edit. Additions, deletions, and changed numbers are the case it misses. They break a passage elsewhere without leaving a stale string to search for.
+**Text you added is a dependent passage too.** Every kind above starts from a change you made, so a stale passage is one that disagrees with the new text. A sentence you wrote has no prior version to disagree with, and nothing about it looks stale. Read it against the constraints already governing the passage, including the ones this pass is not editing: the rules stated where it sits, the definitions of the terms it uses, and the claims on either side of it. In a source file those rules sit in the comment block around it. In a manuscript they sit in a storyline note or in the surrounding section. The rule being correct is why a sentence contradicting it stays invisible while you write.
+
+Renames are the case a scan catches, because the old term is still sitting somewhere as a string, however hard it is to spot from inside the edit. Additions, deletions, and changed numbers are the case it misses. They leave no stale string to search for, whether the broken passage is elsewhere in the document or the sentence the pass just added.
 
 ### Responding to refinements
 

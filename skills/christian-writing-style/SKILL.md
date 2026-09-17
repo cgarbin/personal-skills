@@ -191,7 +191,7 @@ The default is minimal intervention.
 - Fix what violates this skill. Leave what merely differs from how you would have written it.
 - Preserve his structure unless the structure is the problem. Raise a reordering of sections as a finding and leave the document alone.
 - Preserve the voice already on the page, including asides and reactions he wrote himself. The rate limit in `references/blog.md` governs what you add. What he already wrote stays.
-- After renaming a term or reframing a decision, scan the whole document for the old usage. Anything beyond a rename needs the consumer check in **text-review**, because an addition or a changed number breaks a passage elsewhere without leaving a stale string to find.
+- After renaming a term or reframing a decision, scan the whole document for the old usage. Anything beyond a rename needs "Check what a pass left inconsistent" in **text-review**. An addition or a changed number breaks a passage elsewhere without leaving a stale string to find. A sentence you added can contradict a rule that never changed.
 
 A fix confined to a sentence or two goes in directly. Anything larger is a review, so switch to **text-review** and use its gate: present every finding grouped by severity, wait, then work through them one at a time. Do not describe a large rewrite and apply it in the same turn.
 
