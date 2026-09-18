@@ -8,7 +8,7 @@ description: >-
 
 How to review Christian's writing: what to examine, in what order, and how to present feedback. For voice, tone, sentence patterns, and formatting conventions, consult **christian-writing-style**.
 
-Always load **christian-writing-style** alongside this skill, plus the reference file for the register under review: `references/blog.md` or `references/academic.md`. Short snippets need neither. Several checks below cite rules that live only in those files.
+Always load **christian-writing-style** alongside this skill, plus the reference file for the register under review: `christian-writing-style/references/blog.md` or `christian-writing-style/references/academic.md`. Short snippets need neither. Several checks below cite rules that live only in those files.
 
 ---
 
@@ -18,7 +18,7 @@ Three things shape what feedback is useful. Settle them first.
 
 - **Register.** Blog post, journal paper, email, commit message? christian-writing-style routes these at the top of its SKILL.md, and the reference file to load follows from that routing.
 - **Draft stage.** Ask if unclear. Early drafts: feedback on structure, argument, missing pieces. Late drafts: sentence-level editing and polish. Reviewing an early draft for comma placement wastes time. Reviewing a final draft without checking the argument is worse.
-- **Scope.** A whole document, or a single comment, commit subject, or paragraph. A snippet needs the mechanical scan and, for comments, the code-comment test. Layers 1, 2, and 4 and the two-phase gate assume a document.
+- **Scope.** A whole document, or a single comment, commit subject, or paragraph. A snippet needs the mechanical scan and, for comments, the code-comment test. Layers 1, 2, and 4, the two-phase gate, and the paragraph tests in layer 3 all assume a document. A single comment has no paragraphs.
 
 **Reviewing an edit pass is not reviewing a draft.** When the subject is a set of changes, read each changed passage together with the passages that depend on it, in full and in order, whether or not they changed. Read each added passage against the rules that already govern it. "Check what a pass left inconsistent" under Applying changes names the kinds to look for. A diff shows the side that changed and hides the side that depended on it, so coupling breakage is invisible from the diff by construction.
 
@@ -74,19 +74,16 @@ Two related checks:
 
 ### 4. Style alignment
 
-Consult christian-writing-style for the full specification. Common issues:
+christian-writing-style is the specification. Before you start already settled the register. The checks below need the whole piece in view, which is why a writer working sentence by sentence cannot run them.
 
-- **Wrong register.** Blog informality in an academic paper, academic stiffness in a blog post.
-- **Voice drift.** Sections that shift more formal, more casual, more aggressive, or more hedged than Christian's norm.
-- **Missing "why does this matter?"** Christian's writing connects technical content to real-world significance. Flag sections that present results without that connection.
-- **Overclaiming or underclaiming.** Christian is measured. Watch both directions.
+- **Voice drift.** Sections that shift more formal, more casual, more aggressive, or more hedged than the rest of the piece.
+- **Overclaiming or underclaiming.** Christian is measured, so watch both directions. A hedge in the abstract and a flat assertion in the discussion are each defensible alone.
+- **Missing "why does this matter?"** Christian's writing connects technical content to real-world significance. Name the sections that present results without it.
 - **Limitations absent or thin.** Christian treats limitations as a contribution. Flag if a piece (especially academic) skips or rushes through them.
 
 ### 5. Mechanical scan
 
 Backstop for patterns judgment alone misses. `scripts/scan.py` has the patterns and the reasoning behind each one. It exits 0 clean, 1 with hits, 2 on a usage error. `scripts/test_scan.py` pins the behavior a regex cannot state, from where a sentence boundary falls to which units have no sentence at all.
-
-Hits come grouped by the action they need, `FIX` before `REWRITE` before `TEST`, so a find-and-replace does not sit in the same list as a call that needs judgment. Each group prints the fix or the test once, then the hits under it with the sentence around each one.
 
 ```bash
 scripts/scan.py draft.md                    # prose
@@ -95,6 +92,10 @@ scripts/scan.py --summary draft.md          # counts per check
 scripts/scan.py --only citation paper.md    # named checks, and the only way to run citation
 scripts/scan.py --skip-html-comments paper.md   # published prose, no <!-- --> notes
 ```
+
+Hits come grouped by the action they need, `FIX` before `REWRITE` before `TEST`, so a find-and-replace does not sit in the same list as a call that needs judgment. Each group prints the fix or the test once, then the hits under it with the sentence around each one, and a `see` line pointing at the rule behind the check.
+
+`FIX` and `REWRITE` hits are always violations. A `TEST` hit prints the test to apply before you decide. Answer it in writing whenever you decide to leave the text as it is: quote the printed test and answer it in one line. Reasoning that never states the test drifts back to the wording the check flagged.
 
 The voice checks run on everything, since a rule about his voice holds wherever the text sits. They cover:
 
@@ -106,26 +107,16 @@ The voice checks run on everything, since a rule about his voice holds wherever 
 - soft verbs used as jargon, and vocabulary that stands in for the concrete thing
 - vague quantifiers, and quantities written out in words where a number belongs
 
-The extension decides what gets read. The rules that apply are the same either way. A source file is reduced to its comment lines first, because `guard` and `canonical` are ordinary identifiers and a file-wide search buries the hits. Anything else is read as prose, with hard-wrapped lines joined so a phrase split across a line break still matches.
+The extension picks the rest. A source file gets the code-comments stems, and prose gets the sentence-length and specialist-term checks. `references/scan.md` has the routing in full, the checks that fire on correct prose and why, and the precision numbers behind the two `REWRITE` checks. Read it when a hit does not make sense.
 
-Source files get the three code-comments stems, jargon, dead-code, and plan-label, held back from prose because "Step 1" is a heading there. Prose gets two of its own. `specialist-term` asks the curse-of-knowledge question about the same words the jargon stem bans outright in a comment. `long-sentence` counts the words between two sentence boundaries and stays out of source files, where the comment pass reads one physical line at a time and a wrapped sentence never reaches the limit in one unit.
-
-The em-dash check reads every line of a source file, because nothing in code needs one and the comment pass cannot see an error string or a log message. British spelling is not read that way, since it would match every word inside this script's own pattern list.
+Markdown drafting files get `--skip-html-comments`. Scanning storyline and provenance notes alongside the prose buries the real hits.
 
 Two checks need a read instead:
 
 - Inconsistent capitalization or spelling of recurring technical terms.
 - Whether each citation key and named attribution was checked against a source, including ones you wrote yourself. A recalled one counts as unchecked. `--only citation` finds the keys but not where they came from. It stays opt-in because eighty citations in a paper would drown every other check.
 
-Report every `FIX` and `REWRITE` hit, false positives included. Reporting them matters most during iterative editing, where corrections in one round reintroduce patterns cleaned up in the previous one.
-
-Side commentary, the concrete-thing vocabulary, nominalization leads, soft verbs, and specialist terms fire often enough on correct prose that reporting them raw buries the real findings, since "axis" and "stack" are ordinary words in a paper about models, "Precision improved to 0.8" is not a zombie noun, and "API surface" is a noun. `dead-code-ref` is tagged for the same reason: "the target no longer exists" usually describes a missing file. So are `long-sentence`, `unquantified`, and `possession-verb`. A sentence that runs long because it enumerates is doing its job, "a few paragraphs" as a bold lead-in labels a case, and a reader left holding evidence is the idiom. Feeling-words are tagged for a different reason. One per piece is fine when the reaction is itself information, and the script cannot count across a document.
-
-`contrastive-voice` and `comma-join` are `REWRITE`, so no test applies. The first replaced a `TEST` that asked whether a contrast was informative, which is the wrong property: on a manuscript arguing by elimination every instance passed that test and 91 still had to be restated. The judgment half of the old check lives on in `side-commentary`, whose stems reach the tails this pattern misses. The second holds to about 85% precision on a full manuscript, 22 of 26. Its false positives are a two-item list after a colon, a coordinated pair of `that` clauses, a coordinated noun phrase, and a gapped coordination. It reads `and` alone, since every other coordinator states a relationship a period would drop.
-
-Markdown files get `--skip-html-comments`, which reads the published prose and skips `<!-- -->` notes. Use it on a drafting file. Half of one dissertation manuscript is storyline and provenance comments, and scanning them alongside the prose buried the real hits three to two.
-
-Answer a `TEST` hit in writing whenever you decide to leave the text as it is. Quote the printed test and answer it in one line. Reasoning that never states the test drifts back to the wording the check flagged.
+Report every `FIX` and `REWRITE` hit, false positives included. Reporting them matters most during iterative editing, where corrections in one round reintroduce patterns cleaned up in the previous one. `TEST` hits are the other case: several of those checks fire routinely on correct prose, so read `references/scan.md` before reporting a batch of them as findings.
 
 The sweep below reads for what no stem can state. On a manuscript, run it after this layer.
 
@@ -207,6 +198,8 @@ Avoid vague feedback like "this section could be improved." Say specifically wha
 
 Two phases. First, present the full review. Stop and wait. Do not start making changes until Christian asks to proceed.
 
+**Two ways to work through the findings.** Phase 2 below walks one finding at a time and waits on each, which is right when every finding needs its own call. A sweep that finds one pattern repeated across a manuscript needs the other shape: present the instances as a table, let him strike what he does not want, and apply the survivors in one pass. One restatement sweep ran to 91 instances. Asking about each would have cost more attention than reading the manuscript. The decoding-step sweep above uses the table form for that reason.
+
 ### Phase 1: Summarize all findings
 
 Present the complete review using the severity structure above. This gives Christian the full picture so he can prioritize, push back, or skip items before edits begin.
@@ -250,6 +243,8 @@ Before marking any change done, list what the pass could have left wrong: passag
 - **Descriptions of the passage.** A comment, storyline note, or rule that says what the passage does or how it is built. Reword the passage and the description still describes the old one. It sits inches from the text it describes and reads as background, so it survives the read that catches the others.
 
 **Text you added is a dependent passage too.** Every kind above starts from a change you made, so a stale passage is one that disagrees with the new text. A sentence you wrote has no prior version to disagree with, and nothing about it looks stale. Read it against the constraints already governing the passage, including the ones this pass is not editing: the rules stated where it sits, the definitions of the terms it uses, and the claims on either side of it. In a source file those rules sit in the comment block around it. In a manuscript they sit in a storyline note or in the surrounding section. The rule being correct is why a sentence contradicting it stays invisible while you write.
+
+**Fix a stale reference by removing what can go stale.** A count that drifted ("three kinds" against a four-item list) is not fixed by correcting the number, because the same trap stays set for the next edit. Write "the kinds below" or "every kind above". The count was only ever signaling that a list follows. The list does that itself. Apply it to every count in the passage, including the ones that still read correctly. Then check whether dropping a count orphaned an antecedent: "Three kinds. Find them" loses its referent when the three goes.
 
 Renames are the case a scan catches, because the old term is still sitting somewhere as a string, however hard it is to spot from inside the edit. Additions, deletions, and changed numbers are the case it misses. They leave no stale string to search for, whether the broken passage is elsewhere in the document or the sentence the pass just added.
 

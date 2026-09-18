@@ -134,8 +134,6 @@ Side commentary is not the same as personal voice, which `references/blog.md` ca
 
 ### What to avoid
 
-Items ending in a section name are explained above.
-
 - Breathless enthusiasm or marketing language ("revolutionary," "game-changing," "incredible," "novel" without justification).
 - Claims without sources.
 - Attribution verbs stronger than the evidence ("established," "proved," "showed" for what a source argued or proposed).
@@ -148,17 +146,8 @@ Items ending in a section name are explained above.
 - British spelling. Use US: *analyze*, *color*, *behavior*, *modeling*, *-ize*, *center*, *defense*.
 - Em-dashes in his own writing. Use periods or parentheses unless Christian uses one first in the conversation.
 - Joining two independent clauses with a semicolon or with a comma and "and". Each clause takes its own sentence, even closely related ones ("The model converged. The loss plateaued at 0.3."). "So", "but" and "for" each state a relationship a period would drop, so they stay. A compound predicate is one clause and stays whole ("The script reads the artifact and writes the scores beside it"). Semicolons in pseudo-code or table structure are fine.
-- Nominalizations where a verb would do ("the implementation of" → "we implemented"). (Craft principles)
-- Metacommentary that delays content ("It is worth noting that...", "It is important to mention..."). (Craft principles)
-- Hedging pileups. One hedge per claim, placed precisely. (Craft principles)
-- Passive voice when the agent matters and active voice would be clearer. (Craft principles)
-- Long left-branching phrases that separate subject from verb. (Craft principles)
-- Sentences past about forty words that are not a list or an enumeration. (Craft principles)
-- Vague hand-waving instead of concrete evidence. "Various factors" → name them. (Name the concrete thing)
-- Framing-deck vocabulary ("stack," "arm," "frontier," "axes," "lever"), "downstream" for "later," "land" as a verb for where things end up, "carry" for what text conveys, "hold" for what a file or a table contains. (Name the concrete thing)
-- A statistic standing in for its quantity, an artifact standing in for what it shows, a bare ordinal or position. (Name the concrete thing)
-- "X rather than Y" and "X, not Y". (No this-not-that)
-- Editorial close-outs, announcing a choice as deliberate, narrating a disclosure instead of disclosing. (Side commentary)
+
+Everything under Craft principles, Name the concrete thing, No this-not-that, and Side commentary belongs on this list too. A second copy here would be a second wording to drift from.
 
 ---
 
@@ -180,7 +169,7 @@ The common foundation is the entire skill here. There is no opening hook, no roa
 
 **A snippet earns its place by stating a fact its context cannot.** The context is the code for a comment, the diff for a commit message, the stack trace for an error string. That fact is usually the constraint that shaped the work or the hazard it avoids. A commit body is narrower, and **commit** sets its rules. In a comment the rejected alternative goes, whatever the reasoning (**code-comments**, road not taken). The test while drafting: what would a reader who skipped it get wrong? If nothing, delete it. If one clause answers it, that clause is the whole snippet. A constraint that shaped the code and appears nowhere on the page is a missing comment.
 
-When a snippet still runs past two or three sentences after every sentence has earned its place (a multi-paragraph docstring, a long PR description), switch to the blog register. A commit body is the exception. Its reader has the diff, so the body needs only what no comment can state. **commit** has the ceiling and the examples. Its check runs this scan on the body for you.
+When a snippet still runs past two or three sentences after every sentence has earned its place (a module docstring, a long PR description), switch to the blog register. A commit body is the exception. Its reader has the diff, so the body needs only what no comment can state. **commit** has the ceiling and the examples. Its check runs this scan on the body for you.
 
 ---
 
@@ -193,7 +182,7 @@ The default is minimal intervention.
 - Preserve the voice already on the page, including asides and reactions he wrote himself. The rate limit in `references/blog.md` governs what you add. What he already wrote stays.
 - After renaming a term or reframing a decision, scan the whole document for the old usage. Anything beyond a rename needs "Check what a pass left inconsistent" in **text-review**. An addition or a changed number breaks a passage elsewhere without leaving a stale string to find. A sentence you added can contradict a rule that never changed.
 
-A fix confined to a sentence or two goes in directly. Anything larger is a review, so switch to **text-review** and use its gate: present every finding grouped by severity, wait, then work through them one at a time. Do not describe a large rewrite and apply it in the same turn.
+A fix confined to a sentence or two goes in directly. Anything larger is a review, so switch to **text-review** and use its gate: present every finding grouped by severity, wait, then apply them at the pace its Applying changes section sets. Do not describe a large rewrite and apply it in the same turn.
 
 ---
 
@@ -210,9 +199,7 @@ The second form reads the published prose and skips `<!-- -->` notes. Use it on 
 
 Pass every file you touched in one call. The extension decides what gets read: a source file is reduced to its comments and docstrings, anything else is read as prose.
 
-**text-review** owns the script and explains what each pattern is for. On a non-standard install it sits at `text-review/scripts/scan.py` in the skills directory.
-
-Work the groups in order. `FIX` and `REWRITE` hits are always violations. Every group prints a `see` line pointing at the rule behind the check. `TEST` hits also print the test to apply. Whenever you decide to keep your wording, quote that test and answer it in one line. Reasoning that never states the test drifts back to what you already wrote.
+Work the groups in order. **text-review** owns the script. Its layer 5 explains how to read the output, including what to do with a hit you decide to keep. `text-review/references/scan.md` has the design notes behind each check. On a non-standard install the script sits at `text-review/scripts/scan.py` in the skills directory.
 
 A clean scan is not a clean draft.
 
