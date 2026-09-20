@@ -347,8 +347,8 @@ PROSE_CHECKS = [
           "and let the next sentence show it",
           "christian-writing-style, No this-not-that"),
     Check("comma-join", comma_join, "REWRITE",
-          "two clauses, so use a period. It reads \"and\", \"but\" and \"or\". "
-          "\", so\" and \", for\" mark a relationship a period would drop",
+          "two clauses, so use a period. It reads \", and\" alone. \", but\", \", so\" "
+          "and \", for\" mark a relationship a period would drop, so they stay",
           "christian-writing-style, What to avoid"),
 ]
 

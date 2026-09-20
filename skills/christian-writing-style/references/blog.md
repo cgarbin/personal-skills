@@ -25,7 +25,7 @@ Both tell the reader how to feel about the row before saying what the row is, so
 
 Two habits keep it in range.
 
-**Do not open consecutive paragraphs with a reaction to the material.** Let the fact lead and let the reaction follow it, or move the reaction into a later sentence.
+**Do not open a second paragraph in a section with a reaction to the material.** Let the fact lead and let the reaction follow it, or move the reaction into a later sentence.
 
 **Feeling-words spent on a fact cost more than they look.** *Uncomfortable*, *surprising*, *striking*, *remarkable*. One in a piece is fine when the reaction is itself information, because "I did not expect this, and here is why" tells the reader something about the world. "The uncomfortable one" as a paragraph opener is decoration on a fact that stands without it.
 

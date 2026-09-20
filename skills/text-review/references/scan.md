@@ -37,9 +37,9 @@ These are tagged `TEST` because reporting them raw would bury the real findings.
 | `pointer` | "those that read the discharge summary" points at a group the same sentence names, and "the former CEO" means previous. |
 | `feeling-word` | One per piece is fine when the reaction is itself information, and the script cannot count across a document. |
 
-## The two REWRITE checks
+## Why contrastive-voice and comma-join are REWRITE
 
-`contrastive-voice` and `comma-join` are `REWRITE`, so no test applies.
+Both are `REWRITE`, so no test applies.
 
 `contrastive-voice` replaced a `TEST` that asked whether a contrast was informative, which is the wrong property. On a manuscript arguing by elimination every instance passed that test and 91 still had to be restated. The judgment half of the old check lives on in `side-commentary`, whose stems reach the tails this pattern misses.
 

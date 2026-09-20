@@ -17,7 +17,7 @@ More formal register, same core qualities of clarity, honesty, practical groundi
 
 Longer than blog but still clear. Break complex ideas across multiple sentences.
 
-- Clear topic sentences: "In this section, we review the methods and tools that have been proposed to address these challenges."
+- Clear topic sentences that state the content: "Three families of methods address these challenges, each trading coverage for precision differently." A sentence that announces the section instead ("In this section, we review...") is the one signpost clause below, and SKILL.md's classic style rule holds everywhere else.
 - Specific numbers: "Of the 48 papers, 42 (87.5%) used structured data from electronic health records."
 - Hedged conclusions: "These results suggest that... however, further research is needed to..."
 - Transitions that summarize what was just covered and preview what's next.
