@@ -174,6 +174,24 @@ def contrastive_voice(text):
         yield Span(label(m.group(0).strip(), text, m.end()), m.start(), m.end())
 
 
+# Markup that needs a semicolon of its own: an inline code span, a Pandoc
+# multi-citation, an HTML entity, and a LaTeX escape. The rule is about two
+# clauses, and 39 of the 39 hits on one manuscript were markup.
+MARKUP = re.compile(r"`[^`]*`|\[@[^\]]*\]|&#?\w+;|\\.")
+
+
+def semicolon(text):
+    """Find a semicolon outside the markup that holds one.
+
+    Masking keeps the offsets, so the reported sentence is the real one. A
+    fenced block never reaches here, since scan() holds a counting check back
+    from one, which is what takes a shell command out of the results.
+    """
+    masked = MARKUP.sub(lambda m: " " * len(m.group(0)), text)
+    for m in re.finditer(";", masked):
+        yield Span(label(";", text, m.end()), m.start(), m.end())
+
+
 # "That" and "this" are left out on their own, where the stems below reach them
 # only in "that same" and "this same". "That" opens every relative clause ("the
 # row that is empty"). A sentence opening on "This is" points at the situation
@@ -249,7 +267,7 @@ def comma_join(text):
 PROSE_CHECKS = [
     Check("em-dash", r"—", "FIX",
           "use a period or parentheses", AVOID),
-    Check("semicolon", r";", "FIX",
+    Check("semicolon", semicolon, "FIX",
           "use a period between independent clauses. In pseudo-code or table "
           "structure it stays", AVOID),
     # "analysis" and its plural "analyses" are correct US spellings, so the stem

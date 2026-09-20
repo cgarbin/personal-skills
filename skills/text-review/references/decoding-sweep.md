@@ -14,7 +14,7 @@ The six steps below are for a manuscript. On a section, a diff, or a blog post, 
 
 **Procedure.** One agent per chapter. The first chapter runs alone. Its accepted fixes go to the rest, dispatched in parallel.
 
-1. Extract the range to a scratchpad file. Scan it with `--skip-html-comments`. Expect the `FIX` hits to be false positives in a Pandoc manuscript: the multi-citation separator `[@a; @b]`, `&nbsp;` in table cells, and LaTeX spacing like `\;`. Thirty of thirty were. Triage them and answer the `TEST` groups before dispatching, so the agent does not spend findings on them.
+1. Extract the range to a scratchpad file. Scan it with `--skip-html-comments`. Answer the `TEST` groups before dispatching, so the agent does not spend findings on them.
 2. Dispatch a read-only agent with the test above, those three patterns, and accepted fixes from a chapter already done. The worked examples are what keep the report at ten usable findings instead of thirty padded ones.
 3. Give it four guards, or it returns a rewrite pass. Clear cases only, a word or a clause, never a paragraph restructure. Repetition is not a defect, so a restated figure never becomes a cross-reference. Precision beats brevity: units, intervals, version pins, and thresholds stay. The document's defined terms never get simplified away, so list them.
 4. Verify every factual claim in the report against the source table before presenting any of it. Three of one chapter's ten rested on table arithmetic. A review agent in the same session got the arithmetic backwards. The reviewer relayed it to Christian without checking.

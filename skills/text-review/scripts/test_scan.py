@@ -310,6 +310,36 @@ class BearHandoff(Scanned):
                 self.assertEqual(len(self.hits(line, "concrete-thing")), 1)
 
 
+class Semicolon(Scanned):
+    """The rule is about a clause join, and markup holds semicolons of its own."""
+
+    def test_a_clause_join_fires(self):
+        hits = self.hits("The model converged; the loss plateaued at 0.3.", "semicolon")
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(hits[0].check.action, "FIX")
+
+    def test_markup_stays_quiet(self):
+        for unit, line in (("pandoc citation", "The two studies agree [@smith2023; @jones2022]."),
+                           ("html entity", "The cell reads 0.31&nbsp;(0.02) in every run."),
+                           ("latex spacing", "The interval is 0.4\\;to\\;0.6 in the caption."),
+                           ("inline code", "Run `for f in *.md; do` over the drafts."),
+                           ("code fence", "```\nfor f in *.md; do echo $f; done\n```")):
+            with self.subTest(unit=unit):
+                self.assertEqual(self.hits(line, "semicolon"), [])
+
+    def test_a_join_next_to_markup_still_fires(self):
+        # The exclusion covers the span alone, so a join beside markup fires.
+        text = "Pass `--only` to name a check; the opt-in list is in the help."
+        self.assertEqual(len(self.hits(text, "semicolon")), 1)
+
+    def test_two_joins_in_one_unit_both_report(self):
+        text = "The cache grew; the budget held. The loss fell; recall held."
+        self.assertEqual(len(self.hits(text, "semicolon")), 2)
+
+    def test_a_comment_line_still_fires(self):
+        self.assertEqual(len(self.hits("# a; b\n", "semicolon", ".py")), 1)
+
+
 class Pointer(Scanned):
     """The stems are narrow, so this class pins the misses as well as the hits."""
 

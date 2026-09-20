@@ -92,7 +92,7 @@ scripts/scan.py --skip-html-comments paper.md   # published prose, no <!-- --> n
 
 Hits come grouped by the action they need, `FIX` before `REWRITE` before `TEST`, so a find-and-replace does not sit in the same list as a call that needs judgment. Each group prints the fix or the test once, then the hits under it with the sentence around each one, and a `see` line pointing at the rule behind the check. The line number points at the start of the prose unit holding the hit, so quote the sentence when you report it.
 
-`FIX` and `REWRITE` hits print no test, and they still misfire on markup. A Pandoc citation separator, a semicolon inside a code fence or a shell command, an HTML entity in a table cell, and the contrastive comment a repo mandates in SQL (**code-comments** rule 10) all fire. Confirm the hit is prose before you edit it. A `TEST` hit prints the test to apply before you decide. Answer it in writing whenever you decide to leave the text as it is: quote the printed test and answer it in one line. Reasoning that never states the test drifts back to the wording the check flagged.
+`FIX` and `REWRITE` hits print no test. One still misfires, `contrastive-voice` on a SQL comment a repo mandates (**code-comments** rule 10). A `TEST` hit prints the test to apply before you decide. Answer it in writing whenever you decide to leave the text as it is: quote the printed test and answer it in one line. Reasoning that never states the test drifts back to the wording the check flagged.
 
 The voice checks run on everything, since a rule about his voice holds wherever the text sits. Each hit names its check and prints a `see` line to the rule behind it, so the inventory lives in the output and in `references/scan.md`.
 

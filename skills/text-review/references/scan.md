@@ -59,6 +59,23 @@ The pro-forms left out are the ones no stem separates from ordinary use. "One" a
 
 What survives that narrowing still earns its place. On `BHC generation techniques in prior work` as it stood before the hand pass, it reported 5 hits, 4 of them defects that pass had found. It fires on 4 of the 13 pointers that pass rewrote, which is why layer 3 owns the rest. It prints 12 hits on a 5,036-line manuscript.
 
+## What the semicolon check skips
+
+The rule is a semicolon joining two independent clauses. The check masks the markup that needs one
+of its own: an inline code span, a Pandoc multi-citation `[@a; @b]`, an HTML entity such as
+`&nbsp;`, and a LaTeX escape such as `\;`. A fenced block never reaches the check at all, so a
+shell command keeps its separators.
+
+One chapter of a Pandoc manuscript fired 39 times before this and every one was markup. It fires
+none now.
+
+One markup case is left that no pattern reaches. A repo can mandate a contrastive comment in SQL
+(**code-comments** rule 10), which `contrastive-voice` flags, and whether the repo mandates it sits
+in its AGENTS.md.
+
+Generated files are a separate matter. A Pandoc `body.tex` fires on every `2007;297:831--41` in its
+bibliography. The scan is for files you wrote.
+
 ## Markdown drafting files
 
 `--skip-html-comments` reads the published prose and skips `<!-- -->` notes. Half of one dissertation manuscript is storyline and provenance comments, and scanning them alongside the prose buried the real hits three to two.
