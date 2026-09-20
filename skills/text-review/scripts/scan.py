@@ -275,6 +275,14 @@ PROSE_CHECKS = [
                         r"whenever|on|off|out|for|in|true|steady)\b)", "TEST",
           "possession, or staying steady? \"the cohort holds 116\" is \"has\". "
           "\"the rule holds where the contrast is informative\" stays", CONCRETE),
+    # "load-bearing" is the one figurative sense with its own entry in
+    # concrete-thing. Reaching it here too would print that sentence under two
+    # groups, so the reader answers one call twice.
+    Check("relation-verb", r"(?i)(?<!load-)(?<!load )\b(?:bears?|bearing|borne)\b",
+          "REWRITE",
+          "name the relation: \"the evaluation bears on leakage\" is \"could have "
+          "caught leakage\". \"Bears out\" is \"confirms\", and \"bear in mind\" "
+          "is filler", CONCRETE),
     Check("vague-quantifier", r"(?i)\b(?:elevated|tighten)\b|various factors|had issues",
           "REWRITE",
           "give the number, or name what went wrong", CONCRETE),
