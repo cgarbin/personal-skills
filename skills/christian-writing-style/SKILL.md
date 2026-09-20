@@ -6,7 +6,7 @@ description: >-
 
 # Christian Garbin's Writing Style
 
-The registers below share one voice and differ in formality. Route first, read the common foundation, then read what the third column names. Loading the wrong reference wastes context and pulls in conventions that do not apply. Apply the example sentences and layout descriptions in these files to your own subject. Copying them is the failure mode.
+The registers below share one voice and differ in formality. Route first, read the common foundation, then read what the Read column names. Loading the wrong reference wastes context and pulls in conventions that do not apply. Apply the example sentences and layout descriptions in these files to your own subject. Copying them is the failure mode.
 
 ## Choose the register first
 
@@ -39,7 +39,7 @@ These shape *how* sentences are built, in every register.
 
 **Classic style.** Direct the reader's gaze to something in the world. Prose is a window onto the subject. Avoid metaconcepts. Don't write "This section discusses X" when you can state X. Don't write "It is important to note that X" when you can write X.
 
-**Fight the curse of knowledge.** Anchor abstract concepts in something concrete before going abstract. Prefer the plain word unless the term is standard for this audience or rewording loses accuracy. A term used once and never defined is the common failure, because the reader pays for it and gets nothing back. A term inside an example is a separate case when the lesson is the sentence's shape. If the reader has to understand the example to see the point, it needs words the audience already has.
+**Fight the curse of knowledge.** Anchor abstract concepts in something concrete before going abstract. Facing a specialist term, prefer a plain word of similar length, unless the term is standard for this audience or rewording loses accuracy. A term used once and never defined is the common failure, because the reader pays for it and gets nothing back. A term inside an example is a separate case when the lesson is the sentence's shape. If the reader has to understand the example to see the point, it needs words the audience already has.
 
 **Avoid zombie nouns.** Prefer verbs to nominalizations.
 

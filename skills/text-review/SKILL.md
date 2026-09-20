@@ -55,16 +55,16 @@ The most important layer. Elegant prose built on wrong claims is worse than clun
 
 ### 3. Clarity and readability
 
-- **Jargon, overloaded sentences, and filler.** Specified in christian-writing-style. An example is a separate case (Fight the curse of knowledge). The blog audience is broader than the academic one.
+- **Jargon, overloaded sentences, and filler.** The definitions and examples are in christian-writing-style. An example is a separate case (Fight the curse of knowledge). The blog audience is broader than the academic one.
 - **Ambiguity and paragraph focus.** Two readings possible, or a modifier that could attach to two places. One idea per paragraph: split one covering two, merge consecutive ones making the same point.
 - **Decoding-step test.** Ask whether each precise word sits in the slot the thing itself belongs in (christian-writing-style, Name the concrete thing). Name the step the reader has to take, or it is not a finding. The sweep below runs this test over a manuscript.
 - **Paragraph-tail test.** Read the last sentence of each paragraph on its own and ask what it adds beyond the paragraph. Editorial close-outs are almost always final sentences. They are invisible while reading forward because they feel like the ending. Restatements go, conclusions stay (christian-writing-style, side commentary).
-- **Paragraph-opening test.** Read the first clause of each paragraph on its own. One opening on a reaction to the material is voice and belongs in the blog register. `references/blog.md` bans a second one in the same section, so flag the second and any after it.
+- **Paragraph-opening test.** Read the first clause of each paragraph on its own. One opening on a reaction to the material is voice and belongs in the blog register. `references/blog.md` bans a second such opening in the same section, so flag every opening after the first.
 - **Pointer test.** Flag every pointer whose nearest preceding noun is something else, and every one with no noun to find anywhere (christian-writing-style, Point at a noun). Concentrate on the pointers whose noun comes from an earlier sentence, since one resolved inside its own sentence is visible at a glance. The `pointer` check covers part of this ground only.
 
-Run the tail, opening, and pointer tests together in one pass, separate from reading the draft forward. The pointer test needs the sentences in order, since the noun it looks for sits in an earlier one.
-
 - **Code-comment test.** Read each comment against the code it sits on and ask what a reader who skipped it would get wrong. Flag the ones where the answer is nothing. When the review covers comments or docstrings, read **code-comments** first. Its scan is the same script the mechanical scan runs.
+
+Run the tail, opening, and pointer tests together in one pass, separate from reading the draft forward. The pointer test needs the sentences in order, since the noun it looks for sits in an earlier one.
 
 ### 4. Style alignment
 
@@ -180,7 +180,7 @@ For each change:
 
 ### Check what a pass deleted
 
-Before an anchored find-and-replace, confirm the anchor begins a paragraph and matches exactly once, with `assert t.count(old) == 1` per edit. An anchor that matches nothing replaces nothing and still reports success.
+Before an anchored find-and-replace, confirm the anchor begins a paragraph. Check that the anchor matches exactly once with `assert t.count(old) == 1` per edit. An anchor that matches nothing replaces nothing and still reports success.
 
 After the pass, read every line it deleted. `-U0` drops the unchanged lines that would otherwise hide them:
 
@@ -188,7 +188,7 @@ After the pass, read every line it deleted. `-U0` drops the unchanged lines that
 git diff -U0 <commit the pass started from> -- draft.md
 ```
 
-An anchor that starts mid-paragraph removes more than the edit names. The removal reads as an ordinary deletion in the diff. One took a sentence defining three symbols along with the display math that built them, leaving an orphan clause pointing at a section that no longer explained it.
+An anchor that starts mid-paragraph removes more than the edit names. The removal reads as an ordinary deletion in the diff. One such replacement took a sentence defining three symbols along with the display math that built them, leaving an orphan clause pointing at a section that no longer explained it.
 
 On a pass already committed, HEAD returns nothing and the check reports clean on exactly the edits it exists to catch. Record the starting commit before the pass, or diff against `HEAD~1`.
 
@@ -202,6 +202,8 @@ Before marking any change done, list what the pass could have left wrong: passag
 - **Descriptions of the passage.** A comment, storyline note, or rule that says what the passage does or how it is built. Reword the passage and the description still describes the old one. It sits inches from the text it describes and reads as background, so it survives the read that catches the others.
 
 **Text you added is a dependent passage too.** Every kind above is found by comparing against a prior state. A sentence you wrote has no prior version to disagree with, and nothing about it looks stale. Read it against the constraints already governing the passage, including the ones this pass is not editing: the rules stated where it sits, the definitions of the terms it uses, and the claims on either side of it.
+
+**Run the layer 3 tests over your own replacement text.** The tail, opening, and pointer tests are written for a draft, so a replacement of a sentence or two reads as too small to need a pass of its own. A pointer you wrote takes its noun from the sentence you left in place, which you are no longer reading. Run the tests before presenting the change.
 
 **Fix a stale reference by removing what can go stale.** A count that drifted ("three kinds" against a four-item list) is not fixed by correcting the number, because the same trap stays set for the next edit. Write "the kinds below" or "every kind above". The count was only ever signaling that a list follows. The list does that itself. Apply it to every count in the passage, including the ones that still read correctly. A count the reader checks against is the exception, such as a list an agent has to receive in full. Then check whether dropping a count orphaned an antecedent: "Three kinds. Find them" loses its referent when the three goes.
 
