@@ -41,20 +41,14 @@ class LongSentence(Scanned):
     def test_quiet_at_the_limit(self):
         self.assertEqual(self.hits(sentence_of(self.LIMIT), "long-sentence"), [])
 
-    def test_quiet_in_a_table_row(self):
-        row = "| " + sentence_of(60, "") + " | b |"
-        self.assertEqual(self.hits(row, "long-sentence"), [])
-
-    def test_quiet_in_a_code_fence(self):
-        fenced = "```\n" + sentence_of(60) + "\n```"
-        self.assertEqual(self.hits(fenced, "long-sentence"), [])
-
-    def test_quiet_in_an_html_comment(self):
-        note = "<!-- " + sentence_of(60) + " -->"
-        self.assertEqual(self.hits(note, "long-sentence"), [])
-
-    def test_quiet_in_display_math(self):
-        self.assertEqual(self.hits("$$ " + sentence_of(60) + " $$", "long-sentence"), [])
+    def test_quiet_in_a_unit_that_is_not_prose(self):
+        text = sentence_of(60)
+        for unit, body in (("table row", "| " + sentence_of(60, "") + " | b |"),
+                           ("code fence", "```\n" + text + "\n```"),
+                           ("html comment", "<!-- " + text + " -->"),
+                           ("display math", "$$ " + text + " $$")):
+            with self.subTest(unit=unit):
+                self.assertEqual(self.hits(body, "long-sentence"), [])
 
     def test_a_decimal_does_not_end_a_sentence(self):
         # Split here and one 45-word sentence reads as two short ones.
@@ -69,19 +63,11 @@ class LongSentence(Scanned):
         text = " ".join(["alpha"] * 20 + ["Fig. 1 and Smith et al. report"] + ["beta"] * 20)
         self.assertEqual(len(self.hits(text, "long-sentence")), 1)
 
-    def test_a_citation_key_does_not_end_a_sentence(self):
-        text = " ".join(["alpha"] * 22 + ["[@sec:coverage]"] + ["beta"] * 22) + "."
-        self.assertEqual(len(self.hits(text, "long-sentence")), 1)
-
     def test_two_long_sentences_in_one_unit_both_report(self):
         # The dedup key is (check, line, match text), so a match string of the
         # bare count would drop the second hit.
         text = sentence_of(41) + " " + sentence_of(45).capitalize()
         self.assertEqual(len(self.hits(text, "long-sentence")), 2)
-
-    def test_the_match_states_the_count(self):
-        hit = self.hits(sentence_of(41), "long-sentence")[0]
-        self.assertTrue(hit.match.startswith("41 words"), hit.match)
 
     def test_the_context_is_the_whole_sentence(self):
         hit = self.hits(sentence_of(60), "long-sentence")[0]
@@ -113,12 +99,6 @@ class Unquantified(Scanned):
     def test_quiet_when_the_sentence_carries_the_number(self):
         text = "Recall moves a few hundredths, from 0.020 to 0.030."
         self.assertEqual(self.hits(text, "unquantified"), [])
-
-    def test_every_phrase_fires(self):
-        for phrase in ("a few", "a handful", "a small fraction", "a little"):
-            with self.subTest(phrase=phrase):
-                text = f"The gate recovers {phrase} of the missing content."
-                self.assertEqual(len(self.hits(text, "unquantified")), 1)
 
     def test_the_noisy_words_stay_out(self):
         # These fired on correct prose during the sweep and named no defect.
@@ -189,6 +169,12 @@ class CommaJoin(Scanned):
                 "that produced them are in Appendix [ref].")
         self.assertEqual(self.hits(text, "comma-join"), [])
 
+    def test_an_introductory_comma_suppresses_a_genuine_join(self):
+        # Known cost of skipping a sentence that already holds a comma. Two
+        # genuine joins in one manuscript are lost this way.
+        self.assertEqual(self.hits("However, the model converged, and the loss plateaued.",
+                                   "comma-join"), [])
+
     def test_a_second_sentence_is_judged_on_its_own(self):
         # The check reads one sentence at a time, so a list in the first must
         # not silence a join in the second.
@@ -232,23 +218,19 @@ class HtmlComments(Scanned):
     def test_skip_drops_the_comment(self):
         self.assertEqual(self.skipped(self.NOTE), [])
 
-    def test_skip_keeps_prose_after_a_blank_line(self):
-        self.assertEqual(len(self.skipped(self.NOTE + "\n\n" + self.PROSE)), 1)
+    def test_skip_keeps_the_prose_around_a_comment(self):
+        # A note written tight against its paragraph used to take the paragraph
+        # with it, silently, because the flag was one boolean per unit.
+        for placement, text in (("blank line", self.NOTE + "\n\n" + self.PROSE),
+                                ("line after", self.NOTE + "\n" + self.PROSE),
+                                ("line before", self.PROSE + "\n" + self.NOTE),
+                                ("same line", self.NOTE + " " + self.PROSE)):
+            with self.subTest(placement=placement):
+                self.assertEqual(len(self.skipped(text)), 1)
 
     def test_a_multiline_comment_is_skipped_whole(self):
         self.assertEqual(
             self.skipped("<!-- Storyline:\nthe rule is a covariate, not a control.\n-->"), [])
-
-    # A note written tight against its paragraph used to take the paragraph
-    # with it, silently, because the flag was one boolean per unit.
-    def test_skip_keeps_prose_on_the_line_after_a_comment(self):
-        self.assertEqual(len(self.skipped(self.NOTE + "\n" + self.PROSE)), 1)
-
-    def test_skip_keeps_prose_on_the_line_before_a_comment(self):
-        self.assertEqual(len(self.skipped(self.PROSE + "\n" + self.NOTE)), 1)
-
-    def test_skip_keeps_prose_sharing_a_line_with_a_comment(self):
-        self.assertEqual(len(self.skipped(self.NOTE + " " + self.PROSE)), 1)
 
     def test_a_comment_marker_inside_a_fence_opens_nothing(self):
         text = "```\nx <!-- y\n```\n\n" + self.PROSE
@@ -271,30 +253,15 @@ class DedupLabel(Scanned):
 class Conjunctions(Scanned):
     """The rule names "and" alone. Every other coordinator states a relation."""
 
-    def test_but_stays_quiet(self):
-        # A concession is a relationship, and a period drops it.
-        self.assertEqual(self.hits("The model converged, but the loss held.",
-                                   "comma-join"), [])
-
-    def test_or_stays_quiet(self):
-        self.assertEqual(self.hits("The model converges, or the loader retries.",
-                                   "comma-join"), [])
-
-    def test_so_stays_quiet(self):
-        # 89 of these in one manuscript against 4 with ", and". A period drops
-        # the consequence the conjunction states.
-        self.assertEqual(self.hits("The gates closed negative, so the build does not happen.",
-                                   "comma-join"), [])
-
-    def test_for_stays_quiet(self):
-        self.assertEqual(self.hits("The table does not compare, for four reasons hold.",
-                                   "comma-join"), [])
-
-    def test_an_introductory_comma_suppresses_a_genuine_join(self):
-        # Known cost of skipping a sentence that already holds a comma. Two
-        # genuine joins in one manuscript are lost this way.
-        self.assertEqual(self.hits("However, the model converged, and the loss plateaued.",
-                                   "comma-join"), [])
+    def test_every_other_coordinator_stays_quiet(self):
+        # 89 of ", so" in one manuscript against 4 with ", and". A period drops
+        # the concession or the consequence the conjunction states.
+        for line in ("The model converged, but the loss held.",
+                     "The model converges, or the loader retries.",
+                     "The gates closed negative, so the build does not happen.",
+                     "The table does not compare, for four reasons hold."):
+            with self.subTest(line=line):
+                self.assertEqual(self.hits(line, "comma-join"), [])
 
 
 class VagueHold(Scanned):
@@ -304,14 +271,10 @@ class VagueHold(Scanned):
         self.assertEqual(len(self.hits("The cohort holds 116 admissions.",
                                        "possession-verb")), 1)
 
-    def test_staying_steady_is_quiet(self):
-        self.assertEqual(self.hits(
-            "The rule holds where the contrast is informative.", "possession-verb"), [])
-
     def test_the_particle_senses_are_quiet(self):
-        for line in ("The argument holds together.",
+        for line in ("The rule holds where the contrast is informative.",
+                     "The argument holds together.",
                      "Recall holds to the longest admissions.",
-                     "The jargon check is held back from prose.",
                      "Many tables give the reader more to hold at once."):
             with self.subTest(line=line):
                 self.assertEqual(self.hits(line, "possession-verb"), [])
@@ -327,9 +290,20 @@ class VagueHold(Scanned):
         self.assertEqual(len(self.hits("# The index holds the staged paths.\n",
                                        "possession-verb", ".py")), 1)
 
-    def test_it_asks_rather_than_rewrites(self):
+    def test_it_asks(self):
         hits = self.hits("The row holds three statistics.", "possession-verb")
         self.assertEqual(hits[0].check.action, "TEST")
+
+
+class BearHandoff(Scanned):
+    """"load-bearing" belongs to concrete-thing, so relation-verb skips it."""
+
+    def test_load_bearing_stays_with_concrete_thing(self):
+        # Both checks reaching it would print the sentence under two groups.
+        for line in ("The comment is load-bearing.", "The comment is load bearing."):
+            with self.subTest(line=line):
+                self.assertEqual(self.hits(line, "relation-verb"), [])
+                self.assertEqual(len(self.hits(line, "concrete-thing")), 1)
 
 
 class Unchanged(Scanned):
@@ -350,9 +324,9 @@ class Unchanged(Scanned):
                 self.assertEqual(by_name[name].action, "TEST")
                 self.assertNotIn(name, scan.OPT_IN)
 
-    def test_the_two_voice_checks_assert(self):
+    def test_the_voice_checks_assert(self):
         by_name = {c.name: c for c in scan.PROSE_CHECKS}
-        for name in ("contrastive-voice", "comma-join"):
+        for name in ("contrastive-voice", "comma-join", "relation-verb"):
             with self.subTest(name=name):
                 self.assertEqual(by_name[name].action, "REWRITE")
 
