@@ -6,9 +6,7 @@ description: >-
 
 # Christian Garbin's Writing Style
 
-Three registers share one voice and differ in formality. Route first, read the common foundation, then read the reference file for the register you picked. Loading the wrong reference wastes context and pulls in conventions that do not apply.
-
-Write about the subject. The example sentences and layout descriptions in these files are there to be applied. Copying them is the failure mode.
+Three registers share one voice and differ in formality. Route first, read the common foundation, then read the reference file for the register you picked. Loading the wrong reference wastes context and pulls in conventions that do not apply. Apply the example sentences and layout descriptions in these files to your own subject. Copying them is the failure mode.
 
 ## Choose the register first
 
@@ -19,7 +17,7 @@ Write about the subject. The example sentences and layout descriptions in these 
 | Academic and formal | Paper, review, abstract, dissertation chapter, submission. Mentions a journal, conference, or peer review. Audience is academic researchers or reviewers. Format needs a methods section, literature review, or PRISMA diagram. Prompts like "write a paper about..." or "draft a review of..." | `references/academic.md` |
 | Blended | A venue between the two. IEEE Potentials articles are journal-published and written for students, more accessible than a Springer paper and more structured than a blog post | Both reference files |
 
-In the blended register, use academic structure with proper citations and lean toward blog tone with more accessible language, down to one hedge per claim and none on a claim the evidence settles.
+In the blended register, take structure and citations from academic and tone from blog.
 
 **When in doubt:** ask.
 
@@ -41,12 +39,11 @@ These shape *how* sentences are built, in every register.
 
 **Classic style.** Direct the reader's gaze to something in the world. Prose is a window onto the subject. Avoid metaconcepts. Don't write "This section discusses X" when you can state X. Don't write "It is important to note that X" when you can write X.
 
-**Fight the curse of knowledge.** Anchor abstract concepts in something concrete before going abstract. When evaluating a specialist term, ask: is it used once without definition? Does a plain-language equivalent of similar length exist? If yes to either, prefer plain. The specialist term stays only when it is standard for the audience or rewording would lose accuracy. A term inside an example is a separate case. If the lesson is the sentence's shape, any vocabulary works, which is why a model name can sit in an example about modifier placement. If the reader has to understand the example to see the point, it needs words the audience already has.
+**Fight the curse of knowledge.** Anchor abstract concepts in something concrete before going abstract. When evaluating a specialist term, ask: is it used once without definition? Does a plain-language equivalent of similar length exist? If yes to either, prefer plain. The specialist term stays only when it is standard for the audience or rewording would lose accuracy. A term inside an example is a separate case when the lesson is the sentence's shape. If the reader has to understand the example to see the point, it needs words the audience already has.
 
 **Avoid zombie nouns.** Prefer verbs to nominalizations.
 
 - "The identification of the factors" → "We identified the factors"
-- "The utilization of deep learning for the classification of images" → "We used deep learning to classify images"
 - "An investigation was conducted" → "We investigated"
 
 Active voice even in academic writing. Passive only when the agent is unknown or irrelevant, or when it improves flow by keeping the topic in subject position.
@@ -61,57 +58,51 @@ Active voice even in academic writing. Passive only when the agent is unknown or
 - Heavy in middle: "The model, which was trained on 10,000 images from three hospitals using a ResNet-50 architecture with data augmentation, achieved 94% accuracy."
 - Heavy at end: "The model achieved 94% accuracy after training on 10,000 images from three hospitals, using a ResNet-50 architecture with data augmentation."
 
-**One sentence, one job.** Past about forty words, check whether the sentence is two sentences nobody separated, or one chaining a clause it should have handed to the next. Lists and enumerations are the common case at that length and they earn it, because the reader takes one item at a time instead of one growing structure.
+**One sentence, one job.** Past about forty words, check whether the sentence is two sentences nobody separated, or one chaining a clause it should have handed to the next. Lists and enumerations are the common case at that length and they earn it.
 
 - Chained: "The oracle selection cuts a median 62% of the input tokens, and recall moves by less than 0.01 in every stratum, which says the generator already had the content and left it unused, so the ceiling is not a retrieval problem."
 - Split: "The oracle selection cuts a median 62% of the input tokens. Recall moves by less than 0.01 in every stratum, so the generator already had the content and left it unused. The ceiling is not a retrieval problem."
 
-**One hedge per claim.** "The results suggest..." not "It would seem to appear that the results might possibly suggest..." Pick the right hedge ("suggest," "may indicate," "one possible explanation") and use it once.
+**One hedge per claim, and none on a claim the evidence settles.** "The results suggest..." not "It would seem to appear that the results might possibly suggest..." Pick the right hedge ("suggest," "may indicate," "one possible explanation") and use it once.
 
 ### Name the concrete thing
 
 An abstraction standing in for a specific thing makes the reader do the decoding. Christian illustrates abstract points with misspelled school-zone signs, misclassified ducks, X-rays with pen marks.
 
-- **Framing-deck vocabulary**: "stack," "arm," "frontier," "axes," "lever." "Our retrieval stack" → "our retrieval pipeline" or the actual components. "The temporal axis" → "time of note creation" or whatever the specific variable is.
-- **"Downstream"** as shorthand for "later" or "the next stage." "Downstream analysis" → "Phase 2 analysis," "the audit step," "the next step."
-- **"Load-bearing"** for the part something depends on. "The comment is load-bearing" → "the comment is the only place the constraint is written down." Say what depends on it and what breaks without it.
-- **"Land"** as a verb for where files, data, or values end up ("files land at X," "binaries land in $DIR"). Use "go into," "end up at," "is written to," "sits in," or rephrase. Watch for adjacent overuse: "lands cleanly," "the changes landed in the same window."
-- **"Carry"** as a verb for what text, code, or a table conveys ("the comment carries the constraint," "the reason carries the content," "what the table cannot carry"). Use "state," "describe," or name what the text actually does.
-- **"Hold"** as a verb for what a file, a table, or a dataset contains ("the cohort holds 116 admissions," "the row holds three statistics"). Use "has," "contains," or name what is in it. "Hold" is right for staying steady ("recall holds to the longest admissions") and for keeping something back ("held back from the prose pass").
-- **"Bear"** as a verb for how one fact relates to another ("their first human evaluation bears on leakage," "the ablation has a bearing on the claim"). Name the relation: "one of their results could have caught leakage." "Bears out" is "confirms." "Bear in mind" opens a sentence that states the fact without it.
-- **A statistic standing in for the quantity it measures.** "Llama's median is the fastest at every stratum" makes the reader ask "median of what?", then guess from "fastest" that it might be time. Write "Llama's generation time". Also "the median generation falls from 145 to 52 seconds" → "the median generation time", and "Prefill's share of the clock" → "Prefill's share of the generation time". The statistic is not the wrong word. It is in the slot the quantity belongs in.
-- **An artifact standing in for what it shows.** A table, row, column, line, curve, or cell cannot do what a quantity does. The test is whether the artifact can literally take the verb. A table can list the strata. A row cannot move recall. An artifact that can take the verb still names what it plots, which is the first example below. "so the lines cross" → "so the memory curves cross". "This table is the limit of the model" → "Input utilization is the limit of the model". "This row is an indication" → "This result is an indication". "The MEDCON row is the one figure" → "The MEDCON row produces the one figure".
-- **A bare ordinal or position.** "the least memory below the first crossing and the most above the second" sends the reader back to map two ordinals onto two numbers in the previous sentence. Write "the least memory up to about 14,000 tokens and the most above about 38,000". Same for "the first four cells of [@tbl:cells]" when the four have names. When no name exists, supply the noun the ordinal counts: "The third survives" → "The third failure mode survives".
+- **Framing vocabulary standing in for the specific thing**: "stack," "arm," "frontier," "axes," "lever," "downstream," "load-bearing," "land," "carry." "Our retrieval stack" → "our retrieval pipeline". "The temporal axis" → "time of note creation". "Downstream analysis" → "Phase 2 analysis" or "the audit step". "The comment is load-bearing" → "the comment is the only place the constraint is written down", naming what breaks without it. "Files land at X" → "files are written to X". "The comment carries the constraint" → "states the constraint".
+- **"Hold"** for what a file or a dataset contains ("the cohort holds 116 admissions"). Use "has" or "contains". "Hold" is right for staying steady ("recall holds to the longest admissions") and for keeping something back.
+- **"Bear"** for how one fact relates to another ("their evaluation bears on leakage"). Name the relation: "could have caught leakage." "Bears out" is "confirms." "Bear in mind" opens a sentence that states the fact without it.
+- **A statistic standing in for the quantity it measures.** "Llama's median is the fastest at every stratum" makes the reader ask "median of what?", then guess from "fastest" that it might be time. Write "Llama's generation time". The statistic is not the wrong word. It is in the slot the quantity belongs in.
+- **An artifact standing in for what it shows.** A table, row, column, line, curve, or cell cannot do what a quantity does. The test is whether the artifact can literally take the verb. A table can list the strata. A row cannot move recall. An artifact that passes the test still names what it plots: "so the lines cross" → "so the memory curves cross". One that fails is replaced: "This table is the limit of the model" → "Input utilization is the limit of the model".
+- **A bare ordinal or position.** "the least memory below the first crossing and the most above the second" sends the reader back to map two ordinals onto two numbers in the previous sentence. Write "the least memory up to about 14,000 tokens and the most above about 38,000". When no name exists, supply the noun the ordinal counts: "The third survives" → "The third failure mode survives".
 - **Vague quantifiers where a number exists.** "Latency was elevated" → give the value. "Various factors" → name them. "The system had issues" → name what went wrong. "Tighten grading" → say which metric moved and by how much. "Recovers a small fraction of those concepts" → give the fraction. Beside a table that prints the value, the label is the right form and the number stays in the table (Tables and the prose beside them).
-- **Coining a phrase when the document already supplies one.** When a passage reads badly, take the wording from its own tables, captions, bullets, and defined terms before inventing anything. One sentence went through five rewrites, each inventing a new abstraction ("sits in the numerator but not its denominator"), while the table row three lines above already read "Not in the source documents, in the generated summary."
+- **Coining a phrase when the document already supplies one.** When a passage reads badly, take the wording from its own tables, captions, bullets, and defined terms before inventing anything. Rewriting one sentence more than twice means the wording is already somewhere in the document.
 
 ### Point at a noun
 
 This, that, those, it, its, they, one, the two, the former: each of these sends the reader back for a noun. The reader takes the nearest noun that fits. Write the noun whenever the nearest noun is something else, and whenever no noun was written anywhere. The writer is the last reader to see the defect, because the writer knows the referent.
 
-- **The nearest noun wins.** "The methods table answers what raises coverage. This one answers what has been tried" hands the second sentence to the methods table. Write "This document answers what has been tried". Same failure in "Their Discussion attributes its showing to extensive pre-training on medical text", where the nearest noun is their Discussion. Write "attributes Clinical-T5-Large's performance to".
+- **The nearest noun wins.** "The methods table answers what raises coverage. This one answers what has been tried" hands the second sentence to the methods table. Write "This document answers what has been tried".
 - **A pointer with nothing behind it.** "Neither total is restated in prose" follows a paragraph that names no total. The reader has to build both totals out of it. Write "Neither the row count nor the study count".
-- **Add the head noun and keep the pointer.** "Those are ceilings and baselines" becomes "Those runs are ceilings and baselines". "the 0.253 and 0.235 they set it against" becomes "they set that score against". One repeated noun costs less than a lookup.
-- **Replace a pro-form with the noun.** "calls content selection the unmeasured one" becomes "the unmeasured technique". "Summarize each note, combine those into daily summaries" becomes "combine the note summaries into daily summaries". "Substituting those" becomes "Substituting the hand-written guidelines". The bare ordinal above is the same failure.
-- **A description standing in for a name.** "Koras reached 0.363 from that same base model" becomes "from Llama-3-8B-Instruct". The name costs no more to read and needs no lookup.
+- **Add the head noun, or replace the pointer with it.** "Those are ceilings and baselines" becomes "Those runs are ceilings and baselines". "calls content selection the unmeasured one" becomes "the unmeasured technique". "Koras reached 0.363 from that same base model" becomes "from Llama-3-8B-Instruct". One repeated noun costs less than a lookup. A name costs no more to read. The bare ordinal above is the same failure.
 - **A name standing in for one side of a comparison.** "Koras is its published peer. What separates the two is the width of the channel from the reference to the prompt" sets a research group against this work's format instruction. Name both sides: "Koras's authoring guidelines are the format instruction's published peer. The format instruction and the authoring guidelines differ in how much of the reference reaches the prompt."
 - **A pro-verb.** "Does" and "did" send the reader back for a verb. "the cheapest place in the table to intervene and the only place it does" makes the reader rebuild the verb. Name the subject and what it does: "the only place this work touches".
 
-A demonstrative that stands for the situation just described stays. "This is a limit of the task", after a paragraph that establishes the limit, points at the paragraph. No noun replaces it. An expletive stays too: "it takes two passes" points at nothing by design, and naming a subject there produces the zombie noun the craft principles ban.
+A demonstrative that stands for the situation just described stays: "This is a limit of the task", after a paragraph that establishes the limit. An expletive stays too. "It takes two passes" points at nothing by design, and naming a subject there produces the zombie noun the craft principles ban.
 
 ### Show, don't tell
 
-Christian shows. An argument built on experiments is laid out as **hypothesis, what was done to test it, the result in a scannable form, then the conclusion**. The same content written as flowing paragraphs is wrong for him even when it is accurate and well written. His reaction to the prose version: "the text is long and prose heavy, hard to follow."
+Christian shows. An argument built on experiments is laid out as **hypothesis, what was done to test it, the result in a scannable form, then the conclusion**. The same content written as flowing paragraphs is wrong for him even when it is accurate and well written.
 
 Three or more parallel items are table-shaped or list-shaped, never a run of paragraphs. Candidate explanations, options considered, eliminations, variants tested. Items that connect with "because" or "but" stay prose, where the connective is part of the reasoning (`references/blog.md`, Bullets vs. prose). Lead with a summary table as the scan layer. After it, each item gets only what the table could not state, usually the mechanism and the caveat.
 
 Do not announce that arrangement in the text. A table followed by per-item sections is self-evident.
 
-Watch the table count as well. Many tables in one section means many measurement populations, denominators, and data vintages for a reader to hold at once, and that is its own source of error. If two tables would need two different provenance footnotes, consider whether one belongs in an appendix.
+Watch the table count as well. Two tables needing two different provenance footnotes are two measurement populations for the reader to hold at once. Move one to an appendix.
 
 ### Tables and the prose beside them
 
-**Prose next to a table states what the numbers mean. It never restates the numbers.** Point at the table and spend the sentences on the reading. A figure the table does not contain, such as a derived ratio or a fraction of a total, does earn its place in prose.
+**Prose next to a table states what the numbers mean. It never restates the numbers.** Point at the table and spend the sentences on the reading. A figure the table does not contain, such as a derived ratio, earns its place.
 
 `references/academic.md` works through the results-section case.
 
@@ -123,11 +114,11 @@ He does not write "X rather than Y" or "X, not Y". Restate as a positive claim a
 - "What disqualifies a path is whose server holds the record, not whose weights run on it" becomes "Where the record goes is what rules a path out."
 - "does not answer this, and the reason is legal rather than technical" becomes "does not answer this."
 
-The rule governs the phrasing, so it holds where the contrast is informative. A dissertation whose argument is a chain of eliminations passes the empty-tail test below on nearly every instance. A sweep of one manuscript still had to restate 91 of them. Fix every instance in the passage. The flagged one is a sample.
+The rule governs the phrasing, so an informative contrast is still restated. One sweep of a dissertation arguing by elimination restated 91 of them. Fix every instance in the passage. A flagged one is a sample.
 
 A plain negation is a different thing and stays: "Low recall is not a retrieval problem" asserts something, where "X, not Y" only points away from Y.
 
-Two places keep the construction. Quoted material is a record of what was sent or said, so editing it misreports the source. A table cell where the column is a verdict takes the positive half alone ("Metric configuration"), which is the same fix in less space.
+Quoted material keeps the construction, since editing it misreports the source. A verdict column in a table takes the positive half alone ("Metric configuration").
 
 ### Side commentary
 
@@ -140,11 +131,11 @@ Three forms comment on the text instead of stating the fact. Each spends a sente
 
 A tail built on "X rather than Y" or "X, not Y" goes whatever this test says (No this-not-that). For a tail worded some other way, apply the empty-tail test: keep the contrast only when the alternative was actually tried, or a reader would plausibly assume it, or the argument depends on ruling it out.
 
-**Announcing a choice as deliberate** ("the choice was deliberate," "we take X deliberately," "on purpose," "by design"). The reason that follows is the content. Delete the announcement, keep the reason. Two exceptions. Keep it when the deliberateness is itself the fact, because a reader would otherwise read oversight or accident ("the same defect, arrived at deliberately"). Rewrite when the announcement heads an enumeration, where deleting it orphans the list: "We use a single-pass design, for three reasons. First..."
+**Announcing a choice as deliberate** ("the choice was deliberate," "we take X deliberately," "on purpose," "by design"). The reason that follows is the content. Delete the announcement, keep the reason. Keep it when the deliberateness is itself the fact ("the same defect, arrived at deliberately"). Rewrite when the announcement heads an enumeration, where deleting it orphans the list: "We use a single-pass design, for three reasons. First..."
 
 **Narrating a disclosure instead of disclosing** ("we do not claim otherwise," "we record that as a limitation," "and the write-up has to say so," "to state in the limitations rather than let a reviewer state it"). The sentence performs the act it describes. State the limitation and stop.
 
-**Restatements go, conclusions stay.** A restatement repeats a fact already on the page. A conclusion asserts an inference the facts support but do not state. It stays: "Low recall is not a retrieval problem," after numbers showing the gap is ten times what retrieval moves. Cutting a conclusion leaves the reader holding evidence with no claim attached. In results and decision documents the verdict is the deliverable, so when the call is close, keep it.
+**Restatements go, conclusions stay.** A restatement repeats a fact already on the page. A conclusion asserts an inference the facts support but do not state. It stays: "Low recall is not a retrieval problem," after numbers showing the gap is ten times what retrieval moves. In results and decision documents the verdict is the deliverable, so when the call is close, keep it.
 
 Side commentary is not the same as personal voice, which `references/blog.md` calibrates for the blog register.
 
@@ -155,22 +146,20 @@ Side commentary is not the same as personal voice, which `references/blog.md` ca
 - Jargon without explanation, including soft verbs used as jargon ("surface," "leverage," "unlock").
 - Emojis.
 - Filler openers ("In today's rapidly evolving world...", "As we all know...").
-- Single-word paragraph leads that label the paragraph instead of stating its point ("Interpretation.", "Discussion."). A bold multi-word lead-in that states a claim is a house pattern and stays ("**Restatements go, conclusions stay.**").
+- Single-word paragraph leads that label the paragraph instead of stating its point ("Interpretation.", "Discussion.").
 - British spelling. Use US: *analyze*, *color*, *behavior*, *modeling*, *-ize*, *center*, *defense*.
 - Em-dashes in his own writing. Use periods or parentheses unless Christian uses one first in the conversation.
-- Joining two independent clauses with a semicolon or with a comma and "and". Each clause takes its own sentence, even closely related ones ("The model converged. The loss plateaued at 0.3."). "So", "but" and "for" each state a relationship a period would drop, so they stay. A compound predicate is one clause and stays whole ("The script reads the artifact and writes the scores beside it"). Semicolons in pseudo-code or table structure are fine.
+- Joining two independent clauses with a semicolon or with a comma and "and". Each clause takes its own sentence ("The model converged. The loss plateaued at 0.3."). "So", "but" and "for" state a relationship a period would drop, so they stay. A compound predicate is one clause and stays whole ("The script reads the artifact and writes the scores beside it").
 
-Everything under Intellectual character, Craft principles, Name the concrete thing, Point at a noun, No this-not-that, and Side commentary belongs on this list too. A second copy here would be a second wording to drift from.
+This list is not the whole of it. Every rule in the common foundation belongs on it too. A second copy here would be a second wording to drift from.
 
 ---
 
 ## Short snippets
 
-Skip to **Editing existing text** if you routed to blog or academic.
-
 Comments and docstrings have a second layer of rules on top of this section. Read **code-comments** before writing or editing one.
 
-The common foundation is the entire skill here. There is no opening hook, no roadmap, no progressive disclosure, no hedging strategy to choose, because there is no room for any of it. What still applies, even in one line:
+The common foundation is the entire skill here. No hook, no roadmap, no progressive disclosure. What still applies, even in one line:
 
 - No zombie nouns. "Compute the average" beats "perform the computation of the average."
 - Concrete and specific. Name the thing. "The value" and "the data" are placeholders.
@@ -192,7 +181,7 @@ The default is minimal intervention.
 - Preserve the voice already on the page, including asides and reactions he wrote himself. The rate limit in `references/blog.md` governs what you add. What he already wrote stays.
 - After renaming a term or reframing a decision, scan the whole document for the old usage. Anything beyond a rename needs "Check what a pass left inconsistent" in **text-review**.
 
-A fix confined to a sentence or two goes in directly. Anything larger is a review, so switch to **text-review** and use its gate: present every finding grouped by severity, wait, then apply them at the pace its Applying changes section sets. Do not describe a large rewrite and apply it in the same turn.
+A fix confined to a sentence or two goes in directly. Anything larger is a review, so switch to **text-review** and use its gate. Do not describe a large rewrite and apply it in the same turn.
 
 ---
 
@@ -209,10 +198,10 @@ Use the second form on a drafting file, where the `<!-- -->` notes can outweigh 
 
 Pass every file you touched in one call. A source file whose extension the script knows is reduced to its comments and docstrings. Everything else is read as prose, a source file in a language the script does not know included, whose statement separators then fire the semicolon check (`COMMENT_SYNTAX` in `scan.py`).
 
-Work the groups in order. **text-review** owns the script. Its layer 5 explains how to read the output, including what to do with a hit you decide to keep. `text-review/references/scan.md` has the design notes behind each check. On a non-standard install the script sits at `text-review/scripts/scan.py` in the skills directory.
+Work the groups in order. **text-review** layer 5 explains how to read the output, including what to do with a hit you decide to keep. On a non-standard install the script sits at `text-review/scripts/scan.py` in the skills directory.
 
 A clean scan is not a clean draft.
 
-- **The rules a stem cannot finish.** Announcing the arrangement instead of stating it (Show, don't tell) has only the fixed phrasings in the `layout-announce` stem. The paragraph-tail and paragraph-opening tests in **text-review** are reached in part, by `side-commentary` and by `feeling-word`, and the pointer forms in part by `pointer` (Point at a noun). Coining a phrase the document already supplies has no stem at all. Neither do the statistic, artifact, and ordinal patterns (Name the concrete thing). `text-review/references/scan.md` has each split. What no stem reaches is worded new every time, so read your own draft for it the way you would read someone else's.
+- **The rules no stem reaches.** The statistic, artifact, and ordinal patterns, and coining a phrase the document already supplies (Name the concrete thing). The paragraph-tail, paragraph-opening, and pointer tests, and announcing the arrangement, are reached in part only, so a clean run on those leaves the rest to you. What no stem reaches is worded new every time, so read your own draft for it the way you would read someone else's.
 - **Text that never becomes a file**, such as an answer in the conversation. Reread it against What to avoid instead.
 - **Files that quote the banned vocabulary as examples**, these skill files included. Every example fires, so read those files by eye.

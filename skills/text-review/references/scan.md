@@ -32,7 +32,7 @@ These are tagged `TEST` because reporting them raw would bury the real findings.
 | `side-commentary`, `concrete-thing`, `nominalization-lead`, `soft-verb`, `specialist-term` | "axis" and "stack" are ordinary words in a paper about models, "Precision improved to 0.8" is not a zombie noun, and "API surface" is a noun. |
 | `dead-code-ref` | "the target no longer exists" usually describes a missing file. |
 | `long-sentence` | A sentence that runs long because it enumerates is doing its job. |
-| `unquantified` | "a few paragraphs" as a bold lead-in labels a case. |
+| `unquantified` | "a few paragraphs" labels a case instead of measuring one. |
 | `possession-verb` | A reader left holding evidence is the idiom. |
 | `pointer` | "those that read the discharge summary" points at a group the same sentence names, and "the former CEO" means previous. |
 | `feeling-word` | One per piece is fine when the reaction is itself information, and the script cannot count across a document. |
