@@ -84,6 +84,20 @@ An abstraction standing in for a specific thing makes the reader do the decoding
 - **Vague quantifiers where a number exists.** "Latency was elevated" → give the value. "Various factors" → name them. "The system had issues" → name what went wrong. "Tighten grading" → say which metric moved and by how much. "Recovers a small fraction of those concepts" → give the fraction.
 - **Coining a phrase when the document already supplies one.** When a passage reads badly, take the wording from its own tables, captions, bullets, and defined terms before inventing anything. One sentence went through five rewrites, each inventing a new abstraction ("sits in the numerator but not its denominator"), while the table row three lines above already read "Not in the source documents, in the generated summary."
 
+### Point at a noun
+
+This, that, those, it, its, they, one, the two, the former: each of these sends the reader back for a noun. The reader takes the nearest noun that fits. Write the noun whenever the nearest noun is something else, and whenever no noun was written anywhere. The writer is the last reader to see the defect, because the writer knows the referent.
+
+- **The nearest noun wins.** "The methods table answers what raises coverage. This one answers what has been tried" hands the second sentence to the methods table. Write "This document answers what has been tried". Same failure in "Their Discussion attributes its showing to extensive pre-training on medical text", where the nearest noun is their Discussion. Write "attributes Clinical-T5-Large's performance to".
+- **A pointer with nothing behind it.** "Neither total is restated in prose" follows a paragraph that names no total. The reader has to build both totals out of it. Write "Neither the row count nor the study count".
+- **Add the head noun and keep the pointer.** "Those are ceilings and baselines" becomes "Those runs are ceilings and baselines". "the 0.253 and 0.235 they set it against" becomes "they set that score against". One repeated noun costs less than a lookup.
+- **Replace a pro-form with the noun.** "calls content selection the unmeasured one" becomes "the unmeasured technique". "Summarize each note, combine those into daily summaries" becomes "combine the note summaries into daily summaries". "Substituting those" becomes "Substituting the hand-written guidelines". The bare ordinal above is the same failure.
+- **A description standing in for a name.** "Koras reached 0.363 from that same base model" becomes "from Llama-3-8B-Instruct". The name costs no more to read and needs no lookup.
+- **A name standing in for one side of a comparison.** "Koras is its published peer. What separates the two is the width of the channel from the reference to the prompt" sets a research group against this work's format instruction. Name both sides: "Koras's authoring guidelines are its published peer. The format instruction and the authoring guidelines differ in how much of the reference reaches the prompt."
+- **A pro-verb.** "Does" and "did" send the reader back for a verb. "the cheapest place in the table to intervene and the only place it does" makes the reader rebuild the verb. Name the subject and what it does: "the only place this work touches".
+
+A demonstrative that stands for the situation just described stays. "This is a limit of the task", after a paragraph that establishes the limit, points at the paragraph. No noun replaces it.
+
 ### Show, don't tell
 
 Christian shows. An argument built on experiments is laid out as **hypothesis, what was done to test it, the result in a scannable form, then the conclusion**. The same content written as flowing paragraphs is wrong for him even when it is accurate and well written. His reaction to the prose version: "the text is long and prose heavy, hard to follow."
@@ -148,7 +162,7 @@ Side commentary is not the same as personal voice, which `references/blog.md` ca
 - Em-dashes in his own writing. Use periods or parentheses unless Christian uses one first in the conversation.
 - Joining two independent clauses with a semicolon or with a comma and "and". Each clause takes its own sentence, even closely related ones ("The model converged. The loss plateaued at 0.3."). "So", "but" and "for" each state a relationship a period would drop, so they stay. A compound predicate is one clause and stays whole ("The script reads the artifact and writes the scores beside it"). Semicolons in pseudo-code or table structure are fine.
 
-Everything under Craft principles, Name the concrete thing, No this-not-that, and Side commentary belongs on this list too. A second copy here would be a second wording to drift from.
+Everything under Craft principles, Name the concrete thing, Point at a noun, No this-not-that, and Side commentary belongs on this list too. A second copy here would be a second wording to drift from.
 
 ---
 
@@ -189,7 +203,7 @@ A fix confined to a sentence or two goes in directly. Anything larger is a revie
 
 ## Before you finish
 
-Run the mechanical scan on every file you wrote or edited, and fix what it finds. It catches what survives a careful draft: em-dashes, clauses joined by a semicolon or by a comma and "and", British spelling, filler openers, the this-not-that construction, sentences past forty words, and the vocabulary under Name the concrete thing.
+Run the mechanical scan on every file you wrote or edited, and fix what it finds. It catches what survives a careful draft: em-dashes, clauses joined by a semicolon or by a comma and "and", British spelling, filler openers, the this-not-that construction, sentences past forty words, pointer words standing where a noun belongs, and the vocabulary under Name the concrete thing.
 
 ```bash
 ~/.claude/skills/text-review/scripts/scan.py draft.md README.md loader.py
@@ -204,6 +218,6 @@ Work the groups in order. **text-review** owns the script. Its layer 5 explains 
 
 A clean scan is not a clean draft.
 
-- **The rules with no stems.** Announcing the arrangement instead of stating it (Show, don't tell) has no mechanical form. Neither does coining a phrase the document already supplies, nor do the statistic, artifact, and ordinal patterns in the same section (Name the concrete thing). The paragraph-tail and paragraph-opening tests in **text-review** have none either. The wording is new every time. Read your own draft for them the way you would read someone else's.
+- **The rules with no stems.** Announcing the arrangement instead of stating it (Show, don't tell) has no mechanical form. Neither does coining a phrase the document already supplies, nor do the statistic, artifact, and ordinal patterns in the same section (Name the concrete thing). The scan reads some of the pointer forms and leaves the rest to a read (Point at a noun), with the split in `text-review/references/scan.md`. The paragraph-tail and paragraph-opening tests in **text-review** have none either. The wording is new every time. Read your own draft for them the way you would read someone else's.
 - **Text that never becomes a file**, such as an answer in the conversation. Reread it against What to avoid instead.
 - **Files that quote the banned vocabulary as examples**, these skill files included. Every example fires, so read those files by eye.

@@ -18,7 +18,7 @@ Three things shape what feedback is useful. Settle them first.
 
 - **Register.** Blog post, journal paper, email, commit message? christian-writing-style routes these at the top of its SKILL.md, and the reference file to load follows from that routing.
 - **Draft stage.** Ask if unclear. Early drafts: feedback on structure, argument, missing pieces. Late drafts: sentence-level editing and polish. Reviewing an early draft for comma placement wastes time. Reviewing a final draft without checking the argument is worse.
-- **Scope.** A whole document, or a single comment, commit subject, or paragraph. A snippet needs the mechanical scan and, for comments, the code-comment test. Layers 1, 2, and 4, the two-phase gate, and the paragraph tests in layer 3 all assume a document. A single comment has no paragraphs.
+- **Scope.** A whole document, or a single comment, commit subject, or paragraph. A snippet needs the mechanical scan and, for comments, the code-comment test. Layers 1, 2, and 4, the two-phase gate, and the paragraph tests in layer 3 all assume a document. A single comment has no paragraphs. The pointer test runs on a snippet, since one sentence is enough to point at a noun that is not there.
 
 **Reviewing an edit pass is not reviewing a draft.** When the subject is a set of changes, read each changed passage together with the passages that depend on it, in full and in order, whether or not they changed. Read each added passage against the rules that already govern it. "Check what a pass left inconsistent" under Applying changes names the kinds to look for. A diff shows the side that changed and hides the side that depended on it, so coupling breakage is invisible from the diff by construction.
 
@@ -62,7 +62,7 @@ Two related checks:
 
 ### 3. Clarity and readability
 
-- **Ambiguous sentences.** Two readings possible. Pronouns with unclear antecedents. Modifiers that could attach to different parts.
+- **Ambiguous sentences.** Two readings possible. Modifiers that could attach to different parts.
 - **Jargon and assumed knowledge.** Terms used without explanation that the target audience might not know. Blog audience is broader than academic. In an example, ask whether the reader must understand it or only see its shape. Only the first needs vocabulary the audience already has.
 - **Sentence complexity.** Sentences that try to do too much. christian-writing-style covers heavy left-branching, subject-verb separation, nominalizations.
 - **Paragraph focus.** One main idea per paragraph. Split if it covers two or three. Merge if consecutive paragraphs make the same point.
@@ -70,6 +70,7 @@ Two related checks:
 - **Decoding-step test.** Ask whether each precise word sits in the slot the thing itself belongs in (christian-writing-style, Name the concrete thing). Name the step the reader has to take, or it is not a finding. The sweep below runs this test over a manuscript.
 - **Paragraph-tail test.** Read the last sentence of each paragraph on its own and ask what it adds beyond the paragraph. Editorial close-outs are almost always final sentences. They are invisible while reading forward because they feel like the landing. Run this as a separate pass. Following the argument hides these. Restatements go, conclusions stay (christian-writing-style, side commentary).
 - **Paragraph-opening test.** Read the first clause of each paragraph on its own. Flag runs of consecutive paragraphs that open on a reaction to the material. One such opening is voice and belongs in the blog register. Three in a row means every paragraph tells the reader how to feel before saying what the thing is. The fact arrives late each time. Run it in the same pass as the tail test (christian-writing-style, `references/blog.md`).
+- **Pointer test.** Name the noun each pointer word points at (christian-writing-style, Point at a noun). Concentrate on the pointers whose noun has to come from an earlier sentence, since a pointer resolved inside its own sentence is visible at a glance. Flag the pointers whose nearest noun is something else, and those with no noun to find anywhere. Run it in the same pass as the tail test. Reading forward supplies the referent from what the passage means, so a pointer that resolves to the wrong noun reads correctly to everyone who already knows the answer, the writer first. The `pointer` check covers part of this ground. `references/scan.md` says which part.
 - **Code-comment test.** Read each comment against the code it sits on and ask what a reader who skipped it would get wrong. Flag the ones where the answer is nothing. A one-line comment restates the code as easily as a four-line one. When the review covers comments or docstrings, read **code-comments** and run its scan first.
 
 ### 4. Style alignment
@@ -104,7 +105,7 @@ The voice checks run on everything, since a rule about his voice holds wherever 
 - side commentary and the this-not-that construction
 - two independent clauses joined by a semicolon or by a comma and "and"
 - feeling-words and layout announcements
-- soft verbs used as jargon, and vocabulary that stands in for the concrete thing
+- soft verbs used as jargon, vocabulary that stands in for the concrete thing, and pointer words standing where a noun belongs
 - vague quantifiers, and quantities written out in words where a number belongs
 
 The extension picks the rest. A source file gets the code-comments stems, and prose gets the sentence-length and specialist-term checks. `references/scan.md` has the routing in full, the checks that fire on correct prose and why, and the precision numbers behind the two `REWRITE` checks. Read it when a hit does not make sense.

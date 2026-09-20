@@ -34,6 +34,7 @@ These are tagged `TEST` because reporting them raw would bury the real findings.
 | `long-sentence` | A sentence that runs long because it enumerates is doing its job. |
 | `unquantified` | "a few paragraphs" as a bold lead-in labels a case. |
 | `possession-verb` | A reader left holding evidence is the idiom. |
+| `pointer` | "those that read the discharge summary" points at a group the same sentence names, and "the former CEO" means previous. |
 | `feeling-word` | One per piece is fine when the reaction is itself information, and the script cannot count across a document. |
 
 ## The two REWRITE checks
@@ -43,6 +44,20 @@ These are tagged `TEST` because reporting them raw would bury the real findings.
 `contrastive-voice` replaced a `TEST` that asked whether a contrast was informative, which is the wrong property. On a manuscript arguing by elimination every instance passed that test and 91 still had to be restated. The judgment half of the old check lives on in `side-commentary`, whose stems reach the tails this pattern misses.
 
 `comma-join` holds to about 85% precision on a full manuscript, 22 of 26. Its false positives are a two-item list after a colon, a coordinated pair of `that` clauses, a coordinated noun phrase, and a gapped coordination. It reads `and` alone, since every other coordinator states a relationship a period would drop.
+
+## What the pointer check reads
+
+Two demonstratives used as pronouns, "those" and "these" with no head noun after them, plus "that same", "this same", "the former" and "the latter".
+
+"That" and "this" are left out. "That" opens every relative clause, so "the row that is empty" would fire. A sentence opening on "This is" usually points at the situation the paragraph just described, which is the sense that stays.
+
+"That same" is in and "the same" is out. "The same X" fired 9 times on `BHC generation techniques in prior work` for 1 real hit, against "the same papers", "the same target" and "the same clinicians".
+
+The words read after a demonstrative are auxiliaries and prepositions, so "Those cover the case" and "These show the gap" are missed. A plural noun is what blocks the wider list. After a demonstrative, "those runs" and "those counts" read as verbs by any stem. `comma_join`'s `FINITE` pattern hits the same limit.
+
+The pro-forms left out are the ones no stem separates from ordinary use. "One" and "ones" are determiners as often as pro-forms ("the one entry", "the ones without"). "The two" and "the three" fired 46 times on one manuscript for one real hit. "It", "its", "they" and "them" are past counting. The pointer test in layer 3 is what reaches them.
+
+What survives that narrowing still earns its place. On `BHC generation techniques in prior work` as it stood before the hand pass, it reported 5 hits, 4 of them defects that pass had found. It fires on 4 of the 13 pointers that pass rewrote, which is why layer 3 owns the rest. It prints 12 hits on a 5,036-line manuscript.
 
 ## Markdown drafting files
 

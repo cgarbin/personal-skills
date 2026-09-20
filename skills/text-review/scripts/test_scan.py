@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Fixtures for the checks a regex cannot express.
+"""Fixtures for what reading a check does not show.
 
-The pattern checks are readable on their own, so they are covered here only
-where a bug would be silent: the sentence splitter, which decides what the
-length check measures, and the dedup key, which a match string without a word
-count would collide on.
+A pattern is readable on its own, so it is covered here only where a bug in it
+would be silent: what the sentence splitter treats as a boundary, what the dedup
+key collapses, and every skip and exclusion a check makes for a reason the
+pattern cannot state.
 
     scripts/test_scan.py
 """
@@ -152,7 +152,7 @@ class CommaJoin(Scanned):
         self.assertEqual(hits[0].check.action, "REWRITE")
 
     def test_the_paired_cross_reference_fires(self):
-        # Ten of these in the paper, all under 25 words, so long-sentence
+        # Ten paired cross-references in the paper, all under 25 words, so long-sentence
         # never reached them.
         text = ("[@Sec:working-budget] states how the overhead term was determined, "
                 "and [@sec:feasibility] reports it.")
@@ -244,6 +244,10 @@ class DedupLabel(Scanned):
         text = "A is x rather than y. B is p rather than q."
         self.assertEqual(len(self.hits(text, "contrastive-voice")), 2)
 
+    def test_two_pointers_in_one_unit_both_report(self):
+        text = "Those are the ceilings, so combine those into daily summaries."
+        self.assertEqual(len(self.hits(text, "pointer")), 2)
+
     def test_two_joins_in_one_unit_both_report(self):
         text = ("The model converged, and the loss plateaued. "
                 "The cache grew, and the budget held.")
@@ -304,6 +308,51 @@ class BearHandoff(Scanned):
             with self.subTest(line=line):
                 self.assertEqual(self.hits(line, "relation-verb"), [])
                 self.assertEqual(len(self.hits(line, "concrete-thing")), 1)
+
+
+class Pointer(Scanned):
+    """The stems are narrow, so this class pins the misses as well as the hits."""
+
+    def test_a_demonstrative_pronoun_fires(self):
+        # One line per way the pattern reads what follows: an auxiliary, a
+        # preposition, and punctuation.
+        for line in ("Those are ceilings and baselines for extraction.",
+                     "Summarize each note, combine those into daily summaries.",
+                     "Lenient matching finds 747 of those, 4.9%."):
+            with self.subTest(line=line):
+                hits = self.hits(line, "pointer")
+                self.assertEqual(len(hits), 1)
+                self.assertEqual(hits[0].check.action, "TEST")
+
+    def test_the_head_noun_silences_it(self):
+        for line in ("Those runs are ceilings and baselines for extraction.",
+                     "These instructions are the structured prompt."):
+            with self.subTest(line=line):
+                self.assertEqual(self.hits(line, "pointer"), [])
+
+    def test_a_description_standing_in_for_a_name_fires(self):
+        for line in ("Koras reached 0.363 from that same base model.",
+                     "The latter is the truncation baseline."):
+            with self.subTest(line=line):
+                self.assertEqual(len(self.hits(line, "pointer")), 1)
+
+    def test_that_and_this_are_left_to_the_read(self):
+        # Widening the stems to "that" fires on every relative clause in the
+        # file. On "This is" it fires on the sense that stays.
+        for line in ("The row that is empty stays.",
+                     "This is a limit of the task."):
+            with self.subTest(line=line):
+                self.assertEqual(self.hits(line, "pointer"), [])
+
+    def test_a_table_cell_fires(self):
+        # The rolling-summarization row read this way until the sweep of 2026-09-19.
+        text = ("| Rolling summarization | Summarize each note, combine those "
+                "into daily summaries. | GPT-3.5 |")
+        self.assertEqual(len(self.hits(text, "pointer")), 1)
+
+    def test_a_blockquote_stays_quiet(self):
+        self.assertEqual(self.hits("> We combine those into daily summaries.",
+                                   "pointer"), [])
 
 
 class Unchanged(Scanned):

@@ -44,6 +44,7 @@ Hit = namedtuple("Hit", "check path line match context")
 AVOID = "christian-writing-style, What to avoid"
 CONCRETE = "christian-writing-style, Name the concrete thing"
 COMMENTARY = "christian-writing-style, Side commentary"
+POINT_AT_NOUN = "christian-writing-style, Point at a noun"
 
 SENTENCE_LIMIT = 40
 
@@ -157,7 +158,8 @@ def label(match, text, after, words=3):
     repeat inside one paragraph and undercounts the summary.
     """
     tail = " ".join(text[after:].split()[:words])
-    return f"{match} {tail}".strip()
+    joiner = "" if tail[:1] in ",.;:)" else " "
+    return f"{match}{joiner}{tail}".strip()
 
 
 def contrastive_voice(text):
@@ -170,6 +172,31 @@ def contrastive_voice(text):
         return
     for m in CONTRAST.finditer(text):
         yield Span(label(m.group(0).strip(), text, m.end()), m.start(), m.end())
+
+
+# "That" and "this" are left out on their own, where the stems below reach them
+# only in "that same" and "this same". "That" opens every relative clause ("the
+# row that is empty"). A sentence opening on "This is" points at the situation
+# the paragraph just described, which is the sense that stays.
+POINTER_TAIL = (r"[.,;:)]|\s+(?:is|are|was|were|has|have|had|and|or|but|so|that|which|"
+                r"of|in|to|from|with|for|than|against|into|on|at|by)\b")
+
+POINTER = re.compile(rf"(?i)(?<![\w-])(?:(?:those|these)(?={POINTER_TAIL})"
+                     rf"|(?:that|this) same\b"
+                     rf"|the (?:former|latter)\b)")
+
+
+def pointer(text):
+    """Find a pointer word whose noun the reader has to supply.
+
+    Quoted material is skipped for the reason contrastive_voice gives. Table
+    cells are read: one row said "combine those into daily summaries" through
+    every review the table had.
+    """
+    if QUOTED.match(text):
+        return
+    for m in POINTER.finditer(text):
+        yield Span(label(m.group(0), text, m.end()), m.start(), m.end())
 
 
 # A clause after the conjunction needs a subject of its own. Bare nouns stay
@@ -267,6 +294,11 @@ PROSE_CHECKS = [
                             r"load[- ]bearing)\b", "TEST",
           "framing vocabulary, or the literal thing? Name the specific thing if "
           "it is framing", CONCRETE),
+    Check("pointer", pointer, "TEST",
+          "name the noun it points at. If the nearest noun before it is "
+          "something else, or no noun was written at all, write the noun. A "
+          "demonstrative standing for the situation just described stays",
+          POINT_AT_NOUN),
     # "held" is left out. His sweep of one manuscript rewrote 44 instances of
     # the word and changed no "held", where the participle reads as the steady
     # sense. The particles after the verb mark that sense too.
@@ -381,7 +413,7 @@ COMMENT_SYNTAX = {
     ".sql": ("--", C_BLOCK), ".lua": ("--", NO_BLOCK),
 }
 
-# A new prose unit starts at any of these, and does not continue the one above.
+# A new prose unit starts at any marker below, and does not continue the unit above.
 UNIT_START = re.compile(r"^\s*(?:#{1,6}\s|[-*+]\s|\d+\.\s|>\s|\||```|~~~)")
 
 SENTENCE_END = re.compile(r"(?<=[.!?])\s")
