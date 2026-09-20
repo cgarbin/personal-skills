@@ -90,6 +90,7 @@ Christian uses tables extensively, a distinctive pattern.
 - **Comparison tables**: multiple studies, methods, or tools side by side with consistent columns.
 - **Summary tables**: condense large amounts of information into scannable formats.
 - **Chronological tables**: evolution of methods or findings over time.
+- Watch the table count. Two tables needing two different provenance footnotes are two measurement populations for the reader to hold at once. Move one to an appendix.
 - Captions describe what the reader should take away.
 - Figures for process flows (PRISMA, system architectures) and results visualizations.
 

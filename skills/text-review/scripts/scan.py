@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Mechanical scan for text-review layer 5 and the code-comments scan.
+"""Mechanical scan for the text-review and code-comments skills.
 
 The file extension picks what to read. A source file is reduced to its comment
 lines first, because every code-comments stem is also ordinary code vocabulary

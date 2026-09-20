@@ -1,6 +1,6 @@
 # The mechanical scan
 
-Design notes for `scripts/scan.py`. **text-review** layer 5 has what a review needs. This file has the routing, the checks that fire on correct prose, and the reasoning behind the two `REWRITE` checks.
+Design notes for `scripts/scan.py`. **text-review**'s mechanical scan section has what a review needs. This file has the routing, the checks that fire on correct prose, and the reasoning behind the two `REWRITE` checks.
 
 Read it when a hit does not make sense, when you are deciding whether a check misfired, or when you are changing the script.
 

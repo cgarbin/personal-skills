@@ -6,7 +6,7 @@ description: >-
 
 # Christian Garbin's Writing Style
 
-Three registers share one voice and differ in formality. Route first, read the common foundation, then read the reference file for the register you picked. Loading the wrong reference wastes context and pulls in conventions that do not apply. Apply the example sentences and layout descriptions in these files to your own subject. Copying them is the failure mode.
+The registers below share one voice and differ in formality. Route first, read the common foundation, then read what the third column names. Loading the wrong reference wastes context and pulls in conventions that do not apply. Apply the example sentences and layout descriptions in these files to your own subject. Copying them is the failure mode.
 
 ## Choose the register first
 
@@ -27,7 +27,7 @@ In the blended register, take structure and citations from academic and tone fro
 
 ### Intellectual character
 
-- **Be measured and precise.** Avoid hype. Undersell with accurate hedging. Blog: "under these specific circumstances, for this specific application, AI has performed well."
+- **Be measured and precise.** Avoid hype. State the claim at the strength the evidence supports, and hedge where the evidence is thin. Blog: "under these specific circumstances, for this specific application, AI has performed well."
 - **Be honest about limitations.** Say what the work does not cover. In papers, treat the limitations section as a contribution.
 - **Ground claims in evidence.** Cite academic papers in blog posts. Give comprehensive literature reviews in papers. Do not assert without evidence.
 - **Stay practical.** Connect theoretical work back to real-world implications. End systematic reviews with practitioner guidance. Include runnable code in blog experiments.
@@ -39,7 +39,7 @@ These shape *how* sentences are built, in every register.
 
 **Classic style.** Direct the reader's gaze to something in the world. Prose is a window onto the subject. Avoid metaconcepts. Don't write "This section discusses X" when you can state X. Don't write "It is important to note that X" when you can write X.
 
-**Fight the curse of knowledge.** Anchor abstract concepts in something concrete before going abstract. When evaluating a specialist term, ask: is it used once without definition? Does a plain-language equivalent of similar length exist? If yes to either, prefer plain. The specialist term stays only when it is standard for the audience or rewording would lose accuracy. A term inside an example is a separate case when the lesson is the sentence's shape. If the reader has to understand the example to see the point, it needs words the audience already has.
+**Fight the curse of knowledge.** Anchor abstract concepts in something concrete before going abstract. Prefer the plain word unless the term is standard for this audience or rewording loses accuracy. A term used once and never defined is the common failure, because the reader pays for it and gets nothing back. A term inside an example is a separate case when the lesson is the sentence's shape. If the reader has to understand the example to see the point, it needs words the audience already has.
 
 **Avoid zombie nouns.** Prefer verbs to nominalizations.
 
@@ -98,8 +98,6 @@ Three or more parallel items are table-shaped or list-shaped, never a run of par
 
 Do not announce that arrangement in the text. A table followed by per-item sections is self-evident.
 
-Watch the table count as well. Two tables needing two different provenance footnotes are two measurement populations for the reader to hold at once. Move one to an appendix.
-
 ### Tables and the prose beside them
 
 **Prose next to a table states what the numbers mean. It never restates the numbers.** Point at the table and spend the sentences on the reading. A figure the table does not contain, such as a derived ratio, earns its place.
@@ -118,7 +116,7 @@ The rule governs the phrasing, so an informative contrast is still restated. One
 
 A plain negation is a different thing and stays: "Low recall is not a retrieval problem" asserts something, where "X, not Y" only points away from Y.
 
-Quoted material keeps the construction, since editing it misreports the source. A verdict column in a table takes the positive half alone ("Metric configuration").
+Quoted material keeps the construction, since editing it misreports the source. A verdict column in a table takes the positive half alone, so the cell reads "Metric configuration" where the prose would have said "metric configuration, not model choice".
 
 ### Side commentary
 
@@ -196,9 +194,9 @@ Run the mechanical scan on every file you wrote or edited, and fix what it finds
 
 Use the second form on a drafting file, where the `<!-- -->` notes can outweigh the prose.
 
-Pass every file you touched in one call. A source file whose extension the script knows is reduced to its comments and docstrings. Everything else is read as prose, a source file in a language the script does not know included, whose statement separators then fire the semicolon check (`COMMENT_SYNTAX` in `scan.py`).
+Pass every file you touched in one call. A source file whose extension the script knows is reduced to its comments and docstrings. Everything else is read as prose. That includes a source file in a language the script does not know, whose statement separators then fire the semicolon check (`COMMENT_SYNTAX` in `scan.py`).
 
-Work the groups in order. **text-review** layer 5 explains how to read the output, including what to do with a hit you decide to keep. On a non-standard install the script sits at `text-review/scripts/scan.py` in the skills directory.
+Work the groups in order. **text-review**'s mechanical scan section explains how to read the output, including what to do with a hit you decide to keep. On a non-standard install the script sits at `text-review/scripts/scan.py` in the skills directory.
 
 A clean scan is not a clean draft.
 

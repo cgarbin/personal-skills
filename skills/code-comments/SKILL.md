@@ -35,7 +35,7 @@ It covers the stems for all three. It reads the comment lines only. Every stem i
 
 It also runs the **christian-writing-style** voice checks over those same comment lines. An em-dash, a semicolon joining two clauses, and British spelling are wrong in a comment for the same reason they are wrong in a paragraph. The em-dash check goes further and reads every line, since an error string or a log message is prose the comment pass never sees.
 
-Hits are candidates for you to judge. **text-review** layer 5 explains how to read the output and what to do with a hit you decide to keep.
+Hits are candidates for you to judge. **text-review**'s mechanical scan section explains how to read the output and what to do with a hit you decide to keep.
 
 ## What a survivor looks like
 
