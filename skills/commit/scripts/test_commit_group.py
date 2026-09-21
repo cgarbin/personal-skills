@@ -21,11 +21,33 @@ import commit_group
 SCRIPT = Path(__file__).resolve().parent / "commit_group.py"
 TRAILER = "Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
 
-# scan.py belongs to the text-review skill, which installs on its own. The
-# tests this decorates assert on hits only the real scanner produces, so a
-# commit-only install fails them all.
+# scan.py ships with the text-review skill, which can be installed without
+# this one, so the file may not be there.
 needs_scanner = unittest.skipUnless(
     commit_group.SCAN.is_file(), f"no prose scanner at {commit_group.SCAN}")
+
+# A stand-in for scan.py, so the tests below can drive a known hit. The
+# real check table keeps growing. Tests written against it break whenever
+# text-review adds a check.
+STUB_SCANNER = '''
+from collections import namedtuple
+
+Check = namedtuple("Check", "name pattern action note rule")
+Hit = namedtuple("Hit", "check path line match context")
+
+CHECKS = [Check("blocks", None, "FIX", "the blocking note.", None),
+          Check("warns", None, "REWRITE", "the warning note.", None)]
+
+
+def checks_for(path, wanted=None):
+    return CHECKS
+
+
+def scan(path, checks, skip_html_comments=False):
+    text = path.read_text()
+    return [Hit(check, path, 1, f"<{check.name}>", text)
+            for check in checks if check.name in text]
+'''
 
 
 def message(subject, body=None, trailer=TRAILER):
@@ -116,44 +138,25 @@ def body_of(text):
 
 
 class BodyProse(Checked):
-    """The checks that read the body as prose.
+    """The body checks this script runs itself, with the scanner's hits dropped.
 
-    A hit the pattern decides on its own blocks. One that needs the sentence
-    read warns.
+    text-review keeps adding checks, so a test body written for the inventory
+    rules would eventually trip one of them.
     """
 
+    def owned(self, body):
+        """The problems this script raises itself, in the order it reports them.
+
+        Everything the scanner produced is dropped, so these tests keep
+        passing when text-review adds a check.
+        """
+        return [p for p in commit_group.check_message(message("Subject line", body))
+                if not p.rule.startswith("prose")]
+
     def warned(self, body):
-        problems = commit_group.check_message(message("Subject line", body))
+        problems = self.owned(body)
         self.assertEqual([p for p in problems if p.level == "error"], [])
         return sorted({p.rule for p in problems if p.level == "warning"})
-
-    def errored(self, body):
-        return sorted({p.rule for p in
-                       commit_group.check_message(message("Subject line", body))
-                       if p.level == "error"})
-
-    @needs_scanner
-    def test_a_determined_fix_in_the_body_blocks(self):
-        # scan.py calls a semicolon a FIX hit, and christian-writing-style
-        # counts those as violations whatever the context.
-        self.assertEqual(self.errored("The model converged; the loss plateaued."),
-                         ["prose/semicolon"])
-        self.assertEqual(self.errored("The colour of the output is unchanged."),
-                         ["prose/british"])
-
-    @needs_scanner
-    def test_a_judgment_call_in_the_body_does_not_block(self):
-        self.assertEqual(self.errored(
-            "The retry path guards the loader against a stale index entry."), [])
-
-    @needs_scanner
-    def test_a_rewrite_hit_does_not_block(self):
-        # scan.py calls "tighten" a REWRITE hit, and the sentence around it
-        # decides. This one gives both numbers.
-        body = ("The limit moved from 80 to 72 to tighten the body against\n"
-                "git log, which indents every line by four.")
-        self.assertEqual(self.errored(body), [])
-        self.assertIn("prose/vague-quantifier", self.warned(body))
 
     def test_an_inventory_phrase_split_by_the_wrap_is_found(self):
         # A body is wrapped at 72, so a phrase across a line break is the
@@ -162,24 +165,20 @@ class BodyProse(Checked):
             "The paragraph and the diagram moved, all from this review\n"
             "round."))
 
-    @needs_scanner
     def test_a_reported_phrase_stays_on_one_line(self):
         # The skill has the reader sort the output by its level prefix. A
         # phrase with the line break still in it puts half a problem on a
         # line of its own.
-        problems = commit_group.check_message(message(
-            "Subject line",
+        problems = self.owned(
             "The caption cited the July run through the draft. Three\n"
-            "edits put the August numbers back."))
+            "edits put the August numbers back.")
         self.assertEqual([p.rule for p in problems], ["body-inventory"])
         self.assertIn('"Three edits"', problems[0].text)
 
-    @needs_scanner
     def test_every_inventory_phrase_is_reported(self):
-        problems = commit_group.check_message(message(
-            "Subject line",
+        problems = self.owned(
             "The paragraph and the diagram moved in one commit, all from\n"
-            "this review round."))
+            "this review round.")
         self.assertEqual([p.rule for p in problems],
                          ["body-inventory", "body-inventory"])
 
@@ -191,7 +190,6 @@ class BodyProse(Checked):
             "The tokenizer rejects a batch over 8192 tokens. Three fixes\n"
             "got the batch size under it."))
 
-    @needs_scanner
     def test_a_count_that_only_opens_a_wrapped_line_is_clean(self):
         # 72-char wrapping puts a count at the start of a line. This one sits
         # mid-sentence, where it describes the tokenizer.
@@ -207,12 +205,10 @@ class BodyProse(Checked):
         self.assertIn("body-inventory",
                       self.warned("The loader and the index moved in one commit."))
 
-    @needs_scanner
     def test_a_body_stating_a_fact_the_diff_does_not_show_is_clean(self):
         self.assertEqual(self.warned(
             "git wraps a subject over 72 chars in git log --oneline."), [])
 
-    @needs_scanner
     def test_a_body_at_the_ceiling_is_clean(self):
         self.assertEqual(self.warned(AT_CEILING), [])
 
@@ -247,18 +243,6 @@ class BodyProse(Checked):
         self.assertEqual(sorted({p.rule for p in problems}),
                          ["body-length", "prose-scan"])
 
-    @needs_scanner
-    def test_a_body_sentence_past_the_length_limit_warns(self):
-        # The prose scan owns the limit. This asserts the body reaches it.
-        body = "\n".join([
-            "The loader reads the manifest before the index because the index",
-            "names files the manifest may have dropped, and reading them in the",
-            "other order left the loader holding a path that had been deleted,",
-            "which the retry then reported as a missing file instead of a stale",
-            "index entry, so the report named the wrong cause.",
-        ])
-        self.assertIn("prose/long-sentence", self.warned(body))
-
     def test_the_trailers_are_not_part_of_the_body(self):
         # They are the harness's text, so a warning on them names nothing the
         # author can fix.
@@ -287,6 +271,72 @@ class BodyProse(Checked):
         self.assertIsNone(absent_module)
         self.assertIn("did not load", broke)
         self.assertNotEqual(broke, absent)
+
+
+    def test_a_scanner_that_breaks_its_interface_warns(self):
+        # scan.py belongs to another skill, so it can rename the function
+        # this one calls. Without the try around that call the script exits
+        # on a traceback.
+        self.addCleanup(setattr, commit_group, "SCAN", commit_group.SCAN)
+        with tempfile.TemporaryDirectory() as folder:
+            commit_group.SCAN = Path(folder) / "scan.py"
+            commit_group.SCAN.write_text("def checks_for(path, wanted=None):\n"
+                                         "    return []\n")
+            problems = commit_group.check_message(message("Subject line", "A body."))
+        self.assertEqual([p.level for p in problems], ["warning"])
+        self.assertEqual([p.rule for p in problems], ["prose-scan"])
+
+
+class ScannerTranslation(unittest.TestCase):
+    """How a scanner hit becomes an error or a warning.
+
+    The stub has one check of each kind. Which words the real scan.py
+    objects to belongs to text-review's own tests.
+    """
+
+    def setUp(self):
+        folder = tempfile.TemporaryDirectory()
+        self.addCleanup(folder.cleanup)
+        self.addCleanup(setattr, commit_group, "SCAN", commit_group.SCAN)
+        stub = Path(folder.name) / "scan.py"
+        stub.write_text(STUB_SCANNER)
+        commit_group.SCAN = stub
+
+    def problems(self, body):
+        return commit_group.check_message(message("Subject line", body))
+
+    def test_a_blocking_hit_becomes_an_error(self):
+        self.assertEqual([(p.level, p.rule) for p in self.problems("this one blocks")],
+                         [("error", "prose/blocks")])
+
+    def test_any_other_hit_becomes_a_warning(self):
+        self.assertEqual([(p.level, p.rule) for p in self.problems("this one warns")],
+                         [("warning", "prose/warns")])
+
+    def test_the_problem_quotes_the_match_and_the_note(self):
+        self.assertEqual(self.problems("this one blocks")[0].text,
+                         '"<blocks>". the blocking note.')
+
+    def test_a_body_that_trips_nothing_reports_nothing(self):
+        self.assertEqual(self.problems("the body is quiet"), [])
+
+
+class ScannerContract(unittest.TestCase):
+    """Whether the installed scan.py still works the way this script expects.
+
+    A renamed function shows up as an AttributeError the first time anyone
+    commits. A retired blocking action shows up as nothing at all: every
+    body passes and no commit is ever stopped.
+    """
+
+    @needs_scanner
+    def test_the_installed_scanner_can_still_block_a_body(self):
+        # Two violations in one body, so dropping either check leaves this
+        # test working. Nothing here names which check fired.
+        problems = commit_group.check_message(message(
+            "Subject line", "The colour of the output is unchanged; it is quiet."))
+        self.assertTrue([p for p in problems if p.level == "error"
+                         and p.rule.startswith("prose/")], problems)
 
 
 class Trailers(Checked):
@@ -399,11 +449,10 @@ class Staging(Repo):
         self.assertIn("b.txt", self.git("status", "--porcelain"))
 
     def test_it_refuses_an_argument_that_stages_more_than_the_group(self):
-        # argparse turns a flag away before this check, so only pathspecs
-        # reach it. git status prints an untracked directory as "?? src/".
-        # git add walks that into every file underneath. A colon is pathspec
-        # magic, which ls-files matches against any tracked file, so the
-        # on-disk check passes it.
+        # git status prints an untracked directory as "?? src/", which makes
+        # a directory an easy thing to pass. git add turns it into every file
+        # underneath. A colon argument gets past the on-disk check, because
+        # ls-files matches a pattern against any tracked file.
         self.write("a.txt", "a\n")
         (self.root / "src").mkdir()
         self.write("src/b.txt", "b\n")
@@ -458,7 +507,7 @@ class Staging(Repo):
         self.assertEqual(self.commits(), 1)
 
     def test_a_symlink_does_not_drag_in_its_target(self):
-        # git indexes a symlink itself, so following one to its target commits
+        # git stores a symlink itself, so following one to its target commits
         # the wrong file. The target's own edits belong to whichever group
         # named the target.
         self.write("target.txt", "t\n")
@@ -483,6 +532,28 @@ class Staging(Repo):
         self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
         self.assertEqual(self.git("show", "--name-only", "--format=", "HEAD").split(),
                          ["real/deep.txt"])
+
+
+    def test_it_commits_a_symlink_to_a_directory(self):
+        # git commits this link as one file, so naming it is fine. is_dir()
+        # follows the link, so the widening check has to let symlinks past.
+        (self.root / "real").mkdir()
+        self.write("real/deep.txt", "d\n")
+        self.git("add", "real")
+        self.git("commit", "-m", "Add the directory")
+        (self.root / "alias").symlink_to("real")
+        done = self.attempt("MSG", "alias")
+        self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+        self.assertEqual(self.git("show", "--name-only", "--format=", "HEAD").split(),
+                         ["alias"])
+
+    def test_it_stops_when_the_group_has_no_changes(self):
+        # Naming a file with no edits stages nothing, so git refuses the
+        # commit. Without this check the script blames a pre-commit hook.
+        done = self.attempt("MSG", "seed.txt")
+        self.assertEqual(done.returncode, 1, done.stdout)
+        self.assertEqual(self.commits(), 1)
+        self.assertIn("nothing was staged", done.stdout + done.stderr)
 
 
 class HookRecovery(Repo):

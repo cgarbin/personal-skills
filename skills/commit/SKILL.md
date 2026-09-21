@@ -155,10 +155,11 @@ scripts/commit_group.py <message-file> <file> [<file> ...]
 
 It re-runs the Step 4 checks, stages the paths you name and nothing else, and commits. When a format hook rewrites one of those paths and aborts the commit (common with ruff-format), the script stages the rewrite and runs the same commit again, once.
 
-Exit 0 means the commit was created. Exit 2 is a usage error. Exit 1 means nothing was committed, for one of four reasons the output names:
+Exit 0 means the commit was created. Exit 2 is a usage error. Exit 1 means nothing was committed, for one of the reasons the output names:
 
 - A message error.
 - A path that is neither on disk nor tracked.
+- A group that stages nothing, because its paths have no edits or their spelling differs from the tracked name.
 - An index that already has a path outside the group.
 - A hook that failed for a reason a second run will not fix. Read the hook output and fix the cause. Do not re-run the script to get past it.
 

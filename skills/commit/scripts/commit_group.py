@@ -209,7 +209,15 @@ def scan_body(body):
         # checks.
         draft = Path(folder) / "body.md"
         draft.write_text(body + "\n")
-        hits = module.scan(draft, module.checks_for(draft))
+        try:
+            hits = module.scan(draft, module.checks_for(draft))
+        except Exception as failure:
+            # This calls another skill's file, so there is no knowing what
+            # it raises. A commit that passes every other check should not
+            # fail because the prose read broke.
+            return [Problem("warning", "prose-scan",
+                            f"the prose scanner at {SCAN} did not run, so the "
+                            f"body was not read: {failure}")]
     return [Problem("error" if hit.check.action in BLOCKING else "warning",
                     f"prose/{hit.check.name}",
                     f'"{hit.match}". {hit.check.note}') for hit in hits]
@@ -304,8 +312,9 @@ def relay(done):
 def resolve(given, root):
     """Return repo-relative forms of the arguments, so they compare with git's output.
 
-    The last component stays as it was named. git indexes a symlink itself, so
-    following one commits the target and leaves the link out of the group.
+    Only the directory part is resolved. Resolving the whole path would
+    follow a symlink to its target, so git would commit the target and the
+    link would stay uncommitted.
     """
     resolved = []
     for path in given:
@@ -361,6 +370,12 @@ def commit(root, message, files):
         relay(failed)
         return 1
 
+    if not listed_paths(git(root, "diff", "--cached", "--name-only", "-z")):
+        print("error: nothing was staged, so there is nothing to commit. Check "
+              "that each path has edits, and that its spelling matches the "
+              "tracked name: " + ", ".join(files), file=sys.stderr)
+        return 1
+
     first = git(root, "commit", "-F", str(message))
     if first.returncode == 0:
         relay(first)
@@ -397,10 +412,12 @@ def main(argv=None):
     if not args.check and not args.files:
         parser.error("name the files to stage, or pass --check")
 
-    # A leading colon is pathspec magic to git, so it matches files the group
-    # never named.
+    # git reads a leading colon as a pattern, which can match files nobody
+    # named. is_dir() is true for a symlink pointing at a directory. A link
+    # is one file to git, so those stay allowed.
     widening = [path for path in args.files if path in WIDENING
-                or path.startswith(":") or Path(path).is_dir()]
+                or path.startswith(":")
+                or (Path(path).is_dir() and not Path(path).is_symlink())]
     if widening:
         parser.error("name each file, not " + ", ".join(widening))
 
