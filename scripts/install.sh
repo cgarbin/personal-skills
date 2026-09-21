@@ -365,14 +365,33 @@ show_changelog() {
 # ── CLAUDE.md ──────────────────────────────────────────────────────────
 
 # install_claude_md
-#   Symlinks <repo>/claude-md/CLAUDE.md → CLAUDE_MD_TARGET.
+#   Symlinks <repo>/claude-md/CLAUDE.md → CLAUDE_MD_TARGET, but only when
+#   nothing is there yet. Unlike a skill folder, the global CLAUDE.md is a
+#   file the machine may already own, so install never replaces what it
+#   finds, not even a symlink it did not create.
 #   Skips if claude-md/CLAUDE.md doesn't exist in the repo.
 install_claude_md() {
     [[ -f "$CLAUDE_MD_SRC" ]] || return 0
 
     mkdir -p "$(dirname "$CLAUDE_MD_TARGET")"
     echo "CLAUDE.md:"
-    ensure_symlink "$CLAUDE_MD_SRC" "$CLAUDE_MD_TARGET" "CLAUDE.md"
+
+    if [[ -L "$CLAUDE_MD_TARGET" && "$(readlink "$CLAUDE_MD_TARGET")" == "$CLAUDE_MD_SRC" ]]; then
+        echo "  ok        CLAUDE.md (already linked)"
+        up_to_date=$((up_to_date + 1))
+        return 0
+    fi
+
+    # -e follows the link, so a dangling symlink reads as absent. -L catches it.
+    if [[ -e "$CLAUDE_MD_TARGET" || -L "$CLAUDE_MD_TARGET" ]]; then
+        echo "  skip      CLAUDE.md ($CLAUDE_MD_TARGET already exists)"
+        echo "            Remove it and re-run if you want to use this repo's copy."
+        return 0
+    fi
+
+    ln -s "$CLAUDE_MD_SRC" "$CLAUDE_MD_TARGET"
+    echo "  link      CLAUDE.md -> $CLAUDE_MD_SRC"
+    linked=$((linked + 1))
 }
 
 # ── GitHub URL parsing ───────────────────────────────────────────────────
