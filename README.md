@@ -1,6 +1,6 @@
 # Personal Skills
 
-Personal skills, mostly for writing. Use at your own risk.
+Personal skills, mostly for writing or improving text in prose and code comments. Use at your own risk.
 
 - [Set up a new machine](#set-up-a-new-machine)
 - [Update a skill](#update-a-skill)
@@ -12,13 +12,16 @@ Personal skills, mostly for writing. Use at your own risk.
 
 The text refers to "Claude" and "CLAUDE.md", but should be generalizable to any agent that can load skills from a folder.
 
-External skills I use are listed in `skills.manifest`. The install script fetches them and symlinks them into `~/.claude/skills/` alongside personal skills.
-
 - **[christian-writing-style](skills/christian-writing-style/)**: the writing rules for anything under my name, from a technical article to a commit subject line.
 - **[text-review](skills/text-review/)**: reviews writing for accuracy, organization, and clarity. Presents findings by severity and waits before editing.
 - **[code-comments](skills/code-comments/)**: rules for useful comments and docstrings. Works together with `christian-writing-style`.
 - **[commit](skills/commit/)**: commits the session's changes in logical groups, with a review step before each commit.
 - **[python-dev-process](skills/python-dev-process/)** (opt-in): my Python process, covering project phases, tooling, testing, and refactoring discipline.
+
+How to use with a coding agent:
+
+1. _Review the file <path> with the text reviewer skill_
+1. _Review all comments in the file <path> with the code comments skill_
 
 ## Set up a new machine
 
@@ -37,6 +40,8 @@ Run the install script to symlink your skills into the Claude skills directory:
 ./scripts/install.sh
 ```
 
+The symlinks make it simple to update the skill: just fetch the latest changes from this repo or edit the SKILL.md in place.
+
 The script fetches external skills listed in `skills.manifest`, then symlinks both personal and external skills into `~/.claude/skills/`. Running it again is safe. A re-run:
 
 - updates external skills
@@ -52,8 +57,6 @@ If your Claude skills directory is somewhere else, pass it with `--target`:
 ```bash
 ./scripts/install.sh --target /path/to/skills
 ```
-
-With symlinks in place, any edit to the files in this repo (or any `git pull`) is live immediately. No reinstall step needed.
 
 ### 3. Configure Claude Code permissions
 
@@ -171,7 +174,11 @@ Two signs the description is not the problem:
 
 A line in `claude-md/CLAUDE.md` naming the skill looks like a way around this, since that file is in context for every session. Tested on one skill, it changed nothing. The queries that scored zero still scored zero with the line in place. The work produced with it was no better and had about twice the commentary. Treat the queries you cannot reach as out of reach.
 
-## Add an external skill
+## External skills
+
+Use `skills.manifest` to list external skills you want to use. The install script fetches them and symlinks them into `~/.claude/skills/` alongside personal skills.
+
+### Add an external skill
 
 Add a GitHub URL to `skills.manifest` and re-run the install script:
 
@@ -182,7 +189,7 @@ echo "https://github.com/<owner>/<repo>/tree/<branch>/<path-to-skill>" >> skills
 
 External skills are fetched into `from-others/` (git-ignored) and symlinked alongside personal skills. The manifest is committed, so other machines get the same set of external skills after `git pull && ./scripts/install.sh`.
 
-## Track external skill changes
+### Track external skill changes
 
 The install script maintains a `skills.lock` file that records the commit SHA fetched for each external repo. On subsequent runs, if the upstream repo has new commits, the script shows a full diff of what changed in the skill files before updating. This lets you review upstream changes instead of silently replacing skills.
 
