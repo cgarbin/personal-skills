@@ -11,6 +11,7 @@ implementation.
 """
 
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -19,6 +20,12 @@ import commit_group
 
 SCRIPT = Path(__file__).resolve().parent / "commit_group.py"
 TRAILER = "Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>"
+
+# scan.py belongs to the text-review skill, which installs on its own. The
+# tests this decorates assert on hits only the real scanner produces, so a
+# commit-only install fails them all.
+needs_scanner = unittest.skipUnless(
+    commit_group.SCAN.is_file(), f"no prose scanner at {commit_group.SCAN}")
 
 
 def message(subject, body=None, trailer=TRAILER):
@@ -68,7 +75,7 @@ class Subject(Checked):
                 self.assertIn("subject-prefix", self.rules(message(subject)))
 
     def test_a_colon_that_names_no_type_passes(self):
-        # Only the conventional type list is banned, not every colon.
+        # Only the conventional type list is banned.
         for subject in ("Note: the retry path stays",
                         "Commit skill: fold in the message checks"):
             with self.subTest(subject=subject):
@@ -96,7 +103,7 @@ class Body(Checked):
         self.assertEqual(self.errors(message("Subject", url)), [])
 
     def test_a_long_body_line_that_opens_like_a_trailer_fails(self):
-        # The exemption belongs to the trailer block, not to every "Word: " line.
+        # The exemption belongs to the trailer block alone.
         line = "Result: " + " ".join(["alpha"] * 16)
         self.assertGreater(len(line), 72)
         self.assertEqual(self.rules(message("Subject", line)), ["body-wrap"])
@@ -125,6 +132,7 @@ class BodyProse(Checked):
                        commit_group.check_message(message("Subject line", body))
                        if p.level == "error"})
 
+    @needs_scanner
     def test_a_determined_fix_in_the_body_blocks(self):
         # scan.py calls a semicolon a FIX hit, and christian-writing-style
         # counts those as violations whatever the context.
@@ -133,10 +141,12 @@ class BodyProse(Checked):
         self.assertEqual(self.errored("The colour of the output is unchanged."),
                          ["prose/british"])
 
+    @needs_scanner
     def test_a_judgment_call_in_the_body_does_not_block(self):
         self.assertEqual(self.errored(
             "The retry path guards the loader against a stale index entry."), [])
 
+    @needs_scanner
     def test_a_rewrite_hit_does_not_block(self):
         # scan.py calls "tighten" a REWRITE hit, and the sentence around it
         # decides. This one gives both numbers.
@@ -152,10 +162,11 @@ class BodyProse(Checked):
             "The paragraph and the diagram moved, all from this review\n"
             "round."))
 
+    @needs_scanner
     def test_a_reported_phrase_stays_on_one_line(self):
-        # The skill has the reader sort the output by its level prefix, and
-        # a phrase holding the line break puts half a problem on a line of
-        # its own.
+        # The skill has the reader sort the output by its level prefix. A
+        # phrase with the line break still in it puts half a problem on a
+        # line of its own.
         problems = commit_group.check_message(message(
             "Subject line",
             "The caption cited the July run through the draft. Three\n"
@@ -163,6 +174,7 @@ class BodyProse(Checked):
         self.assertEqual([p.rule for p in problems], ["body-inventory"])
         self.assertIn('"Three edits"', problems[0].text)
 
+    @needs_scanner
     def test_every_inventory_phrase_is_reported(self):
         problems = commit_group.check_message(message(
             "Subject line",
@@ -179,6 +191,7 @@ class BodyProse(Checked):
             "The tokenizer rejects a batch over 8192 tokens. Three fixes\n"
             "got the batch size under it."))
 
+    @needs_scanner
     def test_a_count_that_only_opens_a_wrapped_line_is_clean(self):
         # 72-char wrapping puts a count at the start of a line. This one sits
         # mid-sentence, where it describes the tokenizer.
@@ -194,10 +207,12 @@ class BodyProse(Checked):
         self.assertIn("body-inventory",
                       self.warned("The loader and the index moved in one commit."))
 
+    @needs_scanner
     def test_a_body_stating_a_fact_the_diff_does_not_show_is_clean(self):
         self.assertEqual(self.warned(
             "git wraps a subject over 72 chars in git log --oneline."), [])
 
+    @needs_scanner
     def test_a_body_at_the_ceiling_is_clean(self):
         self.assertEqual(self.warned(AT_CEILING), [])
 
@@ -224,15 +239,15 @@ class BodyProse(Checked):
     def test_a_list_marker_is_not_a_word(self):
         self.assertEqual(commit_group.word_count("- one\n- two\n* three"), 3)
 
-    def test_the_ceiling_holds_without_the_prose_scanner(self):
-        # The two skills install separately, so a missing scanner is reachable.
+    def test_a_missing_prose_scanner_warns_and_the_rest_still_runs(self):
         self.addCleanup(setattr, commit_group, "SCAN", commit_group.SCAN)
         commit_group.SCAN = Path("/nonexistent/scan.py")
-        self.assertEqual(
-            sorted({p.rule for p in
-                    commit_group.check_message(message("Subject", PAST_CEILING))}),
-            ["body-length", "prose-scan"])
+        problems = commit_group.check_message(message("Subject", PAST_CEILING))
+        self.assertEqual({p.level for p in problems}, {"warning"})
+        self.assertEqual(sorted({p.rule for p in problems}),
+                         ["body-length", "prose-scan"])
 
+    @needs_scanner
     def test_a_body_sentence_past_the_length_limit_warns(self):
         # The prose scan owns the limit. This asserts the body reaches it.
         body = "\n".join([
@@ -257,18 +272,10 @@ class BodyProse(Checked):
         commit_group.SCAN = Path("/nonexistent/scan.py")
         self.assertEqual(commit_group.check_message(message("Subject line")), [])
 
-    def test_a_missing_prose_scanner_warns_instead_of_blocking(self):
-        self.addCleanup(setattr, commit_group, "SCAN", commit_group.SCAN)
-        commit_group.SCAN = Path("/nonexistent/scan.py")
-        problems = commit_group.check_message(message("Subject line", "A body."))
-        self.assertEqual([p.level for p in problems], ["warning"])
-        self.assertEqual([p.rule for p in problems], ["prose-scan"])
-
     def test_a_scanner_that_will_not_load_is_not_reported_as_missing(self):
         # The file is at the path the message names, so "no prose scanner
         # there" sends the reader looking for a file that is sitting there.
-        # One path serves both loads, so the two reasons differ in their
-        # wording rather than in the path they interpolate.
+        # One path serves both loads, so the wording is what tells them apart.
         self.addCleanup(setattr, commit_group, "SCAN", commit_group.SCAN)
         with tempfile.TemporaryDirectory() as folder:
             commit_group.SCAN = Path(folder) / "scan.py"
@@ -300,7 +307,7 @@ class Trailers(Checked):
 
     def test_a_session_trailer_fails(self):
         # git history is the pressure behind this one. Every commit in this repo
-        # before c5fd39c carries the trailer, so the line reads as correct in
+        # before c5fd39c has the trailer, so the line reads as correct in
         # review and only the check catches it.
         text = (f"Subject line\n\n{TRAILER}\n"
                 "Claude-Session: https://claude.ai/code/session_01C4BXdgYEoEWTb\n")
@@ -329,7 +336,7 @@ class Trailers(Checked):
 
     def test_the_author_name_is_not_pinned(self):
         # The harness sets the name and it moves with the model, so the check
-        # is that a well-formed trailer exists, not that it matches one string.
+        # asks only that a well-formed trailer exists.
         text = "Subject line\n\nCo-Authored-By: Some Future Model <noreply@anthropic.com>\n"
         self.assertEqual(self.errors(text), [])
 
@@ -366,7 +373,7 @@ class Repo(unittest.TestCase):
 
     def attempt(self, *args):
         self.write("MSG", message("Subject line"))
-        return subprocess.run(["python3", str(SCRIPT), *args], cwd=self.root,
+        return subprocess.run([sys.executable, str(SCRIPT), *args], cwd=self.root,
                               capture_output=True, text=True)
 
     def commits(self):
@@ -391,10 +398,16 @@ class Staging(Repo):
         self.attempt("MSG", "a.txt")
         self.assertIn("b.txt", self.git("status", "--porcelain"))
 
-    def test_it_refuses_an_argument_that_stages_the_tree(self):
-        # Only the pathspecs. argparse turns a flag away before this check.
+    def test_it_refuses_an_argument_that_stages_more_than_the_group(self):
+        # argparse turns a flag away before this check, so only pathspecs
+        # reach it. git status prints an untracked directory as "?? src/".
+        # git add walks that into every file underneath. A colon is pathspec
+        # magic, which ls-files matches against any tracked file, so the
+        # on-disk check passes it.
         self.write("a.txt", "a\n")
-        for arg in (".", "..", "./", ":/", "*"):
+        (self.root / "src").mkdir()
+        self.write("src/b.txt", "b\n")
+        for arg in (".", "..", "./", ":/", "*", "src", "src/", ":(glob)*.txt"):
             with self.subTest(arg=arg):
                 done = self.attempt("MSG", arg)
                 self.assertEqual(done.returncode, 2, done.stdout)
@@ -443,6 +456,33 @@ class Staging(Repo):
         done = self.attempt("MSG", "a.txt")
         self.assertEqual(done.returncode, 1, done.stdout)
         self.assertEqual(self.commits(), 1)
+
+    def test_a_symlink_does_not_drag_in_its_target(self):
+        # git indexes a symlink itself, so following one to its target commits
+        # the wrong file. The target's own edits belong to whichever group
+        # named the target.
+        self.write("target.txt", "t\n")
+        self.git("add", "target.txt")
+        self.git("commit", "-m", "Add the target")
+        (self.root / "link.txt").symlink_to("target.txt")
+        self.write("target.txt", "edited\n")
+        done = self.attempt("MSG", "link.txt")
+        self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+        self.assertEqual(self.git("show", "--name-only", "--format=", "HEAD").split(),
+                         ["link.txt"])
+        self.assertIn("target.txt", self.git("status", "--porcelain"))
+
+    def test_a_symlinked_directory_in_the_path_still_resolves(self):
+        # The parent still resolves, which is what a repo reached through a
+        # symlinked path needs. Every test here runs under one, since
+        # tempfile hands back /var on macOS and git prints /private/var.
+        (self.root / "real").mkdir()
+        self.write("real/deep.txt", "d\n")
+        (self.root / "alias").symlink_to("real")
+        done = self.attempt("MSG", "alias/deep.txt")
+        self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+        self.assertEqual(self.git("show", "--name-only", "--format=", "HEAD").split(),
+                         ["real/deep.txt"])
 
 
 class HookRecovery(Repo):
@@ -557,7 +597,7 @@ class Gate(Repo):
     def test_a_message_with_an_error_commits_nothing(self):
         self.write("a.txt", "a\n")
         self.write("BAD", "feat: add the retry\n")
-        done = subprocess.run(["python3", str(SCRIPT), "BAD", "a.txt"],
+        done = subprocess.run([sys.executable, str(SCRIPT), "BAD", "a.txt"],
                               cwd=self.root, capture_output=True, text=True)
         self.assertEqual(done.returncode, 1, done.stdout)
         self.assertEqual(self.commits(), 1)
@@ -566,14 +606,14 @@ class Gate(Repo):
     def test_check_reports_without_committing(self):
         self.write("a.txt", "a\n")
         self.write("MSG", message("Subject line"))
-        done = subprocess.run(["python3", str(SCRIPT), "--check", "MSG"],
+        done = subprocess.run([sys.executable, str(SCRIPT), "--check", "MSG"],
                               cwd=self.root, capture_output=True, text=True)
         self.assertEqual(done.returncode, 0, done.stderr)
         self.assertEqual(self.commits(), 1)
 
     def test_a_message_without_files_is_a_usage_error(self):
         self.write("MSG", message("Subject line"))
-        done = subprocess.run(["python3", str(SCRIPT), "MSG"], cwd=self.root,
+        done = subprocess.run([sys.executable, str(SCRIPT), "MSG"], cwd=self.root,
                               capture_output=True, text=True)
         self.assertEqual(done.returncode, 2)
 
@@ -581,14 +621,14 @@ class Gate(Repo):
         # Silently ignoring them would read as a commit that never happened.
         self.write("a.txt", "a\n")
         self.write("MSG", message("Subject line"))
-        done = subprocess.run(["python3", str(SCRIPT), "--check", "MSG", "a.txt"],
+        done = subprocess.run([sys.executable, str(SCRIPT), "--check", "MSG", "a.txt"],
                               cwd=self.root, capture_output=True, text=True)
         self.assertEqual(done.returncode, 2)
         self.assertEqual(self.commits(), 1)
 
     def test_an_unreadable_message_file_is_a_usage_error(self):
         self.write("a.txt", "a\n")
-        done = subprocess.run(["python3", str(SCRIPT), "ghost-msg", "a.txt"],
+        done = subprocess.run([sys.executable, str(SCRIPT), "ghost-msg", "a.txt"],
                               cwd=self.root, capture_output=True, text=True)
         self.assertEqual(done.returncode, 2)
         self.assertEqual(self.commits(), 1)

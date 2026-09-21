@@ -59,20 +59,19 @@ BODY_WORDS = 35
 # ceiling with nothing in it the writer can cut.
 WORD = re.compile(r"[A-Za-z0-9]\S*")
 
-# The type list from the Conventional Commits spec, not every word before a
-# colon. "Note: ..." is a sentence and stays. "docs: ..." is the convention
-# the skill rejects.
+# Only the type list from the Conventional Commits spec. "Note: ..." is a
+# sentence and stays. "docs: ..." is the convention the skill rejects.
 CONVENTIONAL = re.compile(
     r"^(feat|fix|chore|docs|style|refactor|perf|test|build|ci|revert)"
     r"(\([^)]*\))?!?:\s", re.IGNORECASE)
 
 ADDRESS = re.compile(r"<[^@<>\s]+@[^@<>\s]+>")
 
-# A per-session identifier, which the skill keeps out of a permanent record. It
-# is checked rather than left to review because git history is the pressure
-# behind it: earlier commits here carry the trailer, so the line looks correct.
-# Other unexpected trailers pass. Blocking them all would also block the
-# Signed-off-by a DCO repo requires.
+# A per-session identifier, which the skill keeps out of a permanent record.
+# git history is the pressure behind the check: earlier commits here have the
+# trailer, so the line looks correct in review. Other unexpected trailers
+# pass. Blocking them all would also block the Signed-off-by a DCO repo
+# requires.
 SESSION = re.compile(r"session|conversation|claude\.ai/code", re.IGNORECASE)
 
 # A body describing the commit instead of stating a fact. The count has to
@@ -95,13 +94,13 @@ SCAN = Path(__file__).resolve().parents[2] / "text-review" / "scripts" / "scan.p
 # what a warning asks for.
 BLOCKING = {"FIX"}
 
-# Pathspecs that would stage more than the group. argparse rejects an unknown
-# option on its own, so no flag reaches this.
+# The literal pathspecs that would stage more than the group. argparse rejects
+# an unknown option on its own, so no flag reaches this.
 WIDENING = {".", "..", "./", ":/", "*"}
 
 
 def trailers(text):
-    """Return the trailers git will register, not every line that looks like one.
+    """Return only the trailers git will register.
 
     git reads them from the last paragraph only, so a trailer with no blank
     line above it is body text.
@@ -303,11 +302,16 @@ def relay(done):
 
 
 def resolve(given, root):
-    """Return repo-relative forms of the arguments, so they compare with git's output."""
+    """Return repo-relative forms of the arguments, so they compare with git's output.
+
+    The last component stays as it was named. git indexes a symlink itself, so
+    following one commits the target and leaves the link out of the group.
+    """
     resolved = []
     for path in given:
+        named = Path(path)
         try:
-            resolved.append(str(Path(path).resolve().relative_to(root)))
+            resolved.append(str((named.parent.resolve() / named.name).relative_to(root)))
         except ValueError:
             raise ValueError(f"{path} is outside {root}") from None
     return resolved
@@ -321,7 +325,7 @@ def tracked(root, path):
     """Whether git knows the path, so a name with a typo still fails the check.
 
     A deletion that is already staged is gone from both the index and the
-    working tree, so HEAD holds the last copy of the name.
+    working tree, so HEAD has the last copy of the name.
     """
     return (in_index(root, path)
             or bool(git(root, "ls-tree", "--name-only", "HEAD", "--", path).stdout))
@@ -330,8 +334,8 @@ def tracked(root, path):
 def stage(root, files):
     """Stage the paths git add can match, and return the failure or None.
 
-    git add stops on a pathspec it cannot match, and a staged deletion matches
-    nothing. The index already holds it, so leaving it out loses nothing.
+    git add stops on a pathspec it cannot match. A staged deletion matches
+    nothing. The index already has it, so leaving it out loses nothing.
     """
     matchable = [path for path in files
                  if (root / path).exists() or in_index(root, path)]
@@ -393,7 +397,10 @@ def main(argv=None):
     if not args.check and not args.files:
         parser.error("name the files to stage, or pass --check")
 
-    widening = [path for path in args.files if path in WIDENING]
+    # A leading colon is pathspec magic to git, so it matches files the group
+    # never named.
+    widening = [path for path in args.files if path in WIDENING
+                or path.startswith(":") or Path(path).is_dir()]
     if widening:
         parser.error("name each file, not " + ", ".join(widening))
 
