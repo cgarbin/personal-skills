@@ -1,12 +1,7 @@
 ---
 name: phd-status-update
 description: >-
-  Comprehensive update of all PhD dissertation planning documents. Trigger on
-  explicit full-update requests like "update all the phd plans", "do a full phd
-  state update", "bring all phd plans up to date", "sync the phd documents",
-  "update phd status", "refresh the dissertation plans", or any request to bring
-  multiple PhD planning documents into sync with recent work. Do NOT trigger on
-  single-document edits, individual PhD questions, or daily note operations.
+  Comprehensive update of all PhD dissertation planning documents. Use when Christian asks to bring the PhD plans or status up to date as a set, or to sync several planning documents with recent work. Not for single-document edits, individual PhD questions, or daily note operations.
 ---
 
 # PhD Status Update Skill
@@ -22,19 +17,19 @@ Two layers, in order of priority.
 Key file paths:
 
 - Execution plan: `PhD dissertation - temporal EHR summary/dissertation execution plan.md`
-- Writing plan: `PhD dissertation - temporal EHR summary/dissertation writing plan.md`
+- Writing plans: `PhD dissertation - temporal EHR summary/dissertation paper writing plan.md` for the dissertation and `PhD dissertation - temporal EHR summary/dissertation baseline paper writing plan.md` for the baseline paper
 - Repository map: `PhD dissertation - temporal EHR summary/Supporting material/Repository map.md`
 
 **Execution plan** contains:
 
 - A **Status section** at the top with current phase, last milestone, in-progress work, and next gate. Update these lines when the phase advances, a milestone is committed, or the in-progress or gate items shift. No slip tracking here. That lives in the progress log.
-- A **progress log** at the bottom with dated entries. Add a new entry when a phase completed, a phase slipped, or a deliverable in the writing plan was checked off. Each entry is a `### YYYY-MM-DD: short summary` section followed by 2-4 sentences of prose (split with `####` subheadings if it grows). Entries are chronological, oldest first.
+- A **progress log** at the bottom with dated entries. Add a new entry when a phase completed, a phase slipped, or a deliverable in the dissertation paper writing plan was checked off. Match the heading format, length, and structure of the most recent entry. Entries are chronological, oldest first.
 - **Phase headers** with date ranges. If a phase completed or slipped, update the dates and status markers.
 - A **"Next concrete action"** section. Update this to reflect what's actually next, based on recent daily notes and what was completed.
 - A **Gantt chart** (Mermaid). Update if phase dates shifted.
 - A **phase table** with dates. Update if dates shifted.
 
-**Writing plan** contains checkboxed tasks organized by chapter. Check off tasks that have been completed based on daily notes and git history. Don't check off tasks that are only partially done.
+**The dissertation paper writing plan** contains checkboxed tasks organized by chapter. Check off tasks that have been completed based on daily notes and git history. Don't check off tasks that are only partially done. The baseline paper writing plan has no checkboxes. Correct any of its statements that recent work made stale.
 
 Only touch sections where something actually changed. Don't rewrite content that's still accurate.
 
