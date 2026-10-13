@@ -10,7 +10,7 @@ The defects in them are the test. `chunker.py` has fifteen planted comment viola
 
 That keeper is why the fixture works. An agent that deletes every comment satisfies all fifteen "removes X" assertions and is still wrong, and without a comment worth keeping the eval would score that run as a success.
 
-This matters because `claude-md/CLAUDE.md` tells every session to apply the `code-comments` rules to comments it writes or edits. A session working elsewhere in this repo could reasonably read these files as sloppy and tidy them. Tidying them deletes the eval.
+This matters because `agents-md/AGENTS.md` tells every session to apply the `code-comments` rules to comments it writes or edits. A session working elsewhere in this repo could reasonably read these files as sloppy and tidy them. Tidying them deletes the eval.
 
 ## Changing a fixture
 

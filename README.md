@@ -172,7 +172,7 @@ Two signs the description is not the problem:
 - Two differently worded descriptions fail the same queries.
 - Trigger rates sit at 0 or 1 with nothing in between. A rate in the middle means wording still has room to move it.
 
-A line in `claude-md/CLAUDE.md` naming the skill looks like a way around this, since that file is in context for every session. Tested on one skill, it changed nothing. The queries that scored zero still scored zero with the line in place. The work produced with it was no better and had about twice the commentary. Treat the queries you cannot reach as out of reach.
+A line in `agents-md/AGENTS.md` naming the skill looks like a way around this, since that file is in context for every session. Tested on one skill, it changed nothing. The queries that scored zero still scored zero with the line in place. The work produced with it was no better and had about twice the commentary. Treat the queries you cannot reach as out of reach.
 
 ## External skills
 

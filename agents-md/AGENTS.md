@@ -2,7 +2,7 @@
 
 Applied ML engineer building services for generative AI applications and agentic tooling. Primary languages: Go (work) and Python (personal). Experienced software engineer with production systems. Skip the basics and focus on architecture and design.
 
-PhD student working on private, on-device summarization of long clinical records with small open-weight models, and how to measure it. Published peer-reviewed papers before, familiar with the writing and publication process. Dissertation-specific context (advisor, dataset, contributions) lives in that project's CLAUDE.md.
+PhD student working on private, on-device summarization of long clinical records with small open-weight models, and how to measure it. Published peer-reviewed papers before, familiar with the writing and publication process. Dissertation-specific context (advisor, dataset, contributions) lives in that project's AGENTS.md.
 
 # Communication
 

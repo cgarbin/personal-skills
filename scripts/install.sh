@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Install personal and external skills by symlinking them into the Claude
-# skills directory, and symlink the global CLAUDE.md into ~/.claude/.
+# skills directory, and symlink the global AGENTS.md into ~/.claude/ as CLAUDE.md.
 #
 # Usage:
 #   ./scripts/install.sh                                 # repo = parent of this script's dir
@@ -17,7 +17,7 @@
 # installed per repo with --link-into.
 #
 # The script:
-#   1. Symlinks the global CLAUDE.md from <repo>/claude-md/
+#   1. Symlinks <repo>/agents-md/AGENTS.md as the global CLAUDE.md
 #   2. Cleans up stale personal skill symlinks (deleted, no SKILL.md, or
 #      now opt-in)
 #   3. Symlinks non-opt-in personal skills from <repo>/skills/ globally
@@ -101,7 +101,7 @@ SKILLS_SRC="$REPO_DIR/skills"
 EXTERNAL_DIR="$REPO_DIR/from-others"
 MANIFEST="$REPO_DIR/skills.manifest"
 LOCKFILE="$REPO_DIR/skills.lock"
-CLAUDE_MD_SRC="$REPO_DIR/claude-md/CLAUDE.md"
+AGENTS_MD_SRC="$REPO_DIR/agents-md/AGENTS.md"
 CLAUDE_MD_TARGET="$HOME/.claude/CLAUDE.md"
 OPTIN_FILENAME="OPTIN"
 SKILL_FILENAME="SKILL.md"
@@ -365,18 +365,21 @@ show_changelog() {
 # ── CLAUDE.md ──────────────────────────────────────────────────────────
 
 # install_claude_md
-#   Symlinks <repo>/claude-md/CLAUDE.md → CLAUDE_MD_TARGET, but only when
+#   Symlinks <repo>/agents-md/AGENTS.md → CLAUDE_MD_TARGET, but only when
 #   nothing is there yet. Unlike a skill folder, the global CLAUDE.md is a
 #   file the machine may already own, so install never replaces what it
 #   finds, not even a symlink it did not create.
-#   Skips if claude-md/CLAUDE.md doesn't exist in the repo.
+#   The link keeps the name CLAUDE.md because Claude Code reads AGENTS.md
+#   only in project directories. At the user level it loads
+#   ~/.claude/CLAUDE.md and ignores an AGENTS.md in ~/.claude/.
+#   Skips if agents-md/AGENTS.md doesn't exist in the repo.
 install_claude_md() {
-    [[ -f "$CLAUDE_MD_SRC" ]] || return 0
+    [[ -f "$AGENTS_MD_SRC" ]] || return 0
 
     mkdir -p "$(dirname "$CLAUDE_MD_TARGET")"
     echo "CLAUDE.md:"
 
-    if [[ -L "$CLAUDE_MD_TARGET" && "$(readlink "$CLAUDE_MD_TARGET")" == "$CLAUDE_MD_SRC" ]]; then
+    if [[ -L "$CLAUDE_MD_TARGET" && "$(readlink "$CLAUDE_MD_TARGET")" == "$AGENTS_MD_SRC" ]]; then
         echo "  ok        CLAUDE.md (already linked)"
         up_to_date=$((up_to_date + 1))
         return 0
@@ -389,8 +392,8 @@ install_claude_md() {
         return 0
     fi
 
-    ln -s "$CLAUDE_MD_SRC" "$CLAUDE_MD_TARGET"
-    echo "  link      CLAUDE.md -> $CLAUDE_MD_SRC"
+    ln -s "$AGENTS_MD_SRC" "$CLAUDE_MD_TARGET"
+    echo "  link      CLAUDE.md -> $AGENTS_MD_SRC"
     linked=$((linked + 1))
 }
 
