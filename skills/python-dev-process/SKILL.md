@@ -33,7 +33,7 @@ Set up the toolchain. For a new project, in this order:
 1. **Unit tests** for core logic. Test your code, not third-party libraries. Mock external services. Use `monkeypatch` and `tmp_path` for file I/O.
 2. **Ruff** for lint and format: `uv add --group dev ruff`.
 3. **Pre-commit hook** via `prek` that rejects commits failing lint or format checks.
-4. **AGENTS.md** (and a minimal CLAUDE.md pointing to it). Use `assets/AGENTS-template.md` as the starting point, customized.
+4. **AGENTS.md**. Use `assets/AGENTS-template.md` as the starting point, customized.
 
 ### Phase 3: Extract and modularize
 
@@ -98,14 +98,9 @@ uv sync --all-groups            # install everything
 
 ---
 
-## AGENTS.md and CLAUDE.md
+## AGENTS.md
 
-Every project gets both.
-
-**CLAUDE.md** is one line:
-```
-See [AGENTS.md](AGENTS.md) for project guidelines.
-```
+No CLAUDE.md. Claude Code reads AGENTS.md on its own when the project has no CLAUDE.md.
 
 **AGENTS.md** is the real document. See `assets/AGENTS-template.md` for the template. Key sections:
 
@@ -142,6 +137,6 @@ Each refactoring is its own commit. Never combined with a feature or bug fix.
 2. `uv add` runtime deps. `uv add --group dev pytest ruff` for dev tools.
 3. Standard `.gitignore`.
 4. Build the first working version (Phase 1). Commit.
-5. Add tests, prek hooks, AGENTS.md, CLAUDE.md (Phase 2). Use `assets/AGENTS-template.md` customized.
+5. Add tests, prek hooks, AGENTS.md (Phase 2). Use `assets/AGENTS-template.md` customized.
 6. Commit each guardrail addition separately.
 7. Continue with Phase 3 and 4 as the project grows.
