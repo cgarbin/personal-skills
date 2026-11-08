@@ -264,6 +264,23 @@ def comma_join(text):
             yield Span(label(", and", sentence, end), start + m.start(), start + end)
 
 
+# Fixed phrases that never open a clause. "so much" and "so many" still fire,
+# since "so much of the input is labs" is a clause.
+COMMA_SO = re.compile(r",\s+so\b(?!-|\s+(?:far|to\s+speak|long\s+as)\b)")
+
+
+def comma_so(text):
+    """Find ", so" joining two clauses, each labeled with what follows it.
+
+    Quoted material is skipped. A table cell is read, since a purpose clause
+    inside one is still his prose.
+    """
+    if QUOTED.match(text):
+        return
+    for m in COMMA_SO.finditer(text):
+        yield Span(label(", so", text, m.end()), m.start(), m.end())
+
+
 PROSE_CHECKS = [
     Check("em-dash", r"—", "FIX",
           "use a period or parentheses", AVOID),
@@ -365,9 +382,15 @@ PROSE_CHECKS = [
           "and let the next sentence show it",
           "christian-writing-style, No this-not-that"),
     Check("comma-join", comma_join, "REWRITE",
-          "two clauses, so use a period. It reads \", and\" alone. \", but\", \", so\" "
-          "and \", for\" mark a relationship a period would drop, so they stay",
+          "two clauses, so use a period. It reads \", and\" alone",
           "christian-writing-style, What to avoid"),
+    # A TEST because most hits are correct prose.
+    Check("comma-so", comma_so, "TEST",
+          "does \"in order that\" fit an action the main clause names? Then write "
+          "\"so that\" with no comma. Otherwise cover the first clause and read "
+          "the second. Keep \", so\" when a reader would doubt the second "
+          "without the first. Otherwise split",
+          AVOID),
 ]
 
 OPT_IN = {"citation"}

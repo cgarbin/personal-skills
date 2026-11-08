@@ -254,12 +254,54 @@ class DedupLabel(Scanned):
         self.assertEqual(len(self.hits(text, "comma-join")), 2)
 
 
+class CommaSo(Scanned):
+    """What comma-so skips, and what it still reads."""
+
+    def test_a_consequence_fires(self):
+        text = "No clinician reviewed the BHCs, so a higher score may not mean more."
+        self.assertEqual(len(self.hits(text, "comma-so")), 1)
+
+    def test_a_purpose_clause_fires(self):
+        text = "We document how, so that future work can handle the same confounds."
+        self.assertEqual(len(self.hits(text, "comma-so")), 1)
+
+    def test_so_without_a_comma_stays_quiet(self):
+        text = "Put examples in the prompt so the model sees the task done."
+        self.assertEqual(self.hits(text, "comma-so"), [])
+
+    def test_two_in_one_unit_both_report(self):
+        text = ("The cache grows, so memory rises. Decode is serial, so its time "
+                "grows with the output.")
+        self.assertEqual(len(self.hits(text, "comma-so")), 2)
+
+    def test_so_called_stays_quiet(self):
+        text = "It reads the record, so-called raw input, before scoring."
+        self.assertEqual(self.hits(text, "comma-so"), [])
+
+    def test_fixed_phrases_stay_quiet(self):
+        for line in ("The scores, so far, hold at every stratum.",
+                     "The ceiling is, so to speak, a property of the task.",
+                     "A score is comparable, so long as both used one encoder."):
+            with self.subTest(line=line):
+                self.assertEqual(self.hits(line, "comma-so"), [])
+
+    def test_so_much_of_still_fires(self):
+        text = "Labs dominate short admissions, so much of the input is structured."
+        self.assertEqual(len(self.hits(text, "comma-so")), 1)
+
+    def test_a_blockquote_stays_quiet(self):
+        self.assertEqual(self.hits("> The cache grows, so memory rises.", "comma-so"), [])
+
+    def test_a_table_cell_fires(self):
+        # One sweep fixed a purpose clause inside a table cell.
+        text = "| a | Put examples in the prompt, so the model sees the task. |"
+        self.assertEqual(len(self.hits(text, "comma-so")), 1)
+
+
 class Conjunctions(Scanned):
-    """The rule names "and" alone. Every other coordinator states a relation."""
+    """comma-join reads "and" alone."""
 
     def test_every_other_coordinator_stays_quiet(self):
-        # 89 of ", so" in one manuscript against 4 with ", and". A period drops
-        # the concession or the consequence the conjunction states.
         for line in ("The model converged, but the loss held.",
                      "The model converges, or the loader retries.",
                      "The gates closed negative, so the build does not happen.",

@@ -36,6 +36,7 @@ These are tagged `TEST` because reporting them raw would bury the real findings.
 | `possession-verb` | A reader left holding evidence is the idiom. |
 | `pointer` | "those that read the discharge summary" points at a group the same sentence names, and "the former CEO" means previous. |
 | `feeling-word` | One per piece is fine when the reaction is itself information, and the script cannot count across a document. |
+| `comma-so` | "A retriever can only pick records, so no retriever can deliver more" keeps its comma, since a reader would doubt "no retriever can deliver more" without the first clause. |
 
 ## Why contrastive-voice and comma-join are REWRITE
 
@@ -43,7 +44,11 @@ Both are `REWRITE`, so no test applies.
 
 `contrastive-voice` replaced a `TEST` that asked whether a contrast was informative, which is the wrong property. On a manuscript arguing by elimination every instance passed that test and 91 still had to be restated. The judgment half of the old check lives on in `side-commentary`, whose stems reach the tails this pattern misses.
 
-`comma-join` holds to about 85% precision on a full manuscript, 22 of 26. Its false positives are a two-item list after a colon, a coordinated pair of `that` clauses, a coordinated noun phrase, and a gapped coordination. It reads `and` alone, since every other coordinator states a relationship a period would drop.
+`comma-join` holds to about 85% precision on a full manuscript, 22 of 26. Its false positives are a two-item list after a colon, a coordinated pair of `that` clauses, a coordinated noun phrase, and a gapped coordination. It reads `and` alone.
+
+## What comma-so asks first
+
+`comma-so` fires on `, so that` and on a bare `, so` that states a purpose. Both take `so that` with no comma. The purpose test comes first because one sweep filed a purpose clause under keep, reading it as a design choice. The purpose test reads the verb. An action done for an end ("gives", "stores", "stratified") is purpose. A state ("has no score", "stays out") is a result.
 
 ## What the pointer check reads
 
