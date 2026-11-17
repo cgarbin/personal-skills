@@ -12,6 +12,8 @@ A source file is reduced to its comment lines first, because `guard` and `canoni
 
 The em-dash check reads every line of a source file, because nothing in code needs one and the comment pass cannot see an error string or a log message. British spelling is not read that way, since it would match every word inside this script's own pattern list.
 
+The scan is for files you wrote. A generated file such as a Pandoc `body.tex` fires on every `2007;297:831--41` in its bibliography.
+
 ## Which checks run where
 
 The voice checks run on everything, since a rule about his voice holds wherever the text sits.
@@ -42,13 +44,15 @@ These are tagged `TEST` because reporting them raw would bury the real findings.
 
 Both are `REWRITE`, so no test applies.
 
-`contrastive-voice` replaced a `TEST` that asked whether a contrast was informative, which is the wrong property. On a manuscript arguing by elimination every instance passed that test and 91 still had to be restated. The judgment half of the old check lives on in `side-commentary`, whose stems reach the tails this pattern misses.
+`contrastive-voice` has no test because the rule governs the phrasing. An informative contrast is still restated. On a manuscript arguing by elimination, 91 of them had to be. The judgment about a contrastive tail belongs to `side-commentary`, whose stems reach the tails this pattern misses.
+
+A repo can mandate a contrastive comment in SQL (**code-comments** rule 10). `contrastive-voice` flags it anyway. Whether the repo mandates one is in its AGENTS.md, which no pattern reads.
 
 `comma-join` holds to about 85% precision on a full manuscript, 22 of 26. Its false positives are a two-item list after a colon, a coordinated pair of `that` clauses, a coordinated noun phrase, and a gapped coordination. It reads `and` alone.
 
 ## What comma-so asks first
 
-`comma-so` fires on `, so that` and on a bare `, so` that states a purpose. Both take `so that` with no comma. The purpose test comes first because one sweep filed a purpose clause under keep, reading it as a design choice. The purpose test reads the verb. An action done for an end ("gives", "stores", "stratified") is purpose. A state ("has no score", "stays out") is a result.
+`comma-so` fires on `, so that` and on a bare `, so` that states a purpose. Both take `so that` with no comma. The purpose test comes first because a purpose clause reads like a design choice and gets kept. The purpose test reads the verb. An action done for an end ("gives", "stores", "stratified") is purpose. A state ("has no score", "stays out") is a result.
 
 ## What the pointer check reads
 
@@ -56,31 +60,18 @@ Two demonstratives used as pronouns, "those" and "these" with no head noun after
 
 "That" and "this" are left out. "That" opens every relative clause, so "the row that is empty" would fire. A sentence opening on "This is" usually points at the situation the paragraph just described, which is the sense that stays.
 
-"That same" is in and "the same" is out. "The same X" fired 9 times on `BHC generation techniques in prior work` for 1 real hit, against "the same papers", "the same target" and "the same clinicians".
+"That same" is in and "the same" is out. "The same X" fired 9 times on one chapter for 1 real hit, against "the same papers", "the same target" and "the same clinicians".
 
-The words read after a demonstrative are auxiliaries and prepositions, so "Those cover the case" and "These show the gap" are missed. A plural noun is what blocks the wider list. After a demonstrative, "those runs" and "those counts" read as verbs by any stem. `comma_join`'s `FINITE` pattern hits the same limit.
+The check misses a pointer followed by a lexical verb, such as "Those cover the case" and "These show the gap". The comment on `POINTER_TAIL` gives the reason. `comma_join`'s `FINITE` pattern hits the same limit.
 
 The pro-forms left out are the ones no stem separates from ordinary use. "One" and "ones" are determiners as often as pro-forms ("the one entry", "the ones without"). "The two" and "the three" fired 46 times on one manuscript for one real hit. "It", "its", "they" and "them" are past counting. The pointer test in layer 3 is what reaches them.
 
-What survives that narrowing still earns its place. On `BHC generation techniques in prior work` as it stood before the hand pass, it reported 5 hits, 4 of them defects that pass had found. It fires on 4 of the 13 pointers that pass rewrote, which is why layer 3 owns the rest. It prints 12 hits on a 5,036-line manuscript.
+What survives that narrowing still earns its place. On one chapter most of its hits were real defects, but it found only about a third of the pointers a hand pass rewrote. Layer 3 owns the rest.
 
 ## What the semicolon check skips
 
-The rule is a semicolon joining two independent clauses. The check masks the markup that needs one
-of its own: an inline code span, a Pandoc multi-citation `[@a; @b]`, an HTML entity such as
-`&nbsp;`, and a LaTeX escape such as `\;`. A fenced block never reaches the check at all, so a
-shell command keeps its separators.
-
-One chapter of a Pandoc manuscript fired 39 times before this and every one was markup. It fires
-none now.
-
-One markup case is left that no pattern reaches. A repo can mandate a contrastive comment in SQL
-(**code-comments** rule 10), which `contrastive-voice` flags, and whether the repo mandates it sits
-in its AGENTS.md.
-
-Generated files are a separate matter. A Pandoc `body.tex` fires on every `2007;297:831--41` in its
-bibliography. The scan is for files you wrote.
+The rule is a semicolon joining two independent clauses. The check masks the markup that needs one of its own: an inline code span, a Pandoc multi-citation `[@a; @b]`, an HTML entity such as `&nbsp;`, and a LaTeX escape such as `\;`. A fenced block never reaches the check at all, so a shell command keeps its separators.
 
 ## Markdown drafting files
 
-`--skip-html-comments` reads the published prose and skips `<!-- -->` notes. Half of one dissertation manuscript is storyline and provenance comments, and scanning them alongside the prose buried the real hits three to two.
+`--skip-html-comments` reads the published prose and skips `<!-- -->` notes. On a drafting file the storyline and provenance comments can outnumber the prose. Their hits bury the real ones.
