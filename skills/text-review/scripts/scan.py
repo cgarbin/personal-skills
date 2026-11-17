@@ -192,10 +192,10 @@ def semicolon(text):
         yield Span(label(";", text, m.end()), m.start(), m.end())
 
 
-# "That" and "this" are left out on their own, where the stems below reach them
-# only in "that same" and "this same". "That" opens every relative clause ("the
-# row that is empty"). A sentence opening on "This is" points at the situation
-# the paragraph just described, which is the sense that stays.
+# The tail stops at auxiliaries and prepositions. A plural noun after "those"
+# ("those runs", "those counts") matches any verb stem, so a lexical verb here
+# would fire on every one. A bare "that" would fire on every relative clause
+# ("the row that is empty").
 POINTER_TAIL = (r"[.,;:)]|\s+(?:is|are|was|were|has|have|had|and|or|but|so|that|which|"
                 r"of|in|to|from|with|for|than|against|into|on|at|by)\b")
 
@@ -374,9 +374,9 @@ PROSE_CHECKS = [
                              r"which is worth|that is the", "TEST",
           "delete the clause and reread. If no fact, number, constraint, or "
           "claim is lost, the deletion stands", COMMENTARY),
-    # The judgment half of the old contrastive-tail check lives on in
-    # side-commentary above, whose stems reach the tails this pattern misses
-    # ("not just", "the other way around").
+    # A contrastive tail worded as something other than "X rather than Y" or
+    # "X, not Y" belongs to side-commentary above, whose stems reach it ("not
+    # just", "the other way around").
     Check("contrastive-voice", contrastive_voice, "REWRITE",
           "restate as a positive claim about what is true, or cut the clause "
           "and let the next sentence show it",
