@@ -14,11 +14,11 @@ Comment-specific rules on top of **christian-writing-style**, Short snippets. Th
 
 1. **Plain language over jargon.** No "guard", "invariant", "idempotent", "canonical layout", "downstream", "load-bearing". Say "the check above", "so we don't re-download every run", "the file the script reads". Jargon names the category and leaves the reader to map it back to this code.
 2. **Comment the unit's own contract.** No other-module rules, no naming the consumer, no "why current callers work", no who-sets-this-field. Let types and tests speak.
-3. **Docstrings lead with the plain action.** No metaphor: counts don't "land", rows don't "drift apart", spans aren't "coordinate systems". Someone scanning for what the function does should have it from the first few words.
-4. **Cut redundancy and drift.** Delete anything the signature, summary line, or a referenced definition already says. No field lists another constant owns. Every clause true of the exact thing it sits on, using in-scope names. Reach for delete before rephrase, because a rephrased duplicate drifts from its source on the next edit and a deleted one cannot.
+3. **Docstrings lead with the plain action.** No metaphor: counts don't "land", rows don't "drift apart", spans aren't "coordinate systems". Someone scanning for what the function does should have it from the first few words. A docstring is read without the body: hover text, generated docs, and completion popups show the signature and the docstring only. Never cut the one-line summary of a function, method, class, or type, even one that repeats its name. The summary names the concrete effect of an abstract name ("Replace path with the temporary file" on `commit`) and the types an untyped signature leaves out ("Returns the URL hash for a folder path").
+4. **Cut redundancy and drift.** Past the summary line that rule 3 keeps, delete anything the signature, the summary, or a referenced definition already says. No field lists another constant owns. Every clause true of the exact thing it sits on, using in-scope names. Reach for delete before rephrase, because a rephrased duplicate drifts from its source on the next edit and a deleted one cannot.
 5. **Four over-explanation patterns, cut on sight:** naming the caller's use for each return value, explaining another function's internals, re-arguing a decision a review or a benchmark already settled, and narrating what the code does *not* do.
 6. **Road not taken.** Every sentence about a rejected alternative goes, however good the reasoning. The rejected design drags its vocabulary in with it. That knowledge belongs in a test or in the plan. The rule breaks most often while defending a comment. Asked why one matters, the nearest contrast to reach for is the option you rejected, so it goes back in verbatim. Answer that challenge with the problem and its consequence alone.
-7. **"A future edit could violate this" is not enough.** The constraint must also be invisible in the code it sits on. Survivors answer a question the reader cannot resolve by looking.
+7. **"A future edit could violate this" is not enough.** The constraint must also be invisible in the code it sits on. Survivors answer a question the reader cannot resolve by looking. This rule never decides a docstring's summary line, whose reader does not see the body (rule 3).
 8. **No comments about code that no longer runs.** Watch for `used to`, `no longer`, `after decoupling`, `the old`, `the deleted`. Exception: when comparing old vs new behavior *is* the subject.
 9. **No labels from the plan that produced the code.** "Cluster A1", "F1:", "E1", "Step 3", "this task". The plan is not in the repo, so the label points nowhere. Runtime log phase numbers are fine. A numbering scheme used consistently across files is a decision, so raise it once and leave it.
 10. **SQL is the exception where a repo mandates it.** Where AGENTS.md requires decision-point comments in plain English, contrastive explanations and written-out alternative implementations are required there, whatever they look like. Check before cutting inside a SQL string.
@@ -58,6 +58,14 @@ CHUNK_SIZE = 8192
 ```
 
 Reachability ("callers always pass a non-empty list") is rule 2. Position ("runs before the validation step") and the operation itself ("set the cache key") are visible in the code, so rule 7 cuts them. The reason behind the operation is not visible: "Cache key includes tenant id to avoid cross-tenant reuse."
+
+A docstring's summary line is the exception (rule 3). Keep this one, although the body shows the same operation. "commit" alone does not say what it replaces:
+
+```python
+def commit(self):
+    """Replace path with the temporary file."""
+    os.replace(self.tmp.name, self.path)
+```
 
 Rule 3 decides how a survivor opens. State what the thing returns or does, then why it exists. Both as plain statements. Opening on an argument makes the reader accept a premise before learning what the code does.
 
