@@ -243,14 +243,6 @@ class TrackingParam(Scanned):
                 self.assertEqual([h.match for h in hits], [self.URL])
 
 
-class VagueHold(Scanned):
-    def test_the_participle_never_fires(self):
-        # His sweep of one manuscript rewrote 44 instances and left every
-        # "held", so the form costs more in noise than it finds.
-        self.assertEqual(self.hits("The file held 7.5B parameters.",
-                                   "possession-verb"), [])
-
-
 class BearHandoff(Scanned):
     """"load-bearing" belongs to concrete-thing, so relation-verb skips it."""
 

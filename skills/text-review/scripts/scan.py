@@ -335,7 +335,7 @@ PROSE_CHECKS = [
           "demonstrative standing for the situation just described stays",
           POINT_AT_NOUN),
     # The particles after the verb mark the steady sense.
-    Check("possession-verb", r"(?i)\b(?:hold|holds|holding)\b"
+    Check("possession-verb", r"(?i)\b(?:hold|holds|holding|held)\b"
                         r"(?!\s+(?:to|together|up|back|at|where|wherever|"
                         r"whenever|on|off|out|for|in|true|steady)\b)", "TEST",
           "possession, or staying steady? \"the cohort holds 116\" is \"has\". "
