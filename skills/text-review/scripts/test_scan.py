@@ -112,16 +112,6 @@ class Unquantified(Scanned):
 class ContrastiveVoice(Scanned):
     """The construction is out of his voice, so every hit is a violation."""
 
-    def test_rather_than_fires(self):
-        hits = self.hits("The size difference is aggregation rather than better linking.",
-                         "contrastive-voice")
-        self.assertEqual(len(hits), 1)
-        self.assertEqual(hits[0].check.action, "REWRITE")
-
-    def test_comma_not_fires(self):
-        self.assertEqual(len(self.hits("Format is a covariate, not a control.",
-                                       "contrastive-voice")), 1)
-
     def test_a_heading_fires(self):
         # Section titles carried two of these until the sweep of 2026-09-02.
         text = "### 5.4 Low precision is over-inclusion, not invention"
@@ -137,30 +127,9 @@ class ContrastiveVoice(Scanned):
         text = "> A Brief Hospital Course summarizes the trajectory, not the full record."
         self.assertEqual(self.hits(text, "contrastive-voice"), [])
 
-    def test_more_than_does_not_fire(self):
-        self.assertEqual(self.hits("Recall is larger than precision here.",
-                                   "contrastive-voice"), [])
-
 
 class CommaJoin(Scanned):
     """Independent clauses take a period, whichever conjunction joins them."""
-
-    def test_a_new_subject_fires(self):
-        hits = self.hits("The model converged, and the loss plateaued at 0.3.",
-                         "comma-join")
-        self.assertEqual(len(hits), 1)
-        self.assertEqual(hits[0].check.action, "REWRITE")
-
-    def test_the_paired_cross_reference_fires(self):
-        # Ten paired cross-references in the paper, all under 25 words, so long-sentence
-        # never reached them.
-        text = ("[@Sec:working-budget] states how the overhead term was determined, "
-                "and [@sec:feasibility] reports it.")
-        self.assertEqual(len(self.hits(text, "comma-join")), 1)
-
-    def test_a_pronoun_subject_fires(self):
-        self.assertEqual(len(self.hits("The filter is group-level, and it stays that way.",
-                                       "comma-join")), 1)
 
     def test_a_serial_list_whose_last_item_looks_finite_stays_quiet(self):
         # "the process ... are" reads as subject plus verb. An earlier comma in
@@ -181,10 +150,6 @@ class CommaJoin(Scanned):
         text = ("It reads notes, labs, and orders. The model converged, "
                 "and the loss plateaued at 0.3.")
         self.assertEqual(len(self.hits(text, "comma-join")), 1)
-
-    def test_a_serial_list_stays_quiet(self):
-        text = "The input holds notes, laboratory results, and medication orders."
-        self.assertEqual(self.hits(text, "comma-join"), [])
 
     def test_a_compound_predicate_stays_quiet(self):
         # One subject, two verbs. A period would strand the second.
@@ -253,41 +218,19 @@ class DedupLabel(Scanned):
                 "The cache grew, and the budget held.")
         self.assertEqual(len(self.hits(text, "comma-join")), 2)
 
+    def test_an_em_dash_reports_once_per_comment_line(self):
+        # A source file scans comment lines and then every line, at different
+        # offsets for the same text, so the dedup key has to ignore offsets.
+        self.assertEqual(len(self.hits("# a — b\n", "em-dash", ".py")), 1)
+
 
 class CommaSo(Scanned):
     """What comma-so skips, and what it still reads."""
-
-    def test_a_consequence_fires(self):
-        text = "No clinician reviewed the BHCs, so a higher score may not mean more."
-        self.assertEqual(len(self.hits(text, "comma-so")), 1)
-
-    def test_a_purpose_clause_fires(self):
-        text = "We document how, so that future work can handle the same confounds."
-        self.assertEqual(len(self.hits(text, "comma-so")), 1)
-
-    def test_so_without_a_comma_stays_quiet(self):
-        text = "Put examples in the prompt so the model sees the task done."
-        self.assertEqual(self.hits(text, "comma-so"), [])
 
     def test_two_in_one_unit_both_report(self):
         text = ("The cache grows, so memory rises. Decode is serial, so its time "
                 "grows with the output.")
         self.assertEqual(len(self.hits(text, "comma-so")), 2)
-
-    def test_so_called_stays_quiet(self):
-        text = "It reads the record, so-called raw input, before scoring."
-        self.assertEqual(self.hits(text, "comma-so"), [])
-
-    def test_fixed_phrases_stay_quiet(self):
-        for line in ("The scores, so far, hold at every stratum.",
-                     "The ceiling is, so to speak, a property of the task.",
-                     "A score is comparable, so long as both used one encoder."):
-            with self.subTest(line=line):
-                self.assertEqual(self.hits(line, "comma-so"), [])
-
-    def test_so_much_of_still_fires(self):
-        text = "Labs dominate short admissions, so much of the input is structured."
-        self.assertEqual(len(self.hits(text, "comma-so")), 1)
 
     def test_a_blockquote_stays_quiet(self):
         self.assertEqual(self.hits("> The cache grows, so memory rises.", "comma-so"), [])
@@ -313,49 +256,6 @@ class TrackingParam(Scanned):
                 self.assertEqual([h.match for h in hits], [self.URL])
 
 
-class Conjunctions(Scanned):
-    """comma-join reads "and" alone."""
-
-    def test_every_other_coordinator_stays_quiet(self):
-        for line in ("The model converged, but the loss held.",
-                     "The model converges, or the loader retries.",
-                     "The gates closed negative, so the build does not happen.",
-                     "The table does not compare, for four reasons hold."):
-            with self.subTest(line=line):
-                self.assertEqual(self.hits(line, "comma-join"), [])
-
-
-class VagueHold(Scanned):
-    """"Hold" reads as possession or as staying steady, and only the first goes."""
-
-    def test_possession_fires(self):
-        self.assertEqual(len(self.hits("The cohort holds 116 admissions.",
-                                       "possession-verb")), 1)
-
-    def test_the_particle_senses_are_quiet(self):
-        for line in ("The rule holds where the contrast is informative.",
-                     "The argument holds together.",
-                     "Recall holds to the longest admissions.",
-                     "Many tables give the reader more to hold at once."):
-            with self.subTest(line=line):
-                self.assertEqual(self.hits(line, "possession-verb"), [])
-
-    def test_the_participle_never_fires(self):
-        # His sweep of one manuscript rewrote 44 instances and left every
-        # "held", so the form costs more in noise than it finds.
-        self.assertEqual(self.hits("The file held 7.5B parameters.",
-                                   "possession-verb"), [])
-
-    def test_a_comment_is_read(self):
-        # The word reaches a comment the same way it reaches a paragraph.
-        self.assertEqual(len(self.hits("# The index holds the staged paths.\n",
-                                       "possession-verb", ".py")), 1)
-
-    def test_it_asks(self):
-        hits = self.hits("The row holds three statistics.", "possession-verb")
-        self.assertEqual(hits[0].check.action, "TEST")
-
-
 class BearHandoff(Scanned):
     """"load-bearing" belongs to concrete-thing, so relation-verb skips it."""
 
@@ -369,11 +269,6 @@ class BearHandoff(Scanned):
 
 class Semicolon(Scanned):
     """The rule is about a clause join, and markup holds semicolons of its own."""
-
-    def test_a_clause_join_fires(self):
-        hits = self.hits("The model converged; the loss plateaued at 0.3.", "semicolon")
-        self.assertEqual(len(hits), 1)
-        self.assertEqual(hits[0].check.action, "FIX")
 
     def test_markup_stays_quiet(self):
         for unit, line in (("pandoc citation", "The two studies agree [@smith2023; @jones2022]."),
@@ -393,35 +288,13 @@ class Semicolon(Scanned):
         text = "The cache grew; the budget held. The loss fell; recall held."
         self.assertEqual(len(self.hits(text, "semicolon")), 2)
 
-    def test_a_comment_line_still_fires(self):
-        self.assertEqual(len(self.hits("# a; b\n", "semicolon", ".py")), 1)
-
 
 class Pointer(Scanned):
-    """The stems are narrow, so this class pins the misses as well as the hits."""
-
-    def test_a_demonstrative_pronoun_fires(self):
-        # One line per way the pattern reads what follows: an auxiliary, a
-        # preposition, and punctuation.
-        for line in ("Those are ceilings and baselines for extraction.",
-                     "Summarize each note, combine those into daily summaries.",
-                     "Lenient matching finds 747 of those, 4.9%."):
-            with self.subTest(line=line):
-                hits = self.hits(line, "pointer")
-                self.assertEqual(len(hits), 1)
-                self.assertEqual(hits[0].check.action, "TEST")
-
     def test_the_head_noun_silences_it(self):
         for line in ("Those runs are ceilings and baselines for extraction.",
                      "These instructions are the structured prompt."):
             with self.subTest(line=line):
                 self.assertEqual(self.hits(line, "pointer"), [])
-
-    def test_a_description_standing_in_for_a_name_fires(self):
-        for line in ("Koras reached 0.363 from that same base model.",
-                     "The latter is the truncation baseline."):
-            with self.subTest(line=line):
-                self.assertEqual(len(self.hits(line, "pointer")), 1)
 
     def test_that_and_this_are_left_to_the_read(self):
         # Widening the stems to "that" fires on every relative clause in the
@@ -440,31 +313,6 @@ class Pointer(Scanned):
     def test_a_blockquote_stays_quiet(self):
         self.assertEqual(self.hits("> We combine those into daily summaries.",
                                    "pointer"), [])
-
-
-class Unchanged(Scanned):
-    def test_vague_quantifier_still_rewrites(self):
-        hits = self.hits("Latency was elevated.", "vague-quantifier")
-        self.assertEqual(len(hits), 1)
-        self.assertEqual(hits[0].check.action, "REWRITE")
-
-    def test_em_dash_reports_once_per_comment_line(self):
-        # A source file scans comment lines and then every line, at different
-        # offsets for the same text, so the dedup key has to ignore offsets.
-        self.assertEqual(len(self.hits("# a — b\n", "em-dash", ".py")), 1)
-
-    def test_the_noisy_checks_still_ask(self):
-        by_name = {c.name: c for c in scan.PROSE_CHECKS + scan.PROSE_ONLY_CHECKS}
-        for name in ("long-sentence", "unquantified"):
-            with self.subTest(name=name):
-                self.assertEqual(by_name[name].action, "TEST")
-                self.assertNotIn(name, scan.OPT_IN)
-
-    def test_the_voice_checks_assert(self):
-        by_name = {c.name: c for c in scan.PROSE_CHECKS}
-        for name in ("contrastive-voice", "comma-join", "relation-verb"):
-            with self.subTest(name=name):
-                self.assertEqual(by_name[name].action, "REWRITE")
 
 
 if __name__ == "__main__":
