@@ -57,7 +57,7 @@ All prose written or edited by this skill (planning docs and snapshots) must fol
    - The repository map (read at runtime, do not hardcode repo paths).
    - Git logs for each repo in the map: `git log --oneline --since=<snapshot date>`.
 2. **Draft changes.** For each document, describe what you'll change and why. Show Christian before editing. Auto mode does not override this gate.
-3. **Apply edits.** Use the Edit tool for targeted changes.
+3. **Apply edits.** Change only what step 2 approved so that the diff in step 4 shows those changes and nothing else.
 4. **Show the diff.** After editing, run `git diff` in the phd-dissertation-writing folder so Christian can review. Do not commit. Christian decides when to commit.
 
 ## Creating snapshots
