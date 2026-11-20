@@ -12,7 +12,7 @@ Apply whether starting a new project or contributing to an existing one.
 
 ## Development phases
 
-A vocabulary for what kind of work you're doing right now, not a one-way progression. New features cycle back through phases 1–3 at a smaller scale.
+A vocabulary for what kind of work you're doing right now. New features cycle back through phases 1–3 at a smaller scale.
 
 ### Phase 1: Get it working
 
@@ -30,7 +30,7 @@ Skip linting, formatting, hooks, tests, and module extraction for now. For a new
 
 Set up the toolchain. For a new project, in this order:
 
-1. **Unit tests** for core logic. Test your code, not third-party libraries. Mock external services. Use `monkeypatch` and `tmp_path` for file I/O.
+1. **Unit tests** for core logic. Test your own code. Mock external services. Use `monkeypatch` and `tmp_path` for file I/O.
 2. **Ruff** for lint and format: `uv add --group dev ruff`.
 3. **Pre-commit hook** via `prek` that rejects commits failing lint or format checks.
 4. **AGENTS.md**. Use `assets/AGENTS-template.md` as the starting point, customized.
@@ -40,7 +40,7 @@ Set up the toolchain. For a new project, in this order:
 Refactor when the code gets tangled, whether early or months later. Each extraction is a single focused commit:
 
 - **Presentation separate from logic.** UI code (Streamlit, Flask, CLI) contains no business logic. Business logic has no UI imports.
-- **One responsibility per module.** Split when a module does two distinct things. Name modules after what they do, not what framework they use.
+- **One responsibility per module.** Split when a module does two distinct things. Name modules after what they do.
 - **Constants for magic values.** Define key names, prompt names, and config values as constants in the owning module.
 - **Accessor functions over raw dict access.** Expose accessors instead of letting callers dig into internal dicts.
 - **Move tests alongside the code.** Tests in `tests/` mirror the module structure. Move or create tests in the same commit as the extraction.
@@ -68,7 +68,7 @@ Each extraction commit: move or extract the code, update or add tests, update AG
 - **prek** for pre-commit hooks (Rust-native, faster than the Python `pre-commit` tool). See the `modern-python` skill for setup.
 - **Dev servers**: kill any existing process on the target port first. Example: `lsof -ti:8501 | xargs kill` before `uv run streamlit run app.py`.
 - **uv** manages the venv. Use `uv run <cmd>` instead of activating manually.
-- **Dependencies** live in `pyproject.toml`, managed via `uv add` / `uv remove`. Use `[dependency-groups]` (PEP 735), not `[project.optional-dependencies]`. Commit `uv.lock`.
+- **Dependencies** live in `pyproject.toml`, managed via `uv add` / `uv remove`. Put development dependencies in `[dependency-groups]` (PEP 735). Commit `uv.lock`.
 
 ```bash
 uv add requests rich            # runtime
@@ -84,7 +84,7 @@ uv sync --all-groups            # install everything
 - Mock external services (LLM calls, API requests, DB connections). Never make real network calls in tests.
 - Use `monkeypatch` and `tmp_path` for filesystem tests. Never write to real project files.
 - Don't test the UI layer with framework-specific harnesses. The UI should have no business logic, so there's little to test.
-- Test names describe behavior: `test_batch_screen_continues_on_per_paper_error`, not `test_batch_screen_3`.
+- Test names describe behavior: `test_batch_screen_continues_on_per_paper_error`.
 - Test edge cases and error paths: empty inputs, malformed data, missing fields, network failures. The happy path is necessary but not sufficient.
 
 ---

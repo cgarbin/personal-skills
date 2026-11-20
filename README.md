@@ -48,7 +48,7 @@ The script fetches external skills listed in `skills.manifest`, then symlinks bo
 - leaves alone the ones already linked
 - picks up new ones
 - removes a symlink when its skill was deleted, lost its `SKILL.md`, or became opt-in
-- skips folders that hold no `SKILL.md`
+- skips folders that have no `SKILL.md`
 
 The closing line counts what it linked, what was already current, what it removed, and what it could not touch.
 
@@ -157,7 +157,7 @@ Keep the skill description concise. It is loaded into the coding agent's context
 
 ### Does the skill behave correctly?
 
-`evals/evals.json` holds task prompts with assertions. `evals/fixtures/` holds the files those prompts work on. Run each prompt as a subagent, then check the assertions against what it produced.
+`evals/evals.json` has task prompts with assertions. `evals/fixtures/` has the files those prompts work on. Run each prompt as a subagent, then check the assertions against what it produced.
 
 - **Write assertions a single run either satisfies or does not.** Grade mechanically where you can, by comparing tokenized source.
 - **Plant something in the input file that has to survive.** An agent that deletes everything passes every "removes X" assertion. Without one, the eval scores that run as a success.

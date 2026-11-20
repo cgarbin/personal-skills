@@ -50,7 +50,7 @@ For each group, draft:
 
 End with the `Co-Authored-By` trailer the harness gives you, as its own paragraph. It is the only trailer to add. Never reconstruct it from an older commit, because the author name moves with the model.
 
-Do not record a session link or any other per-session identifier. The commit is permanent and the link is not. It resolves for one account and nobody else. Rebase and cherry-pick copy it onto commits it does not describe. Older commits in these repos carry a `Claude-Session` trailer, which is not a reason to match them, and `--check` reports `trailer-session` if you do.
+Do not record a session link or any other per-session identifier. The commit is permanent and the link is not. It resolves for one account and nobody else. Rebase and cherry-pick copy it onto commits it does not describe. Older commits in these repos have a `Claude-Session` trailer. That is not a reason to match them. `--check` reports `trailer-session` if you do.
 
 Trailers register only from the last paragraph, so one with no blank line above it is body text.
 

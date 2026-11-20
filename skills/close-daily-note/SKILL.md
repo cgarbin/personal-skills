@@ -7,7 +7,7 @@ description: Summarize a day's work in a project's daily note and optionally set
 
 Generate a narrative summary of a day's work, insert it at the top of the daily note, and create the next day's note when one doesn't already exist.
 
-This skill works for any project that keeps daily notes in the structured format: a `_daily-notes/` directory, notes named `YYYY-MM-DD Ddd.md`, and `# Pomodoros`, `# Next tasks`, and `# Notes` sections inside each note. It resolves the project from the current session rather than any hardcoded path, and works whether or not the project is a git repository. If the current location has no such daily notes, it stops (Step 1), which keeps it from firing on free-form journals or non-daily-note projects.
+This skill works for any project that keeps daily notes in the structured format: a `_daily-notes/` directory, notes named `YYYY-MM-DD Ddd.md`, and `# Pomodoros`, `# Next tasks`, and `# Notes` sections inside each note. It resolves the project from the current session and works whether or not the project is a git repository. If the current location has no such daily notes, it stops (Step 1), which keeps it from firing on free-form journals or non-daily-note projects.
 
 Do not commit any changes. Leave everything for the user to review.
 
@@ -17,11 +17,11 @@ The scripts in `scripts/` do all the deterministic work: date arithmetic, locati
 
 Section handling in the next day's note is entirely `next-note.sh`'s job. It emits a fixed order regardless of the order the source used:
 
-1. `# Pomodoros` — rebuilt from the template, carrying the source's `<!-- Categories: -->` comment
-2. the day's plan section — heading only, if the source had one
-3. `# Next tasks` — carried verbatim
-4. `# Notes` — heading only
-5. Free-form sections — carried verbatim, in source order
+1. `# Pomodoros`: rebuilt from the template, carrying the source's `<!-- Categories: -->` comment
+2. the day's plan section: heading only, if the source had one
+3. `# Next tasks`: carried verbatim
+4. `# Notes`: heading only
+5. Free-form sections: carried verbatim, in source order
 
 The plan section is any top-level heading starting with "Today", which covers the `# Today`, `# TODAY`, and `# Today's goals` spellings in these notes. Its heading carries over as the user wrote it.
 
@@ -50,7 +50,7 @@ Two stops:
 
 `repo_count=0` is normal for a notes-only project with no repository map. The summary then rests on the note alone.
 
-When a `Repository map.md` is present, judge its resolution rather than trusting a count. A map carries prose sections as well as repo names, so an unresolved `## ` heading is often not a repo at all, and the script reports the names instead of guessing:
+When a `Repository map.md` is present, judge its resolution by the unresolved names. A map has prose sections as well as repo names, so an unresolved `## ` heading is often not a repo at all. The script lists those names:
 
 - `map_headings > 0` and `map_repos == 0`: the map resolved to nothing. Tell the user which names failed and confirm before continuing, since commits would otherwise be silently absent.
 - Some resolved, some not: mention only the unresolved names that look like repo names. Ignore prose headings.
@@ -77,13 +77,13 @@ Verify the note has both a `# Notes` and a `# Next tasks` top-level heading. If 
 
 ### Step 4: Write the summary
 
-Write a summary as a bullet list in Christian's voice. Do not load the `christian-writing-style` skill: a recap of this length does not need the full register guide, and the rules below cover what it does need.
+Write a summary as a bullet list in Christian's voice. Do not load the `christian-writing-style` skill. A recap of this length does not need the full register guide. The rules below cover what it does need.
 
 Voice rules for the summary:
 
-- Direct and concrete. Name what was done, not "made progress on" or "worked on." If a task touched Steve's 7/9 presentation, say so. If a commit refactored retrieval, say what changed.
+- Direct and concrete. Name what was done. "Made progress on" and "worked on" name nothing. If a task touched Steve's 7/9 presentation, say so. If a commit refactored retrieval, say what changed.
 - Past tense, declarative. "Ran the before/after tests." Not "the before/after tests were run" and not "I have been running the tests."
-- One coherent group of work per bullet, one or two sentences each. Group by topic, not by source: a bullet can mix a pomodoro, a checked task, and a related commit when they describe the same thread of work.
+- One coherent group of work per bullet, one or two sentences each. Group by topic: a bullet can mix a pomodoro, a checked task, and a related commit when they describe the same thread of work.
 - No filler. Skip "productive day," "good progress," "made strides," "key takeaways." Do not open a bullet with "continued" or "continued to". Name the concrete action instead ("Ran the before/after tests," not "Continued the test work by running...").
 - No metacommentary. Do not write "the day was focused on X." Write what happened.
 - No hedging on what the source clearly states. The source is the ground truth for the day.
@@ -95,22 +95,22 @@ The summary should answer:
 
 - What the main focus was.
 - What was completed.
-- What was started but left unfinished within the day's work (a checked subtask under a still-open parent, a commit that landed part of a larger change, a Notes entry that records partial progress, a plan item the day never reached).
+- What was started but left unfinished within the day's work (a checked subtask under a still-open parent, a commit with part of a larger change, a Notes entry that records partial progress, a plan item the day never reached).
 
-Do not restate the open task list. Step 6 carries `# Next tasks` verbatim into the next day's note, so listing queued work in prose duplicates it. "In progress" here means partial completion visible in the source, not "everything still on the to-do list."
+Do not restate the open task list. Step 6 carries `# Next tasks` verbatim into the next day's note, so listing queued work in prose duplicates it. "In progress" here means partial completion visible in the source.
 
 Use whatever signal is present. Pomodoros, commits, checked tasks, and the Notes section each contribute when available, and the summary gets thinner when fewer of them have content. Resist filling in detail the source does not provide.
 
 When extra signal is present, also note:
 
 - **Pomodoros**: what defined the day's narrative arc, especially tasks with multiple pomodoros (sustained focus).
-- **Commits**: what kind of work they represent (new code, refactoring, documentation, infrastructure). When several repos saw activity, note which did what. Commits come from `git log --branches`, so work on an unmerged feature branch is not silently dropped. De-duplicate any commit that appears on more than one branch.
+- **Commits**: what kind of work they represent (new code, refactoring, documentation, infrastructure). When several repos saw activity, note which did what. Commits come from `git log --branches` so that work on an unmerged feature branch is not silently dropped. De-duplicate any commit that appears on more than one branch.
 
 Let the day's content set the length. If the day has two stories, write two bullets. If it has five, write five. Stop when you've covered the day honestly. No headers within the summary.
 
 ### Step 5: Insert the summary at the top of the daily note
 
-Insert the summary as a top-level `# Generated daily summary` section, placed after the YAML frontmatter and before `# Pomodoros`, so it is the first thing the user sees when opening the note.
+Insert the summary as a top-level `# Generated daily summary` section, placed after the YAML frontmatter and before `# Pomodoros` so that it is the first thing the user sees when opening the note.
 
 Use Edit with `# Pomodoros` as the anchor, replacing it with:
 

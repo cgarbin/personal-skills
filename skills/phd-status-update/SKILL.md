@@ -33,7 +33,7 @@ Key file paths:
 
 Only touch sections where something actually changed. Don't rewrite content that's still accurate.
 
-**Don't duplicate the repository map.** If information belongs in the repository map (repo locations, doc inventories, mount paths), planning docs should point at the map, not replicate it. If you see a table or list drifting into a full manifest of every file, trim it back to directory-level pointers.
+**Don't duplicate the repository map.** If information belongs in the repository map (repo locations, doc inventories, mount paths), planning docs should point at the map. If you see a table or list drifting into a full manifest of every file, trim it back to directory-level pointers.
 
 ### 2. Cross-document consistency
 
@@ -57,7 +57,7 @@ All prose written or edited by this skill (planning docs and snapshots) must fol
    - The repository map (read at runtime, do not hardcode repo paths).
    - Git logs for each repo in the map: `git log --oneline --since=<snapshot date>`.
 2. **Draft changes.** For each document, describe what you'll change and why. Show Christian before editing. Auto mode does not override this gate.
-3. **Apply edits.** Use the Edit tool. Targeted changes, not wholesale rewrites.
+3. **Apply edits.** Use the Edit tool for targeted changes.
 4. **Show the diff.** After editing, run `git diff` in the phd-dissertation-writing folder so Christian can review. Do not commit. Christian decides when to commit.
 
 ## Creating snapshots
@@ -74,4 +74,4 @@ When it applies, read `references/snapshots.md`. It has the required sections, t
 - Don't add speculative content ("this suggests we should..." or "consider whether...").
 - Don't touch the dissertation paper itself or the proposal. Don't modify existing snapshots (they're frozen).
 - Don't soften risk statements with adjacent praise.
-- Don't let planning docs accumulate file-by-file listings that belong in the repository map. Keep pointers, not inventories.
+- Don't let planning docs accumulate file-by-file listings that belong in the repository map. Keep pointers in the planning docs and listings in the map.
