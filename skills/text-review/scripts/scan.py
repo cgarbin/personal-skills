@@ -35,9 +35,9 @@ import sys
 from collections import Counter, namedtuple
 from pathlib import Path
 
-# note holds what the action needs: the replacement for FIX, the test to apply
-# for TEST. rule points at the prose that explains the pattern, because copying
-# that prose here would make a third place to keep in sync with the skill files.
+# note is the replacement for FIX, the test to apply for TEST. rule points at
+# the prose that explains the pattern, because copying that prose here would
+# make a third place to keep in sync with the skill files.
 Check = namedtuple("Check", "name pattern action note rule")
 Hit = namedtuple("Hit", "check path line match context")
 
@@ -50,8 +50,7 @@ SENTENCE_LIMIT = 40
 
 SENTENCE_SPLIT = re.compile(r"[.!?]+[\"')\]]*\s+")
 
-# Periods that do not end a sentence. A decimal needs no entry here, since the
-# digit after the point is not whitespace and never starts a candidate split.
+# Periods that do not end a sentence.
 ABBREVIATIONS = {"al", "approx", "cf", "ch", "dr", "e.g", "eq", "fig", "figs",
                  "i.e", "inc", "mr", "ms", "no", "p", "pp", "prof", "ref",
                  "refs", "sec", "st", "tab", "vs"}
@@ -62,9 +61,7 @@ ABBREVIATIONS = {"al", "approx", "cf", "ch", "dr", "e.g", "eq", "fig", "figs",
 WORD = re.compile(r"[A-Za-z0-9][\w'.%:-]*")
 
 # Units that hold no sentence. A table row and a shell command inside an HTML
-# comment both pass the word limit without being prose. The length check reads
-# this. A quantity written out in a table cell is still vague, so the quantity
-# check does not.
+# comment both pass the word limit without being prose.
 NOT_PROSE = re.compile(r"^\s*(?:\||```|~~~|\$\$?|#{1,6}\s|!\[|<!--)")
 
 UNQUANTIFIED = re.compile(r"(?i)\ba (?:few|handful|small fraction|little)\b")
@@ -183,9 +180,7 @@ MARKUP = re.compile(r"`[^`]*`|\[@[^\]]*\]|&#?\w+;|\\.")
 def semicolon(text):
     """Find a semicolon outside the markup that holds one.
 
-    Masking keeps the offsets, so the reported sentence is the real one. A
-    fenced block never reaches here, since scan() holds a counting check back
-    from one, which is what takes a shell command out of the results.
+    Masking keeps the offsets, so the reported sentence is the real one.
     """
     masked = MARKUP.sub(lambda m: " " * len(m.group(0)), text)
     for m in re.finditer(";", masked):
@@ -194,8 +189,7 @@ def semicolon(text):
 
 # The tail stops at auxiliaries and prepositions. A plural noun after "those"
 # ("those runs", "those counts") matches any verb stem, so a lexical verb here
-# would fire on every one. A bare "that" would fire on every relative clause
-# ("the row that is empty").
+# would fire on every one.
 POINTER_TAIL = (r"[.,;:)]|\s+(?:is|are|was|were|has|have|had|and|or|but|so|that|which|"
                 r"of|in|to|from|with|for|than|against|into|on|at|by)\b")
 
@@ -217,9 +211,7 @@ def pointer(text):
         yield Span(label(m.group(0), text, m.end()), m.start(), m.end())
 
 
-# A clause after the conjunction needs a subject of its own. Bare nouns stay
-# out: in "notes, laboratory results, and medication orders" the list item
-# "orders" reads as a verb and every serial list would fire. The capitalized
+# A clause after the conjunction needs a subject of its own. The capitalized
 # alternative is the reason this pattern is not compiled with IGNORECASE, which
 # would let it match any word at all.
 SUBJECT = (r"(?i:it|they|we|this|that|there|these|those|he|she|one|its|their|our|his|her|"
@@ -342,9 +334,7 @@ PROSE_CHECKS = [
           "something else, or no noun was written at all, write the noun. A "
           "demonstrative standing for the situation just described stays",
           POINT_AT_NOUN),
-    # "held" is left out. His sweep of one manuscript rewrote 44 instances of
-    # the word and changed no "held", where the participle reads as the steady
-    # sense. The particles after the verb mark that sense too.
+    # The particles after the verb mark the steady sense.
     Check("possession-verb", r"(?i)\b(?:hold|holds|holding)\b"
                         r"(?!\s+(?:to|together|up|back|at|where|wherever|"
                         r"whenever|on|off|out|for|in|true|steady)\b)", "TEST",
@@ -362,7 +352,7 @@ PROSE_CHECKS = [
           "REWRITE",
           "give the number, or name what went wrong", CONCRETE),
     # Separate from vague-quantifier because these words are right often enough
-    # that a REWRITE, which prints false positives and all, would be wrong.
+    # that each hit needs the test.
     Check("unquantified", unquantified, "TEST",
           "give the fraction, or say why it is not available. A label rather "
           "than a measurement is fine", CONCRETE),
@@ -468,10 +458,9 @@ UNIT_START = re.compile(r"^\s*(?:#{1,6}\s|[-*+]\s|\d+\.\s|>\s|\||```|~~~)")
 SENTENCE_END = re.compile(r"(?<=[.!?])\s")
 
 # Checks that read every line of a source file, past the comments,
-# so they reach an error string or a log message. Only em-dash qualifies:
-# nothing in code needs one, so the sole false positive is a linter declaring
-# the character, while British spelling would match every word inside this
-# script's own pattern list.
+# so they reach an error string or a log message. A check belongs here when
+# nothing in code needs the pattern. The em-dash check's sole false positive is
+# a linter declaring the character.
 WHOLE_FILE = {"em-dash"}
 
 
@@ -634,9 +623,8 @@ def scan(path, checks, skip_html_comments=False):
             continue
         for n, text, fenced in source:
             for check in active:
-                # The pattern checks still read a code block, where a semicolon
-                # in a shell command is a judgment call. The counting checks
-                # cannot, because a code line is not a sentence.
+                # The counting checks skip a code block, because a code line
+                # is not a sentence.
                 if fenced and not isinstance(check.pattern, str):
                     continue
                 for m in matches(check.pattern, text):

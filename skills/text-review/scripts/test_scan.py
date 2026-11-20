@@ -64,8 +64,6 @@ class LongSentence(Scanned):
         self.assertEqual(len(self.hits(text, "long-sentence")), 1)
 
     def test_two_long_sentences_in_one_unit_both_report(self):
-        # The dedup key is (check, line, match text), so a match string of the
-        # bare count would drop the second hit.
         text = sentence_of(41) + " " + sentence_of(45).capitalize()
         self.assertEqual(len(self.hits(text, "long-sentence")), 2)
 
@@ -101,7 +99,7 @@ class Unquantified(Scanned):
         self.assertEqual(self.hits(text, "unquantified"), [])
 
     def test_the_noisy_words_stay_out(self):
-        # These fired on correct prose during the sweep and named no defect.
+        # These fired on correct prose and named no defect.
         for word in ("several", "slightly", "somewhat", "marginally",
                      "minimal", "small"):
             with self.subTest(word=word):
@@ -110,10 +108,7 @@ class Unquantified(Scanned):
 
 
 class ContrastiveVoice(Scanned):
-    """The construction is out of his voice, so every hit is a violation."""
-
     def test_a_heading_fires(self):
-        # Section titles carried two of these until the sweep of 2026-09-02.
         text = "### 5.4 Low precision is over-inclusion, not invention"
         self.assertEqual(len(self.hits(text, "contrastive-voice")), 1)
 
@@ -129,11 +124,7 @@ class ContrastiveVoice(Scanned):
 
 
 class CommaJoin(Scanned):
-    """Independent clauses take a period, whichever conjunction joins them."""
-
     def test_a_serial_list_whose_last_item_looks_finite_stays_quiet(self):
-        # "the process ... are" reads as subject plus verb. An earlier comma in
-        # the same sentence is what tells the two shapes apart.
         text = ("The header patterns, the end-boundary list, and the process "
                 "that produced them are in Appendix [ref].")
         self.assertEqual(self.hits(text, "comma-join"), [])
@@ -145,14 +136,11 @@ class CommaJoin(Scanned):
                                    "comma-join"), [])
 
     def test_a_second_sentence_is_judged_on_its_own(self):
-        # The check reads one sentence at a time, so a list in the first must
-        # not silence a join in the second.
         text = ("It reads notes, labs, and orders. The model converged, "
                 "and the loss plateaued at 0.3.")
         self.assertEqual(len(self.hits(text, "comma-join")), 1)
 
     def test_a_compound_predicate_stays_quiet(self):
-        # One subject, two verbs. A period would strand the second.
         text = "The script reads the artifact, and writes the scores beside it."
         self.assertEqual(self.hits(text, "comma-join"), [])
 
@@ -184,8 +172,8 @@ class HtmlComments(Scanned):
         self.assertEqual(self.skipped(self.NOTE), [])
 
     def test_skip_keeps_the_prose_around_a_comment(self):
-        # A note written tight against its paragraph used to take the paragraph
-        # with it, silently, because the flag was one boolean per unit.
+        # A note tight against its paragraph must leave the paragraph in the
+        # scan. Nothing reports the loss.
         for placement, text in (("blank line", self.NOTE + "\n\n" + self.PROSE),
                                 ("line after", self.NOTE + "\n" + self.PROSE),
                                 ("line before", self.PROSE + "\n" + self.NOTE),
@@ -236,7 +224,6 @@ class CommaSo(Scanned):
         self.assertEqual(self.hits("> The cache grows, so memory rises.", "comma-so"), [])
 
     def test_a_table_cell_fires(self):
-        # One sweep fixed a purpose clause inside a table cell.
         text = "| a | Put examples in the prompt, so the model sees the task. |"
         self.assertEqual(len(self.hits(text, "comma-so")), 1)
 
@@ -256,11 +243,18 @@ class TrackingParam(Scanned):
                 self.assertEqual([h.match for h in hits], [self.URL])
 
 
+class VagueHold(Scanned):
+    def test_the_participle_never_fires(self):
+        # His sweep of one manuscript rewrote 44 instances and left every
+        # "held", so the form costs more in noise than it finds.
+        self.assertEqual(self.hits("The file held 7.5B parameters.",
+                                   "possession-verb"), [])
+
+
 class BearHandoff(Scanned):
     """"load-bearing" belongs to concrete-thing, so relation-verb skips it."""
 
     def test_load_bearing_stays_with_concrete_thing(self):
-        # Both checks reaching it would print the sentence under two groups.
         for line in ("The comment is load-bearing.", "The comment is load bearing."):
             with self.subTest(line=line):
                 self.assertEqual(self.hits(line, "relation-verb"), [])
@@ -268,7 +262,7 @@ class BearHandoff(Scanned):
 
 
 class Semicolon(Scanned):
-    """The rule is about a clause join, and markup holds semicolons of its own."""
+    """The rule is about a clause join. Markup holds semicolons of its own."""
 
     def test_markup_stays_quiet(self):
         for unit, line in (("pandoc citation", "The two studies agree [@smith2023; @jones2022]."),
@@ -280,7 +274,6 @@ class Semicolon(Scanned):
                 self.assertEqual(self.hits(line, "semicolon"), [])
 
     def test_a_join_next_to_markup_still_fires(self):
-        # The exclusion covers the span alone, so a join beside markup fires.
         text = "Pass `--only` to name a check; the opt-in list is in the help."
         self.assertEqual(len(self.hits(text, "semicolon")), 1)
 
@@ -305,7 +298,6 @@ class Pointer(Scanned):
                 self.assertEqual(self.hits(line, "pointer"), [])
 
     def test_a_table_cell_fires(self):
-        # The rolling-summarization row read this way until the sweep of 2026-09-19.
         text = ("| Rolling summarization | Summarize each note, combine those "
                 "into daily summaries. | GPT-3.5 |")
         self.assertEqual(len(self.hits(text, "pointer")), 1)
