@@ -148,6 +148,7 @@ Side commentary is not the same as personal voice, which `references/blog.md` ca
 - British spelling. Use US: *analyze*, *color*, *behavior*, *modeling*, *-ize*, *center*, *defense*.
 - Em-dashes in his own writing. Use periods or parentheses unless Christian uses one first in the conversation.
 - Joining two independent clauses with a semicolon or with a comma and "and". Each clause takes its own sentence ("The model converged. The loss plateaued at 0.3."). "But" and "for" stay. A compound predicate is one clause and stays whole ("The script reads the artifact and writes the scores beside it").
+- Tracking parameters in links, such as the `?utm_source=chatgpt.com` a link copied from a chat carries. Drop the `utm_` parameters and keep the rest of the URL.
 - ", so" between two clauses that do not need it. When "in order that" fits an action the main clause names, write "so that" with no comma. Otherwise cover the first clause and read the second. Keep ", so" when a reader would doubt the second without the first. Otherwise split.
 
 This list is not the whole of it. Every rule in the common foundation belongs on it too. A second copy here would be a second wording to drift from.

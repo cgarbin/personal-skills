@@ -298,6 +298,21 @@ class CommaSo(Scanned):
         self.assertEqual(len(self.hits(text, "comma-so")), 1)
 
 
+class TrackingParam(Scanned):
+    """The match is the URL alone, so the reported text is what gets edited."""
+
+    URL = ("https://help.rayyan.ai/hc/en-us/articles/4406426903825-Which-reference-"
+           "formats-are-compatible-with-Rayyan?utm_source=chatgpt.com")
+
+    def test_the_link_markup_stays_out_of_the_match(self):
+        for line in (f"Rayyan lists them ([formats]({self.URL})).",
+                     f"Rayyan lists them at <{self.URL}>.",
+                     f"Rayyan lists them at {self.URL}."):
+            with self.subTest(line=line):
+                hits = self.hits(line, "tracking-param")
+                self.assertEqual([h.match for h in hits], [self.URL])
+
+
 class Conjunctions(Scanned):
     """comma-join reads "and" alone."""
 

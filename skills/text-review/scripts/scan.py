@@ -281,9 +281,17 @@ def comma_so(text):
         yield Span(label(", so", text, m.end()), m.start(), m.end())
 
 
+# Link markup and a sentence's closing period sit flush against a URL. Without
+# the stops in URL_CHAR and the lookbehind, the reported match includes them
+# and is not the text to edit.
+URL_CHAR = r"[^\s<>()\[\]\"'`]"
+TRACKING_PARAM = rf"(?i){URL_CHAR}*[?&]utm_\w+={URL_CHAR}*(?<![.,;:!?])"
+
 PROSE_CHECKS = [
     Check("em-dash", r"—", "FIX",
           "use a period or parentheses", AVOID),
+    Check("tracking-param", TRACKING_PARAM, "FIX",
+          "drop the utm_ parameters and keep the rest of the URL", AVOID),
     Check("semicolon", semicolon, "FIX",
           "use a period between independent clauses. In pseudo-code or table "
           "structure it stays", AVOID),
